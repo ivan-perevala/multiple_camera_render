@@ -1,0 +1,210 @@
+
+msgid ""
+msgstr ""
+
+#. :src: bpy.types.Preferences.info_section
+msgid "Sections with information about the addon"
+msgstr "Секції з інформацією про доповнення"
+
+#. :src: bpy.types.Preferences.info_section:'README'
+msgid "Information about the addon and how to use it"
+msgstr "Інформація про доповнення і як його використовувати"
+
+#. :src: bpy.types.Preferences.info_section:'CREDITS'
+msgid "Thanks to those thanks to whom this addon was created and maintained"
+msgstr "Подяка тим, завдяки кому доповнення створено і підтримується"
+
+#. :src: bpy.types.Preferences.info_section:'LINKS'
+msgid "Useful links related to this addon"
+msgstr "Корисні посилання стосовно доповнення"
+
+#. :src: bpy.types.Preferences.info_section:'LICENSE'
+msgid "Information about addon license"
+msgstr "Інформація про ліцензію доповнення"
+
+#. :src: bpy.types.CollectionProperty
+msgid "Collection Definition"
+msgstr ""
+
+#. :src: bpy.types.CollectionProperty
+msgid "RNA collection property to define lists, arrays and mappings"
+msgstr ""
+
+#. :src: bpy.types.CollectionProperty.fixed_type
+msgid "Pointer Type"
+msgstr ""
+
+#. :src: bpy.types.CollectionProperty.fixed_type
+msgid "Fixed pointer type, empty if variable type"
+msgstr ""
+
+#. :src: bpy.types.SceneProps.use_multiple_camera_render
+msgid "Use Multiple Camera Render"
+msgstr "Рендер з Декількох Камер"
+
+#. :src: bpy.types.SceneProps.use_multiple_camera_render
+msgid "Render animation from multiple cameras for each frame"
+msgstr ""
+
+#. :src: bpy.types.SceneProps.use_viewport
+msgid "Use in Viewport"
+msgstr "Використовувати у В'юпорті"
+
+#. :src: bpy.types.SceneProps.use_viewport
+msgid "Show how cameras would be changed on frame change in viewport"
+msgstr ""
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\reports.py:408
+msgctxt "BHQAB_Preferences"
+msgid "Open Log Files Directory"
+msgstr "Відкрити Теку Логів"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\reports.py:414
+msgctxt "Operator"
+msgid "Open Log: \"{filename}\"BHQAB_Preferences"
+msgstr ""
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\reports.py:414
+msgctxt "BHQAB_Preferences"
+msgid "Open Log: \"{filename}\""
+msgstr "Відкрити Лог: \"{filename}\""
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:221
+msgid "Warning"
+msgstr "Попередження"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:907
+msgid "Can not check for updates now"
+msgstr "Не вдалося перевірити наявність оновлень"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:1079
+msgid "Installing update"
+msgstr "Встановлюється оновлення"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:820
+msgctxt "Operator"
+msgid "Update to {tag_name}"
+msgstr "Оновити до {tag_name}"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:899
+msgid "Check for updates now"
+msgstr "Перевірити наявність оновлень зараз"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:1071
+msgid "Failed to create backup directory"
+msgstr "Не вдалося створити теку резервної копії"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:1076
+msgid "Failed to make backup"
+msgstr "Не вдалося створити резервну копію"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:1087
+msgid "Unable to remove local installation files, please, check directory permissions"
+msgstr "Не вдалося видалити локальні встіновлені файли, будь ласка, перевірте права доступу до директоії"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:805
+msgid "Pre-release"
+msgstr "Попередній Реліз"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:1110
+msgid "Update failed, installation restored from backup. Please install the update manually"
+msgstr "Не вдалося встановити оновлення, відновлено резервну копію. Будь ласка, встановіть оновлення вручну"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:807
+msgid ""
+"Released version {tag_name} {prerelease_fmt}({published_at}), last checked at {checked_at}\n"
+"Release Notes:\n"
+"\n"
+"{body}"
+msgstr ""
+"Вийшло оновлення {tag_name} {prerelease_fmt}({published_at}), востаннє перевірено {checked_at}\n"
+"Нотатки щодо Випуску:\n"
+"\n"
+"{body}"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:861
+msgid ""
+"Cache File: {fp}\n"
+"Rate Limit: {rate_limit}\n"
+"Remaining: {remaining}\n"
+"Reset Time: {reset_at}"
+msgstr ""
+"Файл Кешу: {fp}\n"
+"Ліміт Запитів: {rate_limit}\n"
+"Доступно Запитів: {remaining}\n"
+"Час Скидання Кількості Запитів: {reset_at}"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:904
+msgid "Unable check for updates before {reset_at}, exceeded rate limit"
+msgstr "Немає можливості перевірити наявність оновлень до {reset_at}, оскільки перевищено ліміт запитів"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:820
+msgid "Update to {tag_name}"
+msgstr "Оновити до {tag_name}"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\lib\bhqab\utils_ui.py:827
+msgid "You are using the latest version, checked at {checked_at}"
+msgstr "Ви використовуєте останню версію, перевірено {checked_at}"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\props\pref.py:106
+msgctxt "Preferences"
+msgid "Support Project on Patreon"
+msgstr "Підтримати Проект на Patreon"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\props\pref.py:113
+msgctxt "Preferences"
+msgid "Project on GitHub"
+msgstr "Проект на GitHub"
+
+#: F:\addons\multiple_camera_render_addon\multiple_camera_render\props\pref.py:120
+msgctxt "Preferences"
+msgid "BlenderHQ on YouTube"
+msgstr "BlenderHQ на YouTube"
+
+#. :src: Add-on Multiple Camera Render info: name
+msgid "Multiple Camera Render"
+msgstr ""
+
+#. :src: Add-on Multiple Camera Render info: warning
+msgid "Please, follow installation instructions. You are using debug version."
+msgstr ""
+
+
+msgctxt "BHQAB_Preferences"
+msgid "This section is intended for developers. You see it because you have an active \"Developers Extras\" option in the Blender user preferences."
+msgstr "Ця секція призначена для розробників. Ви її бачите оскільки ввімкнена опція \"Добавки Розробника\" в користувацких налаштуваннях Blender."
+
+
+msgctxt "BHQAB_Preferences"
+msgid "Log Level"
+msgstr "Рівень Логів"
+
+
+msgid "The level of the log that will be output to the console. For log to file, this level value will not change"
+msgstr "Рівень логу який буде виведено в консоль. Це значення не змінює рівень логу в файл"
+
+
+msgctxt "BHQAB_Preferences"
+msgid "Debug"
+msgstr "Налагодження"
+
+
+msgctxt "BHQAB_Preferences"
+msgid "Info"
+msgstr "Інформація"
+
+
+msgctxt "BHQAB_Preferences"
+msgid "Warning"
+msgstr "Попередження"
+
+
+msgctxt "BHQAB_Preferences"
+msgid "Error"
+msgstr "Помилки"
+
+
+msgctxt "BHQAB_Preferences"
+msgid "Critical"
+msgstr "Критичні Помилки"
+
