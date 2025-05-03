@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# type: ignore
+
+from __future__ import annotations
+
+import logging
+
+from bpy.types import PropertyGroup
+from bpy.props import BoolProperty, EnumProperty
+
+import bhqrprt
+
+log = logging.getLogger(__name__)
+
+
+class SceneProps(PropertyGroup):
+    cameras_usage: EnumProperty(
+        name="Cameras Usage",
+        items=[
+            (
+                'VISIBLE',
+                "Visible",
+                "Render from all visible cameras",
+                'VIS_SEL_11',
+                0
+            ),
+            (
+                'SELECTED',
+                "Selected",
+                "Render only from selected cameras",
+                'RESTRICT_SELECT_OFF',
+                1
+            )
+        ],
+        default='VISIBLE',
+        update=bhqrprt.update_log_setting_changed(log, "camera_usage")
+    )
+
+    direction: EnumProperty(
+        name="Direction",
+        items=(
+            ('COUNTER', "Counter", "", 'LOOP_BACK', 0),
+            ('CLOCKWISE', "Clockwise", "", 'LOOP_FORWARDS', 1)
+        ),
+        default='CLOCKWISE',
+        options={'HIDDEN'},
+        description=(
+            "The direction in which the cameras will change during the rendering of the sequence (Starting from the "
+            "current camera of the scene)"
+        ),
+        update=bhqrprt.update_log_setting_changed(log, "direction")
+    )
+
+    keep_frame_in_filepath: BoolProperty(
+        name="Keep Frame Number",
+        default=True,
+        description="Write frame number even if not rendering animation"
+    )

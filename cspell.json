@@ -2,22 +2,38 @@
     "version": "0.2",
     "ignorePaths": [],
     "dictionaryDefinitions": [],
-    "dictionaries": [],
+    "dictionaries": [
+        "en-US",
+        "uk-UA"
+    ],
     "words": [
         "Владлен",
         "Іван",
         "Кузьмін",
         "Перевала",
         "рендеру",
-        "bhqab",
+        "addopts",
+        "bhqui",
+        "bhqmain",
+        "bhqrprt",
+        "fstr",
         "idname",
         "ivpe",
         "Kuzmin",
         "msgctxt",
+        "mypy",
         "Perevala",
+        "pylint",
+        "pyproject",
+        "pyright",
+        "Pytest",
+        "pythonpath",
         "scol",
+        "setuptools",
+        "testpaths",
         "Vladlen"
     ],
     "ignoreWords": [],
-    "import": []
+    "import": [],
+    "language": "en,uk"
 }

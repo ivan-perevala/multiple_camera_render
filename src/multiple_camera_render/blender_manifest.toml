@@ -1,0 +1,25 @@
+# https://docs.blender.org/manual/en/latest/advanced/extensions/getting_started.html#manifest
+
+schema_version = "1.0.0"
+
+id = "multiple_camera_render"
+version = "4.4.0"
+name = "Multiple Camera Render"
+tagline = "Sequential rendering from multiple cameras"
+maintainer = "Ivan Perevala <ivan95perevala@gmail.com>"
+type = "add-on"
+permissions = ["files"]
+website = "https://github.com/BlenderHQ/multiple_camera_render"
+tags = ["Render"]
+blender_version_min = "4.4.0"
+
+# TODO: Uncomment before release.
+# wheels = [
+#   "wheels/bhqui-1.0.0-py3-none-any.whl",
+#   "wheels/bhqrprt-1.0.0-py3-none-any.whl",
+#   "wheels/bhqmain-1.0.0-py3-none-any.whl",
+# ]
+
+license = ["SPDX:GPL-3.0-or-later"]
+
+copyright = ["2020-2025 Ivan Perevala, Vladlen Kuzmin"]

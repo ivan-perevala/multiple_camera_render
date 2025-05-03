@@ -21,8 +21,5 @@ build/
 _build/
 **.egg-info/
 
-# Log files
-src/multiple_camera_render/logs/*.txt
-
 # Keep directory layout
 !.gitkeep

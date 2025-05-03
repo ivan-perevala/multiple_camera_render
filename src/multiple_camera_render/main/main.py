@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# type: ignore
+
+from __future__ import annotations
+
+import logging
+
+import bpy
+from bpy.types import Operator
+from bpy.props import BoolProperty
+
+import bhqmain
+import bhqrprt
+
+from . chunk_main import Main
+
+log = logging.getLogger(__name__)
+_err = log.error
+
+
+class MCR_OT_render(Operator):
+    bl_idname = "mcr.render"
+    bl_label = "Multiple Camera Render"
+
+    preview: BoolProperty(default=False)
+    animation: BoolProperty(default=False)
+
+    def invoke(self, context, event):
+        main = Main.create()
+        main.animation = self.animation
+        if main.invoke(context) == bhqmain.InvokeState.SUCCESSFUL:
+            wm = context.window_manager
+            wm.modal_handler_add(self)
+            return {'RUNNING_MODAL'}
+        else:
+            bhqrprt.report_and_log(log, self, level=logging.WARNING, message="Failed to invoke render")
+            return {'CANCELLED'}
+
+    def modal(self, context, event):
+        main = Main.get_instance()
+        if not main:
+            return {'CANCELLED'}
+
+        return main.modal(context)
+
+    def execute(self, context):
+        if not bpy.app.background:
+            _err("Can be executed directly only in background mode")
+            return {'CANCELLED'}
+
+        main = Main.create()
+        main.animation = self.animation
+
+        if main.invoke(context) != bhqmain.InvokeState.SUCCESSFUL:
+            bhqrprt.report_and_log(
+                log, self,
+                level=logging.WARNING,
+                message="Failed to invoke multiple camera render in background mode, see previous logs."
+            )
+            return {'CANCELLED'}
+
+        while (main := Main.get_instance()):
+            main.modal(context)
+
+        return {'FINISHED'}

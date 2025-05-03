@@ -1,0 +1,21 @@
+{
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.venv": true,
+        "**/.venv_win": true,
+        "**/.vscode": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true,
+        "**/**.egg-info": true,
+    },
+    "editor.rulers": [
+        120,
+    ],
+    "autoDocstring.docstringFormat": "sphinx",
+    "python.analysis.extraPaths": [
+        "../lib/lib_bhqui/src",
+        "../lib/lib_bhqrprt/src",
+        "../lib/lib_bhqmain/src",
+        "../lib/py_launch_blender",
+    ]
+}

@@ -1,0 +1,102 @@
+# SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# NOTE: Use https://packaging.python.org/en/latest/guides/writing-pyproject-toml/ guide reference for editing this file. 
+
+# ----------------------------------------------------------------------------------------------------------------------
+[project]
+version = "1.0.0"
+name = "multiple_camera_render"
+description = "Multiple Camera Render"
+authors = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
+maintainers = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
+license = { text = "GPL-3.0-or-later" }
+
+# Python version used by Blender 4.4
+# TODO: Test and update pyproject.toml w.r.t. required Blender version.
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+dev = ["fake-bpy-module"]
+tests = ["pytest", "py_launch_blender"]
+docs = ["sphinx", "sphinx-intl", "furo"]
+
+# ----------------------------------------------------------------------------------------------------------------------
+# setuptools used here, might be changed because this method considered legacy.
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#declaring-the-build-backend
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Project uses src file layout, so we need to clarify this here.
+# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#setuptools-specific-configuration
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Include LICENSE files as package data for project.
+# https://setuptools.pypa.io/en/latest/userguide/datafiles.html#package-data
+[tool.setuptools.package-data]
+"multiple_camera_render" = [
+    "./LICENSE",
+    "./README.md",
+    "wheels/bhqmain-1.0.0-py3-none-any.whl",
+    "wheels/bhqrprt-1.0.0-py3-none-any.whl",
+    "wheels/bhqui-1.0.0-py3-none-any.whl",
+    ]
+
+# ----------------------------------------------------------------------------------------------------------------------
+# MyPy configuration.
+# https://mypy.readthedocs.io/en/stable/config_file.html#using-a-pyproject-toml-file
+[tool.mypy]
+# Type-checks the interior of functions without type annotations.
+check_untyped_defs = true
+
+# Disallows defining functions without type annotations or with incomplete type annotations.
+disallow_untyped_defs = false
+
+# Suppresses error messages about imports that cannot be resolved.
+ignore_missing_imports = true
+
+# Shows a warning when returning a value with type Any from a function declared with a non-Any return type.
+warn_return_any = true
+
+# Warns about unneeded # type: ignore comments.
+warn_unused_ignores = true
+
+# ----------------------------------------------------------------------------------------------------------------------
+# PyLint configuration.
+# https://pylint.readthedocs.io/en/stable/user_guide/usage/run.html
+[tool.pylint]
+# The type of string formatting that logging methods do. `old` means using % formatting, `new` is for `{}` formatting.
+logging-format-style = "fstr"
+
+# 'missing-module-docstring' - Used when a module has no docstring. Empty modules do not require a docstring.
+disable = """
+missing-module-docstring,
+"""
+
+# ----------------------------------------------------------------------------------------------------------------------
+[tool.pyright]
+# Generate or suppress diagnostics for imports that have no corresponding source file.
+reportMissingModuleSource = false
+
+# Generate or suppress diagnostics for type annotations that use invalid type expression forms or are semantically
+# invalid.
+reportInvalidTypeForm = false
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Pytest configuration
+# https://docs.pytest.org/en/stable/reference/customize.html#pyproject-toml
+[tool.pytest.ini_options]
+
+# https://docs.pytest.org/en/stable/explanation/goodpractices.html#tests-outside-application-code
+addopts = ["--import-mode=importlib"]
+
+#https://docs.pytest.org/en/stable/reference/reference.html#confval-pythonpath
+pythonpath = ["./src"]
+
+#https://docs.pytest.org/en/stable/reference/reference.html#confval-testpaths
+testpaths = ["tests"]
