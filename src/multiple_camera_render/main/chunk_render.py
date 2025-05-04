@@ -19,6 +19,7 @@ from bpy.types import Scene, Context
 from mathutils import Vector
 
 import bhqmain
+import bhqui
 
 from . clockwise_iter import ClockwiseIterator
 
@@ -32,6 +33,7 @@ _err = log.error
 
 class RenderStatus(IntEnum):
     NONE = 0
+    PREVIEW = auto()
     NEED_LAUNCH = auto()
     RENDERING = auto()
     COMPLETE = auto()
@@ -45,13 +47,12 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
     status: RenderStatus
 
+    _PROGRESS_ID = "mcr"
+
     def __init__(self, main):
         super().__init__(main)
         self.camera_iterator = None
         self.status = RenderStatus.NONE
-
-    def handler_render_pre(self, scene: Scene, _=None):
-        self.status = RenderStatus.RENDERING
 
     def _eval_render_filename_frame(self, context: Context, name: str) -> str:
         scene = context.scene
@@ -87,6 +88,13 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         scene.render.filepath = os.path.join(directory, f"{name}{ext}")
 
+    def handler_render_pre(self, scene: Scene, _=None):
+        self.status = RenderStatus.RENDERING
+
+    def handler_frame_change(self, scene: Scene, _=None):
+        if self.main.preview:
+            self.handler_render_post(scene)
+
     def handler_render_post(self, scene: Scene, _=None):
         _dbg("Render post")
 
@@ -119,6 +127,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             (bpy.app.handlers.render_pre, self.handler_render_pre),
             (bpy.app.handlers.render_post, self.handler_render_post),
             (bpy.app.handlers.render_cancel, self.handler_render_cancel),
+            (bpy.app.handlers.frame_change_pre, self.handler_frame_change),
         )
 
     def _register_handlers(self):
@@ -181,7 +190,22 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             _err(f"Missing camera objects, search time {time.time() - dt:.6f}")
             return False
 
-    def launch_render(self) -> bool:
+    def launch_render(self, context: Context) -> bool:
+
+        self._increase_progress(context)
+
+        if self.main.preview:
+            if self.main.animation:
+                if not context.screen.is_animation_playing:
+                    scene = context.scene
+                    scene.frame_set(scene.frame_start)
+                    bpy.ops.screen.animation_play()
+            else:
+                bpy.ops.screen.frame_offset(delta=0)
+
+            self.status = RenderStatus.PREVIEW
+            return True
+
         res = bpy.ops.render.render(
             'INVOKE_DEFAULT',
             animation=self.main.animation,
@@ -189,6 +213,20 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             write_still=True
         )
         return res == {'RUNNING_MODAL'}
+
+    def _setup_progress(self):
+        progress = bhqui.progress.get(identifier=self._PROGRESS_ID)
+        progress.label = "Multiple Camera Render"
+        progress.subtype = 'STEP'
+        progress.num_steps = len(self.camera_iterator)
+
+    def _increase_progress(self, context: Context):
+        progress = bhqui.progress.get(identifier=self._PROGRESS_ID)
+        progress.step += 1
+        progress.label = context.scene.camera.name
+
+    def _cancel_progress(self):
+        bhqui.progress.complete(identifier=self._PROGRESS_ID)
 
     def invoke(self, context):
         if not self._eval_cameras(context):
@@ -201,8 +239,15 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         self.status = RenderStatus.NEED_LAUNCH
 
+        self._setup_progress()
+
         return super().invoke(context)
 
     def cancel(self, context):
+        self._cancel_progress()
         self._unregister_handlers()
+
+        if self.main.preview and context.screen.is_animation_playing:
+            bpy.ops.screen.animation_cancel(restore_frame=True)
+
         return super().cancel(context)

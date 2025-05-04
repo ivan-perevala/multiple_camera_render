@@ -13,6 +13,8 @@ from bpy.types import Window, Timer, Context
 
 import bhqmain
 
+from .. import get_preferences
+
 if TYPE_CHECKING:
     from . chunk_main import Main
 
@@ -41,9 +43,15 @@ class Timers(bhqmain.MainChunk['Main', 'Context']):
 
     def _ensure_window_timers(self, context: Context):
         wm = context.window_manager
+
+        timestep = 1e-1
+        if self.main.preview:
+            addon_pref = get_preferences()
+            timestep = addon_pref.preview_timestep
+
         for window in wm.windows:
             if window not in self._timers:
-                self._timers[window] = wm.event_timer_add(0.1, window=window)
+                self._timers[window] = wm.event_timer_add(timestep, window=window)
 
     def _remove_window_timers(self, context: Context):
         wm = context.window_manager

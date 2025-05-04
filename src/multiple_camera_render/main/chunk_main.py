@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 
 import bpy
-from bpy.types import Context
+from bpy.types import Context, Event
 
 import bhqmain
 
@@ -40,13 +40,17 @@ class Main(bhqmain.MainChunk['Main', 'Context']):
         self.preview = False
         self.animation = False
 
-    def modal(self, context: Context):
-        if not bpy.app.is_job_running('RENDER'):
-            if self.render.status == RenderStatus.NEED_LAUNCH:
-                self.render.launch_render()
-        if self.render.status == RenderStatus.COMPLETE:
-            if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
-                return {'FINISHED'}
-            else:
-                return {'CANCELLED'}
-        return {'RUNNING_MODAL'}
+    def modal(self, context: Context, event: Event):
+        if event.type.startswith('TIMER'):
+            if self.preview or (not bpy.app.is_job_running('RENDER')):
+                if self.render.status == RenderStatus.NEED_LAUNCH:
+                    self.render.launch_render(context)
+            if self.render.status == RenderStatus.COMPLETE:
+                if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
+                    return {'FINISHED'}
+                else:
+                    return {'CANCELLED'}
+        if self.preview:
+            return {'PASS_THROUGH'}
+        else:
+            return {'RUNNING_MODAL'}

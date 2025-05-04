@@ -21,6 +21,8 @@ DATA_DIR = os.path.join(_CUR_DIR, "data")
 bhqrprt.setup_logger(directory=os.path.join(_CUR_DIR, "logs"))
 log = logging.getLogger()
 
+def get_preferences() -> props.Preferences:
+    return bpy.context.preferences.addons[__package__].preferences
 
 def __reload_submodules(lc):
     from importlib import reload
@@ -53,6 +55,9 @@ def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
+
+    addon_pref = bpy.context.preferences.addons[__package__].preferences
+    addon_pref.log_level = addon_pref.log_level
 
 
 def unregister():

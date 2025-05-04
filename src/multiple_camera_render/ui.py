@@ -20,6 +20,11 @@ def additional_TOPBAR_MT_render_draw(self, context):
     col.operator(operator=main.MCR_OT_render.bl_idname, text="Render Multiple Cameras")
     col.operator(operator=main.MCR_OT_render.bl_idname, text="Render Animation from Multiple Cameras").animation = True
 
+    col.operator(operator=main.MCR_OT_render.bl_idname, text="Preview").preview = True
+    props = col.operator(operator=main.MCR_OT_render.bl_idname, text="Preview Animation")
+    props.preview = True
+    props.animation = True
+
     scene_props = context.scene.mcr
 
     layout.prop_menu_enum(scene_props, "cameras_usage")

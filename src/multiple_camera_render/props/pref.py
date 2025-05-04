@@ -12,7 +12,7 @@ import bhqrprt
 import bhqui
 
 from bpy.types import AddonPreferences, Context
-from bpy.props import EnumProperty
+from bpy.props import EnumProperty, FloatProperty
 
 from .. import icons
 from .. import __package__ as ADDON_PKG
@@ -65,11 +65,24 @@ class Preferences(AddonPreferences):
 
     log_level: bhqrprt.get_prop_log_level(log, identifier="log_level")
 
+    preview_timestep: FloatProperty(
+        options={'SKIP_SAVE'},
+        default=0.1,
+        min=1e-2,
+        max=1.0,
+        soft_min=0.1,
+        subtype='TIME_ABSOLUTE',
+        name="Preview Timestep",
+        description="Time step for cameras to be changed in preview mode",
+    )
+
     def draw(self, context: Context):
         layout = self.layout
         layout.use_property_split = True
 
         col = layout.column(align=False)
+
+        col.prop(self, "preview_timestep")
 
         bhqrprt.template_ui_draw_paths(log, col, msgctxt="Preferences")
 

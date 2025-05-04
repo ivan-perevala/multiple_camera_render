@@ -25,12 +25,14 @@ class MCR_OT_render(Operator):
     bl_idname = "mcr.render"
     bl_label = "Multiple Camera Render"
 
-    preview: BoolProperty(default=False)
-    animation: BoolProperty(default=False)
+    preview: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
+    animation: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
 
     def invoke(self, context, event):
         main = Main.create()
         main.animation = self.animation
+        main.preview = self.preview
+
         if main.invoke(context) == bhqmain.InvokeState.SUCCESSFUL:
             wm = context.window_manager
             wm.modal_handler_add(self)
@@ -44,11 +46,14 @@ class MCR_OT_render(Operator):
         if not main:
             return {'CANCELLED'}
 
-        return main.modal(context)
+        return main.modal(context, event)
 
     def execute(self, context):
         if not bpy.app.background:
             _err("Can be executed directly only in background mode")
+            return {'CANCELLED'}
+        if self.preview:
+            _err("Preview not available in background mode")
             return {'CANCELLED'}
 
         main = Main.create()
