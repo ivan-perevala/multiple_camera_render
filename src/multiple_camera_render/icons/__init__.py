@@ -25,6 +25,15 @@ class Icons:
         'counter',
         'visible',
         'selected',
+        'credits',
+        'github',
+        'info',
+        'license',
+        'links',
+        'patreon',
+        'preferences',
+        'readme',
+        'youtube',
     )
 
 
@@ -37,6 +46,15 @@ _IconsType = Literal[
     'counter',
     'visible',
     'selected',
+    'credits',
+    'github',
+    'info',
+    'license',
+    'links',
+    'patreon',
+    'preferences',
+    'readme',
+    'youtube',
 ]
 
 

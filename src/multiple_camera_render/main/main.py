@@ -71,3 +71,14 @@ class MCR_OT_render(Operator):
             main.modal(context)
 
         return {'FINISHED'}
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.animation:
+            if properties.preview:
+                return "Preview animation process. Not actual render would be performed"
+            return "Render animation sequentionally from multiple cameras"
+        else:
+            if properties.preview:
+                return "Preview camera order. Not actual render would be performed"
+            return "Sequentional render of current frame from multiple cameras"

@@ -167,9 +167,12 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
                 angles[i] = math.atan2(x, y)
 
         mask = ~np.isnan(angles)
-        indices = np.argsort(angles)[mask]
+        if not mask.any():
+            return False
 
+        indices = np.argsort(angles)[mask]
         array = cameras[mask][indices]
+
         curr_camera_index = np.argmax(array == curr_camera)
         self.camera_iterator = ClockwiseIterator(array, curr_camera_index)
 

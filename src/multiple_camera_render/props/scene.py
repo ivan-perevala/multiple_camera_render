@@ -45,19 +45,19 @@ class SceneProps(PropertyGroup):
         name="Direction",
         items=(
             (
-                'COUNTER',
-                "Counter",
-                "",
-                icons.get_id('counter'),
-                0
-            ),
-            (
                 'CLOCKWISE',
                 "Clockwise",
                 "",
                 icons.get_id('clockwise'),
+                0
+            ),
+            (
+                'COUNTER',
+                "Counter",
+                "",
+                icons.get_id('counter'),
                 1
-            )
+            ),
         ),
         default='CLOCKWISE',
         options={'HIDDEN'},
