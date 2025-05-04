@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import os
 import logging
 
 import bhqrprt
@@ -21,9 +22,31 @@ assert ADDON_PKG
 
 log = logging.getLogger(__name__)
 
+_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+
+with open(os.path.join(_DATA_DIR, "LICENSE.txt"), 'r') as file:
+    _LICENSE_TEXT = file.read()
+
+with open(os.path.join(_DATA_DIR, "README.txt"), 'r') as file:
+    _README_TEXT = file.read()
+    
+with open(os.path.join(_DATA_DIR, "CREDITS.txt"), 'r') as file:
+    _CREDITS_TEXT = file.read()
+
 
 class Preferences(AddonPreferences):
     bl_idname = ADDON_PKG
+
+    tab: EnumProperty(
+        items=(
+            ('GENERAL', 'General', "General extension options", icons.get_id('preferences'), 0),
+            ('INFO', 'Info', "Info and useful links", icons.get_id('info'), 1),
+        ),
+        default='GENERAL',
+        options={'HIDDEN', 'SKIP_SAVE'},
+        name="Tab",
+        description="Active preferences tab",
+    )
 
     info_section: EnumProperty(
         items=(
@@ -76,21 +99,88 @@ class Preferences(AddonPreferences):
         description="Time step for cameras to be changed in preview mode",
     )
 
+    links: EnumProperty(
+        items=(
+            ('GITHUB', "Github", "https://github.com/blenderhq", icons.get_id('github'), 1 << 0),
+            ('PATREON', "Support project on Patreon", "https://www.patreon.com/BlenderHQ", icons.get_id('patreon'), 1 << 1),
+        ),
+        default=set(),
+        options={'ENUM_FLAG'},
+    )
+
     def draw(self, context: Context):
         layout = self.layout
         layout.use_property_split = True
 
+        row = layout.row()
+        row.prop_tabs_enum(self, "tab")
+
         col = layout.column(align=False)
 
-        col.prop(self, "preview_timestep")
+        match self.tab:
+            case 'GENERAL':
+                header, panel = col.panel("mcr_pref_preview", default_closed=False)
+                header.label(text="Preview", icon_value=icons.get_id('preview'))
+                if panel:
+                    col.prop(self, "preview_timestep")
 
-        bhqrprt.template_ui_draw_paths(log, col, msgctxt="Preferences")
+                if bhqui.developer_extras_poll(context):
+                    header, panel = col.panel("dev_log", default_closed=True)
+                    header.label(text="Developer Extras", text_ctxt="Preferences")
+                    header.alert = True
+                    if panel:
+                        bhqui.template_developer_extras_warning(context, panel)
 
-        if bhqui.developer_extras_poll(context):
-            header, panel = col.panel("dev_log", default_closed=True)
-            header.label(text="Developer Extras", text_ctxt="Preferences")
-            header.alert = True
-            if panel:
-                bhqui.template_developer_extras_warning(context, panel)
+                        panel.prop(self, "log_level")
 
-                panel.prop(self, "log_level")
+            case 'INFO':
+
+                header, panel = col.panel("mcr_pref_readme", default_closed=False)
+                header.label(text="Readme", icon_value=icons.get_id('readme'))
+                if panel:
+                    col = panel.column(align=True)
+                    bhqui.draw_wrapped_text(context, col, text=_README_TEXT)
+
+                header, panel = col.panel("mcr_pref_links", default_closed=False)
+                header.label(text="Links and Support", icon_value=icons.get_id('links'))
+                if panel:
+                    col = panel.column(align=True)
+                    bhqrprt.template_ui_draw_paths(log, col, msgctxt="Preferences")
+
+                    panel.separator()
+
+                    col = panel.column(align=True)
+
+                    bhqui.draw_wrapped_text(context, col, text="Please, attach log file(s) alongside with issue:")
+
+                    scol = col.column(align=True)
+                    scol.alert = True
+
+                    props = scol.operator(
+                        'wm.url_open',
+                        text="Submit Issue on Github",
+                        icon_value=icons.get_id('github')
+                    )
+                    props.url = "https://github.com/BlenderHQ/multiple_camera_render/issues/new/"
+
+                    props = col.operator('wm.url_open', text="BlenderHQ on Github", icon_value=icons.get_id('github'))
+                    props.url = "https://github.com/blenderhq"
+
+                    props = col.operator(
+                        'wm.url_open',
+                        text="Support project on Patreon",
+                        icon_value=icons.get_id('patreon')
+                    )
+                    props.url = "https://github.com/blenderhq"
+
+                header, panel = col.panel("mcr_pref_license", default_closed=True)
+                header.label(text="License", icon_value=icons.get_id('license'))
+                if panel:
+                    col = panel.column(align=True)
+                    bhqui.draw_wrapped_text(context, col, text=_LICENSE_TEXT, text_ctxt="Preferences")
+
+                header, panel = col.panel("mcr_pref_credits", default_closed=True)
+                header.label(text="Credits", icon_value=icons.get_id('credits'))
+                if panel:
+                    col = panel.column(align=True)
+                    bhqui.draw_wrapped_text(context, col, text=_CREDITS_TEXT)
