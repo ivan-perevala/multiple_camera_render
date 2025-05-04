@@ -6,7 +6,31 @@
 
 from __future__ import annotations
 
-from bpy.types import UILayout
+from bpy.types import UILayout, Menu
+
+from . import icons
+
+
+class MCR_MT_camera_usage(Menu):
+    bl_idname = "MCR_MT_camera_usage"
+    bl_label = "Camera Usage"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene_props = context.scene.mcr
+        layout.prop(scene_props, "cameras_usage", expand=True)
+
+
+class MCR_MT_direction(Menu):
+    bl_idname = "MCR_MT_direction"
+    bl_label = "Direction"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene_props = context.scene.mcr
+        layout.prop(scene_props, "direction", expand=True)
 
 
 def additional_TOPBAR_MT_render_draw(self, context):
@@ -17,16 +41,40 @@ def additional_TOPBAR_MT_render_draw(self, context):
     col = layout.column()
     col.operator_context = 'INVOKE_DEFAULT'
 
-    col.operator(operator=main.MCR_OT_render.bl_idname, text="Render Multiple Cameras")
-    col.operator(operator=main.MCR_OT_render.bl_idname, text="Render Animation from Multiple Cameras").animation = True
+    col.operator(
+        operator=main.MCR_OT_render.bl_idname,
+        text="Render Multiple Cameras",
+        icon_value=icons.get_id('render'),
+    )
 
-    col.operator(operator=main.MCR_OT_render.bl_idname, text="Preview").preview = True
-    props = col.operator(operator=main.MCR_OT_render.bl_idname, text="Preview Animation")
+    props = col.operator(
+        operator=main.MCR_OT_render.bl_idname,
+        text="Render Animation from Multiple Cameras",
+        icon_value=icons.get_id('render_animation'),
+    )
+    props.animation = True
+
+    props = col.operator(
+        operator=main.MCR_OT_render.bl_idname,
+        text="Preview",
+        icon_value=icons.get_id('preview'),
+    )
+    props.preview = True
+
+    props = col.operator(
+        operator=main.MCR_OT_render.bl_idname,
+        text="Preview Animation",
+        icon_value=icons.get_id('preview_animation'),
+    )
     props.preview = True
     props.animation = True
 
     scene_props = context.scene.mcr
 
-    layout.prop_menu_enum(scene_props, "cameras_usage")
-    layout.prop_menu_enum(scene_props, "direction")
-    layout.prop(scene_props, "keep_frame_in_filepath")
+    def _get_menu_icon(attr: str):
+        return col.enum_item_icon(scene_props, attr, getattr(scene_props, attr))
+
+    col.menu(menu=MCR_MT_camera_usage.bl_idname, icon_value=_get_menu_icon("cameras_usage"))
+    col.menu(menu=MCR_MT_direction.bl_idname, icon_value=_get_menu_icon("direction"))
+
+    col.prop(scene_props, "keep_frame_in_filepath")

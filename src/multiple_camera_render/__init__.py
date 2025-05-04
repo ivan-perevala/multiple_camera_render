@@ -21,11 +21,15 @@ DATA_DIR = os.path.join(_CUR_DIR, "data")
 bhqrprt.setup_logger(directory=os.path.join(_CUR_DIR, "logs"))
 log = logging.getLogger()
 
+
 def get_preferences() -> props.Preferences:
     return bpy.context.preferences.addons[__package__].preferences
 
+
 def __reload_submodules(lc):
     from importlib import reload
+    if "icons" in lc:
+        reload(icons)
     if "props" in lc:
         reload(props)
     if "ui" in lc:
@@ -37,6 +41,7 @@ def __reload_submodules(lc):
 __reload_submodules(locals())
 del __reload_submodules
 
+from . import icons
 from . import props
 from . import ui
 from . import main
@@ -46,6 +51,8 @@ _classes = (
     props.Preferences,
     props.SceneProps,
     main.MCR_OT_render,
+    ui.MCR_MT_camera_usage,
+    ui.MCR_MT_direction,
 )
 
 _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
@@ -61,6 +68,7 @@ def register():
 
 
 def unregister():
+    icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
     del Scene.mcr

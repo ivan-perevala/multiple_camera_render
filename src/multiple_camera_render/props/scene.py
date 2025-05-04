@@ -13,6 +13,8 @@ from bpy.props import BoolProperty, EnumProperty
 
 import bhqrprt
 
+from .. import icons
+
 log = logging.getLogger(__name__)
 
 
@@ -24,14 +26,14 @@ class SceneProps(PropertyGroup):
                 'VISIBLE',
                 "Visible",
                 "Render from all visible cameras",
-                'VIS_SEL_11',
+                icons.get_id('visible'),
                 0
             ),
             (
                 'SELECTED',
                 "Selected",
                 "Render only from selected cameras",
-                'RESTRICT_SELECT_OFF',
+                icons.get_id('selected'),
                 1
             )
         ],
@@ -42,8 +44,20 @@ class SceneProps(PropertyGroup):
     direction: EnumProperty(
         name="Direction",
         items=(
-            ('COUNTER', "Counter", "", 'LOOP_BACK', 0),
-            ('CLOCKWISE', "Clockwise", "", 'LOOP_FORWARDS', 1)
+            (
+                'COUNTER',
+                "Counter",
+                "",
+                icons.get_id('counter'),
+                0
+            ),
+            (
+                'CLOCKWISE',
+                "Clockwise",
+                "",
+                icons.get_id('clockwise'),
+                1
+            )
         ),
         default='CLOCKWISE',
         options={'HIDDEN'},
@@ -57,5 +71,5 @@ class SceneProps(PropertyGroup):
     keep_frame_in_filepath: BoolProperty(
         name="Keep Frame Number",
         default=True,
-        description="Write frame number even if not rendering animation"
+        description="Write frame number even if not rendering animation",
     )
