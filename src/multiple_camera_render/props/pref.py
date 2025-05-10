@@ -29,7 +29,7 @@ with open(os.path.join(_DATA_DIR, "LICENSE.txt"), 'r') as file:
 
 with open(os.path.join(_DATA_DIR, "README.txt"), 'r') as file:
     _README_TEXT = file.read()
-    
+
 with open(os.path.join(_DATA_DIR, "CREDITS.txt"), 'r') as file:
     _CREDITS_TEXT = file.read()
 
@@ -86,8 +86,6 @@ class Preferences(AddonPreferences):
         description="Sections with information about the addon",
     )
 
-    log_level: bhqrprt.get_prop_log_level(log, identifier="log_level")
-
     preview_timestep: FloatProperty(
         options={'SKIP_SAVE'},
         default=0.1,
@@ -124,15 +122,6 @@ class Preferences(AddonPreferences):
                 if panel:
                     col.prop(self, "preview_timestep")
 
-                if bhqui.developer_extras_poll(context):
-                    header, panel = col.panel("dev_log", default_closed=True)
-                    header.label(text="Developer Extras", text_ctxt="Preferences")
-                    header.alert = True
-                    if panel:
-                        bhqui.template_developer_extras_warning(context, panel)
-
-                        panel.prop(self, "log_level")
-
             case 'INFO':
 
                 header, panel = col.panel("mcr_pref_readme", default_closed=False)
@@ -156,12 +145,10 @@ class Preferences(AddonPreferences):
                     scol = col.column(align=True)
                     scol.alert = True
 
-                    props = scol.operator(
-                        'wm.url_open',
-                        text="Submit Issue on Github",
-                        icon_value=icons.get_id('github')
+                    bhqrprt.template_submit_issue(
+                        scol,
+                        url="https://github.com/BlenderHQ/multiple_camera_render/issues/new/"
                     )
-                    props.url = "https://github.com/BlenderHQ/multiple_camera_render/issues/new/"
 
                     props = col.operator('wm.url_open', text="BlenderHQ on Github", icon_value=icons.get_id('github'))
                     props.url = "https://github.com/blenderhq"
@@ -174,7 +161,7 @@ class Preferences(AddonPreferences):
                     props.url = "https://github.com/blenderhq"
 
                 header, panel = col.panel("mcr_pref_license", default_closed=True)
-                header.label(text="License", icon_value=icons.get_id('license'))
+                header.label(text="License", icon_value=icons.get_id('license'), text_ctxt="Preferences")
                 if panel:
                     col = panel.column(align=True)
                     bhqui.draw_wrapped_text(context, col, text=_LICENSE_TEXT, text_ctxt="Preferences")

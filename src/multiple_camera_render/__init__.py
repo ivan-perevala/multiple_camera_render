@@ -18,7 +18,6 @@ import bhqrprt
 _CUR_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(_CUR_DIR, "data")
 
-bhqrprt.setup_logger(directory=os.path.join(_CUR_DIR, "logs"))
 log = logging.getLogger()
 
 
@@ -36,6 +35,8 @@ def __reload_submodules(lc):
         reload(ui)
     if "main" in lc:
         reload(main)
+    if "translations" in lc:
+        reload(translations)
 
 
 __reload_submodules(locals())
@@ -45,6 +46,7 @@ from . import icons
 from . import props
 from . import ui
 from . import main
+from . import translations
 
 
 _classes = (
@@ -58,16 +60,19 @@ _classes = (
 _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
 
 
+@bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(_CUR_DIR, "logs"))
 def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
 
-    addon_pref = bpy.context.preferences.addons[__package__].preferences
-    addon_pref.log_level = addon_pref.log_level
+    bpy.app.translations.register(__package__, translations.translations_dict)
 
 
+@bhqrprt.unregister_reports
 def unregister():
+    bpy.app.translations.unregister(__package__)
+
     icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
