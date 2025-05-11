@@ -33,20 +33,25 @@ class Main(bhqmain.MainChunk['Main', 'Context']):
 
     preview: bool
     animation: bool
+    quit: bool
 
     def __init__(self, main):
         super().__init__(main)
 
         self.preview = False
         self.animation = False
+        self.quit = False
 
-    def modal(self, context: Context, event: Event):
-        if event.type.startswith('TIMER'):
+    def modal(self, context: Context, event: None | Event):
+        if event is None or event.type.startswith('TIMER'):
             if self.preview or (not bpy.app.is_job_running('RENDER')):
                 if self.render.status == RenderStatus.NEED_LAUNCH:
                     self.render.launch_render(context)
             if self.render.status == RenderStatus.COMPLETE:
                 if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
+                    if self.quit:
+                        bpy.ops.wm.quit_blender()
+
                     return {'FINISHED'}
                 else:
                     return {'CANCELLED'}

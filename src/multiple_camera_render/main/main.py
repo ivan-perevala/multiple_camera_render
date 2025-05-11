@@ -27,11 +27,13 @@ class MCR_OT_render(Operator):
 
     preview: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
     animation: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
+    quit: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
 
     def invoke(self, context, event):
         main = Main.create()
         main.animation = self.animation
         main.preview = self.preview
+        main.quit = self.quit
 
         if main.invoke(context) == bhqmain.InvokeState.SUCCESSFUL:
             wm = context.window_manager
@@ -68,7 +70,7 @@ class MCR_OT_render(Operator):
             return {'CANCELLED'}
 
         while (main := Main.get_instance()):
-            main.modal(context)
+            main.modal(context, None)
 
         return {'FINISHED'}
 
