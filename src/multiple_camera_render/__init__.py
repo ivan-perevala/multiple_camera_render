@@ -35,8 +35,6 @@ def __reload_submodules(lc):
         reload(ui)
     if "main" in lc:
         reload(main)
-    if "translations" in lc:
-        reload(translations)
 
 
 __reload_submodules(locals())
@@ -46,7 +44,6 @@ from . import icons
 from . import props
 from . import ui
 from . import main
-from . import translations
 
 
 _classes = (
@@ -66,15 +63,10 @@ def register():
     Scene.mcr = PointerProperty(type=props.SceneProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
 
-    bpy.app.translations.register(__package__, translations.translations_dict)
 
-
-@bhqrprt.unregister_reports
+@bhqrprt.unregister_reports(log)
 def unregister():
-    bpy.app.translations.unregister(__package__)
-
     icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
     del Scene.mcr
-    bhqrprt.teardown_logger()
