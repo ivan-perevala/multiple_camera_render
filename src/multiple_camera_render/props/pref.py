@@ -6,7 +6,6 @@
 
 from __future__ import annotations
 
-import os
 import logging
 
 import bhqrprt
@@ -22,16 +21,41 @@ assert ADDON_PKG
 
 log = logging.getLogger(__name__)
 
-_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+_CREDITS_TEXT = """
+Vladlen Kuzmin (ssh4) - the idea of creating an add-on, the organization of the work of the BlenderHQ project.
+Ivan Perevala (ivpe) - development of basic concepts of interaction with the add-on and code.
+"""[1:]
 
-with open(os.path.join(_DATA_DIR, "LICENSE.txt"), 'r') as file:
-    _LICENSE_TEXT = file.read()
 
-with open(os.path.join(_DATA_DIR, "README.txt"), 'r') as file:
-    _README_TEXT = file.read()
+_LICENSE_TEXT = """
+Multiple Camera Render addon.
+Copyright © 2020-2025 Vladlen Kuzmin (ssh4), Ivan Perevala (ivpe)
 
-with open(os.path.join(_DATA_DIR, "CREDITS.txt"), 'r') as file:
-    _CREDITS_TEXT = file.read()
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""[1:]
+
+_README_TEXT = """
+Multiple Camera Render
+
+Extension for sequential rendering from multiple cameras.
+
+You can find all the functionality in Topbar > Render section. There you would find a bunch of operators for rendering and simulating sequential rendering as well as options for running them.
+
+If you have any issues, please, use GitHub issue tracker to submit the issue. It would be nice if you would attach some related log files to tracker.
+
+Thank you for reading and using our software!
+"""[1:]
 
 
 class Preferences(AddonPreferences):
@@ -97,15 +121,6 @@ class Preferences(AddonPreferences):
         description="Time step for cameras to be changed in preview mode",
     )
 
-    links: EnumProperty(
-        items=(
-            ('GITHUB', "Github", "https://github.com/blenderhq", icons.get_id('github'), 1 << 0),
-            ('PATREON', "Support project on Patreon", "https://www.patreon.com/BlenderHQ", icons.get_id('patreon'), 1 << 1),
-        ),
-        default=set(),
-        options={'ENUM_FLAG'},
-    )
-
     def draw(self, context: Context):
         layout = self.layout
         layout.use_property_split = True
@@ -128,27 +143,12 @@ class Preferences(AddonPreferences):
                 header.label(text="Readme", icon_value=icons.get_id('readme'))
                 if panel:
                     col = panel.column(align=True)
-                    bhqui.draw_wrapped_text(context, col, text=_README_TEXT)
+                    bhqui.draw_wrapped_text(context, col, text=_README_TEXT, text_ctxt='README')
 
                 header, panel = col.panel("mcr_pref_links", default_closed=False)
                 header.label(text="Links and Support", icon_value=icons.get_id('links'))
                 if panel:
                     col = panel.column(align=True)
-                    bhqrprt.template_ui_draw_paths(log, col, msgctxt="Preferences")
-
-                    panel.separator()
-
-                    col = panel.column(align=True)
-
-                    bhqui.draw_wrapped_text(context, col, text="Please, attach log file(s) alongside with issue:")
-
-                    scol = col.column(align=True)
-                    scol.alert = True
-
-                    bhqrprt.template_submit_issue(
-                        scol,
-                        url="https://github.com/BlenderHQ/multiple_camera_render/issues/new/"
-                    )
 
                     props = col.operator('wm.url_open', text="BlenderHQ on Github", icon_value=icons.get_id('github'))
                     props.url = "https://github.com/blenderhq"
@@ -164,10 +164,10 @@ class Preferences(AddonPreferences):
                 header.label(text="License", icon_value=icons.get_id('license'), text_ctxt="Preferences")
                 if panel:
                     col = panel.column(align=True)
-                    bhqui.draw_wrapped_text(context, col, text=_LICENSE_TEXT, text_ctxt="Preferences")
+                    bhqui.draw_wrapped_text(context, col, text=_LICENSE_TEXT, text_ctxt='LICENSE')
 
                 header, panel = col.panel("mcr_pref_credits", default_closed=True)
                 header.label(text="Credits", icon_value=icons.get_id('credits'))
                 if panel:
                     col = panel.column(align=True)
-                    bhqui.draw_wrapped_text(context, col, text=_CREDITS_TEXT)
+                    bhqui.draw_wrapped_text(context, col, text=_CREDITS_TEXT, text_ctxt='CREDITS')
