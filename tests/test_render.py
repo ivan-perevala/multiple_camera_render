@@ -2,43 +2,68 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import py_launch_blender as lb
-
 import os
-import sys
+import subprocess
+import shutil
+
+import pytest
 
 
-def test_build():
-    with lb.EnvironmentVariables() as ev:
-        ev.BLENDER_USER_CONFIG = os.path.abspath('tests/config/')
-        ev.BLENDER_USER_EXTENSIONS = os.path.abspath('tests/extensions/')
-        ev.BLENDER_USER_SCRIPTS = os.path.abspath('tests/scripts/')
+@pytest.fixture
+def blender():
+    return shutil.which("blender")
 
-        lb.launch_blender(
-            background=True,
-            command="extension"
-        )
 
-# def test_launch():
-#     with lb.EnvironmentVariables() as ev:
-#         ev.BLENDER_CUSTOM_SPLASH_BANNER = 'tests/banner.png'
-#         ev.BLENDER_USER_CONFIG = os.path.abspath('tests/config/')
-#         ev.BLENDER_USER_EXTENSIONS = os.path.abspath('tests/extensions/')
-#         ev.BLENDER_USER_SCRIPTS = os.path.abspath('tests/scripts/')
+CAMERA_NAMES = (
+    "Camera",
+    "Camera.001",
+    "Camera.002",
+    "Camera.003",
+    "Camera.004",
+    "Camera.005",
+    "Camera.006",
+)
 
-#         if venv_path := os.environ.get('VIRTUAL_ENV', None):
-#             ev.BLENDER_SYSTEM_PYTHON = venv_path
 
-#         os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)
+@pytest.mark.parametrize("filepath", ("workbench_7_cameras_default.blend",))
+@pytest.mark.parametrize("background", (False, True,))
+@pytest.mark.parametrize("animation", (False, True))
+@pytest.mark.parametrize("preview", (False, True))
+@pytest.mark.parametrize("render_output", (("test_####", "test_{_frame:04}_{_camera}.png"),))
+def test_render(tmpdir, blender, filepath, background, animation, preview, render_output):
+    cli: list = [blender,]
 
-#         proc = lb.launch_blender(
-#             factory_startup=True,
-#             python_exit_code=255,
-#             python_use_system_env=True,
-#             # python_expr=f"import pytest; pytest.main(['-v', '-s', 'src/bl_tests/test_render'])"
-#         )
+    if background:
+        cli.append("--background")
 
-#         while proc.poll() is None:
-#             pass
+    cli.extend([
+        os.path.abspath(f"tests/data/{filepath}"),
+        "--render-output",
+        os.path.join(tmpdir, render_output[0]),
+        "--python-expr",
+        f"import bpy; bpy.ops.mcr.render('INVOKE_DEFAULT', animation={animation}, preview={preview}, quit=True)",
+        "--python-exit-code",
+        "255",
+    ])
 
-#         assert not proc.returncode
+    proc = subprocess.Popen(cli, env=os.environ)
+
+    while proc.poll() is None:
+        pass
+
+    assert proc.returncode == 0
+
+    _expected_files = set()
+    rendered_files = set(os.listdir(tmpdir))
+
+    if preview:
+        assert not rendered_files
+    else:
+        if animation:
+            for _frame in range(1, 11):
+                for _camera in CAMERA_NAMES:
+                    _expected_files.add(render_output[1].format(_frame=_frame, _camera=_camera))
+        else:
+            _expected_files = set((render_output[1].format(_frame=1, _camera=_) for _ in CAMERA_NAMES))
+
+        assert rendered_files == _expected_files

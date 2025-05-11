@@ -45,7 +45,7 @@ where = ["src"]
     "wheels/bhqmain-1.0.0-py3-none-any.whl",
     "wheels/bhqrprt-1.0.0-py3-none-any.whl",
     "wheels/bhqui-1.0.0-py3-none-any.whl",
-    ]
+]
 
 # ----------------------------------------------------------------------------------------------------------------------
 # MyPy configuration.
@@ -98,5 +98,8 @@ addopts = ["--import-mode=importlib"]
 #https://docs.pytest.org/en/stable/reference/reference.html#confval-pythonpath
 pythonpath = ["./src"]
 
-#https://docs.pytest.org/en/stable/reference/reference.html#confval-testpaths
+# https://docs.pytest.org/en/stable/reference/reference.html#confval-testpaths
 testpaths = ["tests"]
+
+# https://docs.pytest.org/en/stable/example/pythoncollection.html#changing-naming-conventions
+python_files = "test_*.py"
