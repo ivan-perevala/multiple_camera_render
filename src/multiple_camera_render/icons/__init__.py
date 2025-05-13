@@ -37,7 +37,7 @@ class Icons:
     )
 
 
-_IconsType = Literal[
+IdentifierType = Literal[
     'render',
     'render_animation',
     'preview',
@@ -58,7 +58,7 @@ _IconsType = Literal[
 ]
 
 
-def get_id(identifier: _IconsType) -> int:
+def get_id(identifier: IdentifierType) -> int:
     if Icons.cache is None:
         Icons.cache = bhqui.IconsCache(
             directory=os.path.dirname(__file__),
