@@ -15,7 +15,7 @@ from bpy.types import AddonPreferences, Context
 from bpy.props import EnumProperty, FloatProperty
 
 from .. import icons
-from .. import __package__ as ADDON_PKG
+from .. import ADDON_PKG
 assert ADDON_PKG
 
 
