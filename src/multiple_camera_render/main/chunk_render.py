@@ -173,7 +173,12 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         indices = np.argsort(angles)[mask]
         array = cameras[mask][indices]
 
-        curr_camera_index = np.argmax(array == curr_camera)
+        if curr_camera is None:
+            # In case of missing active scene camera.
+            curr_camera = scene.camera = array[0]
+            curr_camera_index = 0
+        else:
+            curr_camera_index = np.argmax(array == curr_camera)
         self.camera_iterator = ClockwiseIterator(array, curr_camera_index)
 
         if scene_props.direction == 'COUNTER':
