@@ -8,8 +8,8 @@ schema_version = "1.0.0"
 
 id = "multiple_camera_render"
 version = "4.4.0"
-name = "Multiple Camera Render"
-tagline = "Sequential rendering from multiple cameras"
+name = "Multiple Camera Render (Development)"
+tagline = "Development setup for multiple camera render"
 maintainer = "Ivan Perevala <ivan95perevala@gmail.com>"
 type = "add-on"
 permissions = ["files"]
@@ -17,11 +17,10 @@ website = "https://github.com/BlenderHQ/multiple_camera_render"
 tags = ["Render"]
 blender_version_min = "4.4.0"
 
-wheels = [
-    "wheels/bhqui-1.0.0-py3-none-any.whl",
-    "wheels/bhqrprt-1.0.0-py3-none-any.whl",
-    "wheels/bhqmain-1.0.0-py3-none-any.whl",
-]
+# NOTE: Current manifest should not contain `wheels` field. For development process, libraries should be installed
+# manually (typically, using junction links to their code) - this way they can be modified alongside with extension.
+#
+# wheels = []
 
 license = ["SPDX:GPL-3.0-or-later"]
 

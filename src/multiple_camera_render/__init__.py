@@ -13,6 +13,11 @@ import bpy
 from bpy.props import PointerProperty
 from bpy.types import Scene, TOPBAR_MT_render
 
+try:
+    from ... import __package__ as ADDON_PKG
+except ImportError:
+    ADDON_PKG = __package__
+
 import bhqrprt
 
 _CUR_DIR = os.path.dirname(__file__)
@@ -22,7 +27,7 @@ log = logging.getLogger()
 
 
 def get_preferences() -> props.Preferences:
-    return bpy.context.preferences.addons[__package__].preferences
+    return bpy.context.preferences.addons[ADDON_PKG].preferences
 
 
 def __reload_submodules(lc):
