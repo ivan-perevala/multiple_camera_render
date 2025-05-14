@@ -20,6 +20,8 @@ def __reload_submodules(lc):
         reload(clockwise_iter)
     if "main" in lc:
         reload(main)
+    if "chunk_object_sequence" in lc:
+        reload(chunk_object_sequence)
 
 
 __reload_submodules(locals())
@@ -32,10 +34,16 @@ from . import chunk_restore
 from . import chunk_timers
 from . import clockwise_iter
 from . import main
+from . import chunk_object_sequence
 
 from . main import MCR_OT_render
+from . chunk_object_sequence import ObjectSequence, register_mesh_sequence_handlers, unregister_mesh_sequence_handlers
 
 __all__ = (
     # file://./main.py
     "MCR_OT_render",
+    # file://./chunk_object_sequence.py
+    "ObjectSequence",
+    "register_mesh_sequence_handlers",
+    "unregister_mesh_sequence_handlers",
 )

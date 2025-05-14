@@ -70,10 +70,12 @@ def register():
     Scene.mcr = PointerProperty(type=props.SceneProps)
     Object.mcr = PointerProperty(type=props.ObjectProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
+    main.register_mesh_sequence_handlers()
 
 
 @bhqrprt.unregister_reports(log)
 def unregister():
+    main.unregister_mesh_sequence_handlers()
     icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
