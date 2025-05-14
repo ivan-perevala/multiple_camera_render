@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 from bpy.types import PropertyGroup
-from bpy.props import IntProperty, StringProperty
+from bpy.props import IntProperty, StringProperty, BoolProperty
 
 
 class ObjectProps(PropertyGroup):
@@ -18,30 +18,31 @@ class ObjectProps(PropertyGroup):
         description="File path to one of objects in sequence",
     )
 
+    frame_duration: IntProperty(
+        default=100,
+        min=0,
+        options={'SKIP_SAVE'},
+        name="Frames",
+        description="Number of meshes of sequence to use"
+    )
+
     frame_start: IntProperty(
-        default=0,
-        options={'SKIP_SAVE'},
-        name="Frame Start",
-        description="Starting frame for object sequence animation"
-    )
-
-    frame_end: IntProperty(
         default=1,
         options={'SKIP_SAVE'},
-        name="Frame End",
-        description="Last frame for object sequence animation",
-    )
-
-    frame_step: IntProperty(
-        default=1,
-        options={'SKIP_SAVE'},
-        name="Frame Step",
-        description="Step for object sequence animation",
+        name="Start",
+        description="Global starting frame of mesh sequence, assuming first mesh has #1",
     )
 
     frame_offset: IntProperty(
-        default=1,
+        default=0,
         options={'SKIP_SAVE'},
-        name="Frame Offset",
-        description="Offset frame to start animation at",
+        name="Offset",
+        description="Offset the number of the frame to use in the amination",
+    )
+
+    use_cyclic: BoolProperty(
+        default=False,
+        options={'SKIP_SAVE'},
+        name="Cyclic",
+        description="Cyclic the meshes"
     )

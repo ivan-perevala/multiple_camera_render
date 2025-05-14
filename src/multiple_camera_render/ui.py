@@ -96,11 +96,17 @@ class OBJECT_PT_mesh_sequence(Panel):
     def draw(self, context):
         layout = self.layout
 
+        layout.use_property_split = True
+
         ob = context.active_object
 
+        layout.prop(ob.mcr, "filepath")
+
         col = layout.column(align=True)
-        col.prop(ob, "frame_start")
-        col.prop(ob, "frame_end")
-        col.prop(ob, "frame_step")
+        row = col.row(align=True)
+        row.prop(ob.mcr, "frame_duration")
+        # row.operator(MCR_OT_update_mesh_sequence_length.bl_idname, icon='FILE_REFRESH', text="") TODO: Actual operator.
+        col.prop(ob.mcr, "frame_start")
+        col.prop(ob.mcr, "frame_offset")
         col.separator()
-        col.prop(ob, "frame_offset")
+        col.prop(ob.mcr, "use_cyclic")
