@@ -96,7 +96,7 @@ reportInvalidTypeForm = false
 addopts = ["--import-mode=importlib"]
 
 #https://docs.pytest.org/en/stable/reference/reference.html#confval-pythonpath
-pythonpath = ["./src"]
+#pythonpath = ["./src"]
 
 # https://docs.pytest.org/en/stable/reference/reference.html#confval-testpaths
 testpaths = ["tests"]
