@@ -16,6 +16,12 @@ else:
         HAS_BPY = True
 
 if HAS_BPY:
+    if "multiple_camera_render" in locals():
+        import importlib
+        importlib.reload(multiple_camera_render)
+
+    from . src import multiple_camera_render
+
     from .src.multiple_camera_render import register, unregister
 else:
     def register():
