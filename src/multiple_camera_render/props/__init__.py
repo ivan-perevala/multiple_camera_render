@@ -12,19 +12,25 @@ def __reload_submodules(lc):
         reload(pref)
     if "scene" in lc:
         reload(scene)
+    if "ob" in lc:
+        reload(ob)
 
 
 __reload_submodules(locals())
 
 from . import pref
 from . import scene
+from . import ob
 
 from . pref import Preferences
 from . scene import SceneProps
+from . ob import ObjectProps
 
 __all__ = (
     # file://./pref.py
     "Preferences",
     # file://./scene.py
-    "SceneProps"
+    "SceneProps",
+    # file://./ob.py
+    "ObjectProps",
 )

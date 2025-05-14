@@ -11,7 +11,7 @@ import logging
 
 import bpy
 from bpy.props import PointerProperty
-from bpy.types import Scene, TOPBAR_MT_render
+from bpy.types import Scene, Object, TOPBAR_MT_render
 
 try:
     from ... import __package__ as ADDON_PKG
@@ -54,9 +54,11 @@ from . import main
 _classes = (
     props.Preferences,
     props.SceneProps,
+    props.ObjectProps,
     main.MCR_OT_render,
     ui.MCR_MT_camera_usage,
     ui.MCR_MT_direction,
+    ui.OBJECT_PT_mesh_sequence,
 )
 
 _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
@@ -66,6 +68,7 @@ _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
 def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
+    Object.mcr = PointerProperty(type=props.ObjectProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
 
 
@@ -75,3 +78,4 @@ def unregister():
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
     del Scene.mcr
+    del Object.mcr

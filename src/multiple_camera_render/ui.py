@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from bpy.types import UILayout, Menu
+from bpy.types import UILayout, Menu, Panel
 
 from . import icons
 
@@ -78,3 +78,29 @@ def additional_TOPBAR_MT_render_draw(self, context):
     col.menu(menu=MCR_MT_direction.bl_idname, icon_value=_get_menu_icon("direction"))
 
     col.prop(scene_props, "keep_frame_in_filepath")
+
+
+class OBJECT_PT_mesh_sequence(Panel):
+    bl_idname = "OBJECT_PT_mesh_sequence"
+    bl_label = "Mesh Sequence"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "object"
+    # bl_options = {'DEFAULT_CLOSED'} # TODO: Should be closed at release
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.active_object
+        return ob and ob.type == 'MESH' and context.mode == 'OBJECT'
+
+    def draw(self, context):
+        layout = self.layout
+
+        ob = context.active_object
+
+        col = layout.column(align=True)
+        col.prop(ob, "frame_start")
+        col.prop(ob, "frame_end")
+        col.prop(ob, "frame_step")
+        col.separator()
+        col.prop(ob, "frame_offset")
