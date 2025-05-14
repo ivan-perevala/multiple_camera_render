@@ -31,11 +31,11 @@ class MCR_OT_render(Operator):
 
     def invoke(self, context, event):
         main = Main.create()
-        main.animation = self.animation
-        main.preview = self.preview
-        main.quit = self.quit
+        main().animation = self.animation
+        main().preview = self.preview
+        main().quit = self.quit
 
-        if main.invoke(context) == bhqmain.InvokeState.SUCCESSFUL:
+        if main().invoke(context) == bhqmain.InvokeState.SUCCESSFUL:
             wm = context.window_manager
             wm.modal_handler_add(self)
             return {'RUNNING_MODAL'}
@@ -45,10 +45,10 @@ class MCR_OT_render(Operator):
 
     def modal(self, context, event):
         main = Main.get_instance()
-        if not main:
+        if not main():
             return {'CANCELLED'}
 
-        return main.modal(context, event)
+        return main().modal(context, event)
 
     def execute(self, context):
         if not bpy.app.background:
@@ -59,9 +59,9 @@ class MCR_OT_render(Operator):
             return {'CANCELLED'}
 
         main = Main.create()
-        main.animation = self.animation
+        main().animation = self.animation
 
-        if main.invoke(context) != bhqmain.InvokeState.SUCCESSFUL:
+        if main().invoke(context) != bhqmain.InvokeState.SUCCESSFUL:
             bhqrprt.report_and_log(
                 log, self,
                 level=logging.WARNING,
@@ -70,7 +70,7 @@ class MCR_OT_render(Operator):
             return {'CANCELLED'}
 
         while (main := Main.get_instance()):
-            main.modal(context, None)
+            main().modal(context, None)
 
         return {'FINISHED'}
 
