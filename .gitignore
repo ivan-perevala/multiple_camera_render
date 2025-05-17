@@ -27,6 +27,9 @@ _build/
 # Log files
 src/multiple_camera_render/logs/*.txt
 
+# Wheel files.
+*.whl
+
 # Icon generation script
 icons/blender_icons_geom.py
 
