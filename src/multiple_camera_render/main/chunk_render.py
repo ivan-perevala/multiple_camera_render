@@ -97,8 +97,6 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             self.handler_render_post(scene)
 
     def handler_render_post(self, scene: Scene, _=None):
-        _dbg("Render post")
-
         context = bpy.context
 
         def _intern_eval_next_camera():
@@ -107,8 +105,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
                 scene.camera = next_camera
                 self._eval_render_filepath(context)
                 self.status = RenderStatus.NEED_LAUNCH
+                _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
             else:
                 self.status = RenderStatus.COMPLETE
+                _info("All cameras from initially evaluated has been processed, processing complete.")
 
         if self.main.animation:
             if scene.frame_current_final == scene.frame_end:
