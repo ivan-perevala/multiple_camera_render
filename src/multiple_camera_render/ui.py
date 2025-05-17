@@ -6,9 +6,30 @@
 
 from __future__ import annotations
 
+
+def __reload(lc):
+    from importlib import reload
+
+    if "icons" in lc:
+        reload(icons)
+
+    # DOC_SEQ_RELOAD
+    if "main" in lc:
+        reload(main)
+    # \DOC_SEQ_RELOAD
+
+
+__reload(locals())
+
+
 from bpy.types import UILayout, Menu, Panel
 
+import bhqui
+
 from . import icons
+
+from . import main
+from . main import ObjectSequence
 
 
 class MCR_MT_camera_usage(Menu):
@@ -101,6 +122,21 @@ class OBJECT_PT_mesh_sequence(Panel):
         ob = context.active_object
 
         layout.prop(ob.mcr, "filepath")
+
+        object_is_a_sequence = False
+        if seq_main := ObjectSequence.get_instance():
+            object_is_a_sequence = seq_main().is_object_a_sequence(ob)
+
+        if not object_is_a_sequence:
+            col = layout.column(align=True)
+            col.alignment = 'RIGHT'
+            if ob.mcr.filepath:
+                col.alert = True
+
+            bhqui.draw_wrapped_text(
+                context, col,
+                text="Cant load object sequence",
+            )
 
         col = layout.column(align=True)
         row = col.row(align=True)

@@ -37,7 +37,7 @@ from . import main
 from . import chunk_object_sequence
 
 from . main import MCR_OT_render
-from . chunk_object_sequence import ObjectSequence, register_mesh_sequence_handlers, unregister_mesh_sequence_handlers
+from . chunk_object_sequence import ObjectSequence, register_mesh_sequence_handlers, unregister_mesh_sequence_handlers, sequence_handlers_reload
 
 __all__ = (
     # file://./main.py
@@ -46,4 +46,5 @@ __all__ = (
     "ObjectSequence",
     "register_mesh_sequence_handlers",
     "unregister_mesh_sequence_handlers",
+    "sequence_handlers_reload",
 )

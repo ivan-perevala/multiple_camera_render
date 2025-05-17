@@ -6,14 +6,31 @@
 
 from __future__ import annotations
 
-from bpy.types import PropertyGroup
+
+def __reload(lc):
+    from importlib import reload
+    # DOC_SEQ_RELOAD
+    if "main" in lc:
+        reload(main)
+    # \DOC_SEQ_RELOAD
+
+
+from bpy.types import PropertyGroup, Context
 from bpy.props import IntProperty, StringProperty, BoolProperty
+
+from .. import main
+from .. main import ObjectSequence
 
 
 class ObjectProps(PropertyGroup):
+    def _update_filepath(self, context: Context):
+        if seq_main := ObjectSequence.get_instance():
+            seq_main().mark_object(self.id_data)
+
     filepath: StringProperty(
         options={'SKIP_SAVE'},
         subtype='FILE_PATH',
+        update=_update_filepath,
         name="Filepath",
         description="File path to one of objects in sequence",
     )

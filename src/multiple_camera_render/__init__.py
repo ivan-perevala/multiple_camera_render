@@ -30,20 +30,29 @@ def get_preferences() -> props.Preferences:
     return bpy.context.preferences.addons[ADDON_PKG].preferences
 
 
+IS_RELOADING = False  # DOC_SEQ_RELOAD
+
+
 def __reload_submodules(lc):
     from importlib import reload
+    global IS_RELOADING
+
+    if "main" in lc:
+        # NOTE: Always reloading first. The reason is object sequence reloading process, which normally works using
+        # application handlers.
+        reload(main)
+        IS_RELOADING = True  # DOC_SEQ_RELOAD
     if "icons" in lc:
         reload(icons)
     if "props" in lc:
         reload(props)
     if "ui" in lc:
         reload(ui)
-    if "main" in lc:
-        reload(main)
 
 
 __reload_submodules(locals())
 del __reload_submodules
+
 
 from . import icons
 from . import props
@@ -71,6 +80,11 @@ def register():
     Object.mcr = PointerProperty(type=props.ObjectProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
     main.register_mesh_sequence_handlers()
+
+    # DOC_SEQ_RELOAD
+    if IS_RELOADING:
+        main.sequence_handlers_reload()
+    # \DOC_SEQ_RELOAD
 
 
 @bhqrprt.unregister_reports(log)
