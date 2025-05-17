@@ -170,16 +170,16 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         if not mask.any():
             return False
 
-        indices = np.argsort(angles)[mask]
-        array = cameras[mask][indices]
+        indices = np.argsort(angles[mask])
+        cameras = cameras[mask][indices]
 
-        if curr_camera is None:
-            # In case of missing active scene camera.
-            curr_camera = scene.camera = array[0]
+        if curr_camera is None or curr_camera.type != 'CAMERA':
+            # In case of missing active scene camera or active camera is any other object type than 'CAMERA'.
+            curr_camera = scene.camera = cameras[0]
             curr_camera_index = 0
         else:
-            curr_camera_index = np.argmax(array == curr_camera)
-        self.camera_iterator = ClockwiseIterator(array, curr_camera_index)
+            curr_camera_index = np.argmax(cameras == curr_camera)
+        self.camera_iterator = ClockwiseIterator(cameras, curr_camera_index)
 
         if scene_props.direction == 'COUNTER':
             self.camera_iterator = reversed(self.camera_iterator)
@@ -188,9 +188,9 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         assert pop_current_camera == curr_camera
         self._eval_render_filepath(context)
 
-        if array.size:
+        if cameras.size:
             _dbg(
-                f"Evaluated {array.size} cameras (active camera index: {curr_camera_index}) "
+                f"Evaluated {cameras.size} cameras (active camera index: {curr_camera_index}) "
                 f"in {time.time() - dt:.6f} sec."
             )
             return True
