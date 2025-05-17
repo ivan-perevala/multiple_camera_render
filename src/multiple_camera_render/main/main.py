@@ -29,6 +29,7 @@ class MCR_OT_render(Operator):
     animation: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
     quit: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
 
+    @bhqrprt.operator_report(log)
     def invoke(self, context, event):
         main = Main.create()
         main().animation = self.animation
@@ -50,6 +51,7 @@ class MCR_OT_render(Operator):
 
         return main().modal(context, event)
 
+    @bhqrprt.operator_report(log)
     def execute(self, context):
         if not bpy.app.background:
             _err("Can be executed directly only in background mode")
