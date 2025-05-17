@@ -22,8 +22,8 @@ assert ADDON_PKG
 log = logging.getLogger(__name__)
 
 _CREDITS_TEXT = """
-Vladlen Kuzmin (ssh4) - the idea of creating an add-on, the organization of the work of the BlenderHQ project.
-Ivan Perevala (ivpe) - development of basic concepts of interaction with the add-on and code.
+Vladlen Kuzmin (ssh4) - the idea of creating an extension.
+Ivan Perevala (ivpe) - engineering, development, maintenance.
 """[1:]
 
 
@@ -144,21 +144,6 @@ class Preferences(AddonPreferences):
                 if panel:
                     col = panel.column(align=True)
                     bhqui.draw_wrapped_text(context, col, text=_README_TEXT, text_ctxt='README')
-
-                header, panel = col.panel("mcr_pref_links", default_closed=False)
-                header.label(text="Links and Support", icon_value=icons.get_id('links'))
-                if panel:
-                    col = panel.column(align=True)
-
-                    props = col.operator('wm.url_open', text="BlenderHQ on Github", icon_value=icons.get_id('github'))
-                    props.url = "https://github.com/blenderhq"
-
-                    props = col.operator(
-                        'wm.url_open',
-                        text="Support project on Patreon",
-                        icon_value=icons.get_id('patreon')
-                    )
-                    props.url = "https://github.com/blenderhq"
 
                 header, panel = col.panel("mcr_pref_license", default_closed=True)
                 header.label(text="License", icon_value=icons.get_id('license'), text_ctxt="Preferences")

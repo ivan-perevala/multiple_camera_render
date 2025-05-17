@@ -13,7 +13,7 @@ tagline = "Development setup for multiple camera render"
 maintainer = "Ivan Perevala <ivan95perevala@gmail.com>"
 type = "add-on"
 permissions = ["files"]
-website = "https://github.com/BlenderHQ/multiple_camera_render"
+website = "https://github.com/ivan-perevala/multiple_camera_render"
 tags = ["Render"]
 blender_version_min = "4.4.0"
 
