@@ -27,5 +27,8 @@ _build/
 # Log files
 src/multiple_camera_render/logs/*.txt
 
+# Icon generation script
+icons/blender_icons_geom.py
+
 # Keep directory layout
 !.gitkeep
