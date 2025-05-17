@@ -125,6 +125,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             self.status = RenderStatus.CANCELLED
             _info("Animation playback has been cancelled by user")
 
+    def handler_load_pre(self, scene: Scene, _=None):
+        _info("Cancelling because user loaded new file")
+        self.main.cancel(bpy.context)
+
     def _get_handler_callbacks(self):
         return (
             (bpy.app.handlers.render_pre, self.handler_render_pre),
@@ -132,6 +136,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             (bpy.app.handlers.render_cancel, self.handler_render_cancel),
             (bpy.app.handlers.frame_change_pre, self.handler_frame_change),
             (bpy.app.handlers.animation_playback_post, self.handler_animation_playback_post),
+            (bpy.app.handlers.load_pre, self.handler_load_pre),
         )
 
     def _register_handlers(self):
