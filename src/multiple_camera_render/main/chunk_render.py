@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 _dbg = log.debug
 _err = log.error
+_info = log.info
 
 
 class RenderStatus(IntEnum):
@@ -96,8 +97,6 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             self.handler_render_post(scene)
 
     def handler_render_post(self, scene: Scene, _=None):
-        _dbg("Render post")
-
         context = bpy.context
 
         def _intern_eval_next_camera():
@@ -106,8 +105,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
                 scene.camera = next_camera
                 self._eval_render_filepath(context)
                 self.status = RenderStatus.NEED_LAUNCH
+                _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
             else:
                 self.status = RenderStatus.COMPLETE
+                _info("All cameras from initially evaluated has been processed, processing complete.")
 
         if self.main.animation:
             if scene.frame_current_final == scene.frame_end:
@@ -116,11 +117,17 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             _intern_eval_next_camera()
 
     def handler_render_cancel(self, scene: Scene, _=None):
-        _dbg("Render cancel")
-
-        context = bpy.context
-        self.main.cancel(context)
         self.status = RenderStatus.CANCELLED
+        _info("Render has been cancelled by user")
+
+    def handler_animation_playback_post(self, scene: Scene, _=None):
+        if self.main.preview:
+            self.status = RenderStatus.CANCELLED
+            _info("Animation playback has been cancelled by user")
+
+    def handler_load_pre(self, scene: Scene, _=None):
+        _info("Cancelling because user loaded new file")
+        self.main.cancel(bpy.context)
 
     def _get_handler_callbacks(self):
         return (
@@ -128,6 +135,8 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             (bpy.app.handlers.render_post, self.handler_render_post),
             (bpy.app.handlers.render_cancel, self.handler_render_cancel),
             (bpy.app.handlers.frame_change_pre, self.handler_frame_change),
+            (bpy.app.handlers.animation_playback_post, self.handler_animation_playback_post),
+            (bpy.app.handlers.load_pre, self.handler_load_pre),
         )
 
     def _register_handlers(self):
@@ -170,16 +179,16 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         if not mask.any():
             return False
 
-        indices = np.argsort(angles)[mask]
-        array = cameras[mask][indices]
+        indices = np.argsort(angles[mask])
+        cameras = cameras[mask][indices]
 
-        if curr_camera is None:
-            # In case of missing active scene camera.
-            curr_camera = scene.camera = array[0]
+        if curr_camera is None or curr_camera.type != 'CAMERA':
+            # In case of missing active scene camera or active camera is any other object type than 'CAMERA'.
+            curr_camera = scene.camera = cameras[0]
             curr_camera_index = 0
         else:
-            curr_camera_index = np.argmax(array == curr_camera)
-        self.camera_iterator = ClockwiseIterator(array, curr_camera_index)
+            curr_camera_index = np.argmax(cameras == curr_camera)
+        self.camera_iterator = ClockwiseIterator(cameras, curr_camera_index)
 
         if scene_props.direction == 'COUNTER':
             self.camera_iterator = reversed(self.camera_iterator)
@@ -188,9 +197,9 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         assert pop_current_camera == curr_camera
         self._eval_render_filepath(context)
 
-        if array.size:
+        if cameras.size:
             _dbg(
-                f"Evaluated {array.size} cameras (active camera index: {curr_camera_index}) "
+                f"Evaluated {cameras.size} cameras (active camera index: {curr_camera_index}) "
                 f"in {time.time() - dt:.6f} sec."
             )
             return True
