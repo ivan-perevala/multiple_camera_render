@@ -12,6 +12,7 @@ import logging
 import bpy
 from bpy.props import PointerProperty
 from bpy.types import Scene, TOPBAR_MT_render
+from bpy.app.handlers import persistent
 
 try:
     from ... import __package__ as ADDON_PKG
@@ -62,15 +63,32 @@ _classes = (
 _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
 
 
+@persistent
+def handler_load_post(_=None):
+    scene = bpy.context.scene
+    bhqrprt.log_bpy_struct_properties(log, struct=scene.mcr)
+
+
+_handlers = (
+    (bpy.app.handlers.load_post, handler_load_post),
+)
+
+
 @bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(_CUR_DIR, "logs"))
 def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
 
+    for handler, callback in _handlers:
+        handler.append(callback)
+
 
 @bhqrprt.unregister_reports(log)
 def unregister():
+    for handler, callback in reversed(_handlers):
+        handler.remove(callback)
+
     icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
