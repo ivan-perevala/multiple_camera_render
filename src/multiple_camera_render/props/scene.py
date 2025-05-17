@@ -72,4 +72,5 @@ class SceneProps(PropertyGroup):
         name="Keep Frame Number",
         default=True,
         description="Write frame number even if not rendering animation",
+        update=bhqrprt.update_log_setting_changed(log, "keep_frame_in_filepath")
     )
