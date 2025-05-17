@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 _dbg = log.debug
 _err = log.error
+_info = log.info
 
 
 class RenderStatus(IntEnum):
@@ -116,11 +117,13 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             _intern_eval_next_camera()
 
     def handler_render_cancel(self, scene: Scene, _=None):
-        _dbg("Render cancel")
-
-        context = bpy.context
-        self.main.cancel(context)
         self.status = RenderStatus.CANCELLED
+        _info("Render has been cancelled by user")
+
+    def handler_animation_playback_post(self, scene: Scene, _=None):
+        if self.main.preview:
+            self.status = RenderStatus.CANCELLED
+            _info("Animation playback has been cancelled by user")
 
     def _get_handler_callbacks(self):
         return (
@@ -128,6 +131,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             (bpy.app.handlers.render_post, self.handler_render_post),
             (bpy.app.handlers.render_cancel, self.handler_render_cancel),
             (bpy.app.handlers.frame_change_pre, self.handler_frame_change),
+            (bpy.app.handlers.animation_playback_post, self.handler_animation_playback_post),
         )
 
     def _register_handlers(self):

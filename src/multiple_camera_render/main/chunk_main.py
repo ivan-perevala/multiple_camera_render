@@ -55,6 +55,11 @@ class Main(bhqmain.MainChunk['Main', 'Context']):
                     return {'FINISHED'}
                 else:
                     return {'CANCELLED'}
+            elif self.render.status == RenderStatus.CANCELLED:
+                if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
+                    return {'FINISHED'}
+                else:
+                    return {'CANCELLED'}
         if self.preview:
             return {'PASS_THROUGH'}
         else:
