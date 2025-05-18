@@ -18,7 +18,7 @@ An example of use can be the creation of render proxy [impostors](https://docs.u
 
 ## Release Notes
 
-* [Version 4.4.0 (latest)](./release/notes/v4.4.0.md)
+* [Version 4.4.0 (latest)](./release/notes/v4.2.0.md)
 * [Version 3.0.0](./release/notes/v3.0.0.md)
 
 ## License
