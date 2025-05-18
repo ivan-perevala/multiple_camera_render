@@ -157,12 +157,16 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         scene = context.scene
         scene_props = scene.mcr
         curr_camera = scene.camera
+        need_switch_camera = False
 
         match scene_props.cameras_usage:
             case 'VISIBLE':
                 objects = context.visible_objects
             case 'SELECTED':
                 objects = context.selected_objects
+                # Active scene camera might be not in selected objects. In this case, switch required.
+                if curr_camera not in objects:
+                    need_switch_camera = True
 
         if not objects:
             return False
@@ -182,7 +186,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         indices = np.argsort(angles[mask])
         cameras = cameras[mask][indices]
 
-        if curr_camera is None or curr_camera.type != 'CAMERA':
+        if curr_camera is None or curr_camera.type != 'CAMERA' or need_switch_camera:
             # In case of missing active scene camera or active camera is any other object type than 'CAMERA'.
             curr_camera = scene.camera = cameras[0]
             curr_camera_index = 0
