@@ -14,15 +14,19 @@ from bpy.props import PointerProperty
 from bpy.types import Scene, Object, TOPBAR_MT_render
 from bpy.app.handlers import persistent
 
-try:
-    from ... import __package__ as ADDON_PKG
-except ImportError:
-    ADDON_PKG = __package__
+# NOTE: Development mode uses different package than release, this should be here for now.
+#
+# try:
+#     from ... import __package__ as ADDON_PKG
+# except ImportError:
+#     ADDON_PKG = __package__
+# else:
+#     if ADDON_PKG == 'bl_ext':
+#         ADDON_PKG = __package__
 
-import bhqrprt
+ADDON_PKG = __package__
 
-_CUR_DIR = os.path.dirname(__file__)
-DATA_DIR = os.path.join(_CUR_DIR, "data")
+import bhqrprt4 as bhqrprt
 
 log = logging.getLogger()
 
@@ -80,12 +84,7 @@ def handler_load_post(_=None):
     bhqrprt.log_bpy_struct_properties(log, struct=scene.mcr)
 
 
-_handlers = (
-    (bpy.app.handlers.load_post, handler_load_post),
-)
-
-
-@bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(_CUR_DIR, "logs"))
+@bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(os.path.dirname(__file__), "logs"))
 def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
@@ -98,15 +97,12 @@ def register():
         main.sequence_handlers_reload()
     # \DOC_SEQ_RELOAD
 
-    for handler, callback in _handlers:
-        handler.append(callback)
+    bpy.app.handlers.load_post.append(handler_load_post)
 
 
 @bhqrprt.unregister_reports(log)
 def unregister():
-    main.unregister_mesh_sequence_handlers()
-    for handler, callback in reversed(_handlers):
-        handler.remove(callback)
+    bpy.app.handlers.load_post.remove(handler_load_post)
 
     icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)

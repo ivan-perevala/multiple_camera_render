@@ -42,9 +42,9 @@ where = ["src"]
 "multiple_camera_render" = [
     "./LICENSE",
     "./README.md",
-    "wheels/bhqmain-1.0.0-py3-none-any.whl",
-    "wheels/bhqrprt-1.0.0-py3-none-any.whl",
-    "wheels/bhqui-1.0.0-py3-none-any.whl",
+    "wheels/bhqmain-4.2.0-py3-none-any.whl",
+    "wheels/bhqrprt-4.2.0-py3-none-any.whl",
+    "wheels/bhqui-4.2.0-py3-none-any.whl",
 ]
 
 # ----------------------------------------------------------------------------------------------------------------------

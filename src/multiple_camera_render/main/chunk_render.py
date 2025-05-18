@@ -18,8 +18,8 @@ import bpy
 from bpy.types import Scene, Context
 from mathutils import Vector
 
-import bhqmain
-import bhqui
+import bhqmain4 as bhqmain
+import bhqui4 as bhqui
 
 from . clockwise_iter import ClockwiseIterator
 
@@ -100,15 +100,27 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         context = bpy.context
 
         def _intern_eval_next_camera():
-            next_camera = next(self.camera_iterator, None)
+            next_camera = None
+
+            while True:
+                next_camera = next(self.camera_iterator, None)
+                if next_camera is None:
+                    self.status = RenderStatus.COMPLETE
+                    _info("All cameras from initially evaluated has been processed, processing complete.")
+                    return
+
+                try:
+                    getattr(next_camera, "name")
+                except ReferenceError:
+                    _err("Camera from initial array was removed by user")
+                else:
+                    break
+
             if next_camera:
                 scene.camera = next_camera
                 self._eval_render_filepath(context)
                 self.status = RenderStatus.NEED_LAUNCH
                 _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
-            else:
-                self.status = RenderStatus.COMPLETE
-                _info("All cameras from initially evaluated has been processed, processing complete.")
 
         if self.main.animation:
             if scene.frame_current_final == scene.frame_end:
@@ -157,12 +169,16 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         scene = context.scene
         scene_props = scene.mcr
         curr_camera = scene.camera
+        need_switch_camera = False
 
         match scene_props.cameras_usage:
             case 'VISIBLE':
                 objects = context.visible_objects
             case 'SELECTED':
                 objects = context.selected_objects
+                # Active scene camera might be not in selected objects. In this case, switch required.
+                if curr_camera not in objects:
+                    need_switch_camera = True
 
         if not objects:
             return False
@@ -182,7 +198,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         indices = np.argsort(angles[mask])
         cameras = cameras[mask][indices]
 
-        if curr_camera is None or curr_camera.type != 'CAMERA':
+        if curr_camera is None or curr_camera.type != 'CAMERA' or need_switch_camera:
             # In case of missing active scene camera or active camera is any other object type than 'CAMERA'.
             curr_camera = scene.camera = cameras[0]
             curr_camera_index = 0

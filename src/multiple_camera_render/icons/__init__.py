@@ -10,7 +10,7 @@ import os
 
 from typing import Literal
 
-import bhqui
+import bhqui4 as bhqui
 
 
 class Icons:

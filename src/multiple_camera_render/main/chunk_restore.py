@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from bpy.types import Object, Context
 
-import bhqmain
+import bhqmain4 as bhqmain
 
 if TYPE_CHECKING:
     from . chunk_main import Main
