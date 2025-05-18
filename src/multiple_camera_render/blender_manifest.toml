@@ -12,17 +12,19 @@ name = "Multiple Camera Render"
 tagline = "Sequential rendering from multiple cameras"
 maintainer = "Ivan Perevala <ivan95perevala@gmail.com>"
 type = "add-on"
-permissions = ["files"]
 website = "https://github.com/ivan-perevala/multiple_camera_render"
-tags = ["Render"]
+tags = ["Render", "Animation"]
 blender_version_min = "4.4.0"
-
+license = ["SPDX:GPL-3.0-or-later"]
 wheels = [
     "wheels/bhqui-1.0.0-py3-none-any.whl",
     "wheels/bhqrprt-1.0.0-py3-none-any.whl",
     "wheels/bhqmain-1.0.0-py3-none-any.whl",
 ]
-
-license = ["SPDX:GPL-3.0-or-later"]
-
 copyright = ["2020-2025 Ivan Perevala, Vladlen Kuzmin"]
+
+[permissions]
+files = "Writing execution log files inside extension directory"
+
+[build]
+paths_exclude_pattern = ["__pycache__/", "logs/*.txt", ".gitkeep"]
