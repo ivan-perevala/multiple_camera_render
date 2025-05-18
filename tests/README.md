@@ -12,6 +12,7 @@ Examples of tests for different Blender verisons on Windows:
 pytest --blender="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
 pytest --blender="C:/Program Files/Blender Foundation/Blender 4.3/blender.exe"
 pytest --blender="C:/Program Files/Blender Foundation/Blender 4.4/blender.exe"
+pytest --blender="C:/Program Files (x86)/Steam/steamapps/common/Blender/blender.exe"
 ```
 
 * You would need pytest installed.
