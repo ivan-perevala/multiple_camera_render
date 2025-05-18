@@ -26,7 +26,7 @@ from bpy.app.handlers import persistent
 
 ADDON_PKG = __package__
 
-import bhqrprt
+import bhqrprt4 as bhqrprt
 
 log = logging.getLogger()
 

@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import logging
 
-import bhqrprt
-import bhqui
+import bhqrprt4 as bhqrprt
+import bhqui4 as bhqui
 
 from bpy.types import AddonPreferences, Context
 from bpy.props import EnumProperty, FloatProperty

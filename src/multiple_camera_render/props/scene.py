@@ -11,7 +11,7 @@ import logging
 from bpy.types import PropertyGroup
 from bpy.props import BoolProperty, EnumProperty
 
-import bhqrprt
+import bhqrprt4 as bhqrprt
 
 from .. import icons
 

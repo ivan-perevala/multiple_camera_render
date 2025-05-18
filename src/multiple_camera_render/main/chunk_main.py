@@ -11,7 +11,7 @@ import logging
 import bpy
 from bpy.types import Context, Event
 
-import bhqmain
+import bhqmain4 as bhqmain
 
 from . chunk_restore import Restore
 from . chunk_timers import Timers

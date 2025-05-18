@@ -18,8 +18,8 @@ import bpy
 from bpy.types import Scene, Context
 from mathutils import Vector
 
-import bhqmain
-import bhqui
+import bhqmain4 as bhqmain
+import bhqui4 as bhqui
 
 from . clockwise_iter import ClockwiseIterator
 

@@ -12,8 +12,8 @@ import bpy
 from bpy.types import Operator
 from bpy.props import BoolProperty
 
-import bhqmain
-import bhqrprt
+import bhqmain4 as bhqmain
+import bhqrprt4 as bhqrprt
 
 from . chunk_main import Main
 

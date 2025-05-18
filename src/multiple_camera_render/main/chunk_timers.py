@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 import bpy
 from bpy.types import Window, Timer, Context
 
-import bhqmain
+import bhqmain4 as bhqmain
 
 from .. import get_preferences
 
