@@ -10,8 +10,13 @@ import pytest
 
 
 @pytest.fixture
-def blender():
-    return shutil.which("blender")
+def blender(request):
+    blender = request.config.getoption("--blender")
+
+    if blender is None:
+        blender = shutil.which("blender")
+
+    return blender
 
 
 CAMERA_NAMES = (
@@ -25,7 +30,10 @@ CAMERA_NAMES = (
 )
 
 
-@pytest.mark.parametrize("filepath", ("workbench_7_cameras_default.blend",))
+@pytest.mark.parametrize("filepath", (
+    "workbench_7_cameras_clockwise.blend",
+    "workbench_7_cameras_counterclockwise.blend",
+))
 @pytest.mark.parametrize("background", (False, True,))
 @pytest.mark.parametrize("animation", (False, True))
 @pytest.mark.parametrize("preview", (False, True))
