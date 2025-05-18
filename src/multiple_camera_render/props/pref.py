@@ -139,6 +139,8 @@ class Preferences(AddonPreferences):
 
             case 'INFO':
 
+                bhqrprt.template_submit_issue(col, url="https://github.com/ivan-perevala/multiple_camera_render/issues")
+
                 header, panel = col.panel("mcr_pref_readme", default_closed=False)
                 header.label(text="Readme", icon_value=icons.get_id('readme'))
                 if panel:
