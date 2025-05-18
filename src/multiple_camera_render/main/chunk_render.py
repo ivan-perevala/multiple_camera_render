@@ -100,15 +100,27 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         context = bpy.context
 
         def _intern_eval_next_camera():
-            next_camera = next(self.camera_iterator, None)
+            next_camera = None
+
+            while True:
+                next_camera = next(self.camera_iterator, None)
+                if next_camera is None:
+                    self.status = RenderStatus.COMPLETE
+                    _info("All cameras from initially evaluated has been processed, processing complete.")
+                    return
+
+                try:
+                    getattr(next_camera, "name")
+                except ReferenceError:
+                    _err("Camera from initial array was removed by user")
+                else:
+                    break
+
             if next_camera:
                 scene.camera = next_camera
                 self._eval_render_filepath(context)
                 self.status = RenderStatus.NEED_LAUNCH
                 _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
-            else:
-                self.status = RenderStatus.COMPLETE
-                _info("All cameras from initially evaluated has been processed, processing complete.")
 
         if self.main.animation:
             if scene.frame_current_final == scene.frame_end:
