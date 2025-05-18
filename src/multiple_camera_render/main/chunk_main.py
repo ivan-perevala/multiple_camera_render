@@ -51,7 +51,6 @@ class Main(bhqmain.MainChunk['Main', 'Context']):
                 if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
                     if self.quit:
                         bpy.ops.wm.quit_blender()
-
                     return {'FINISHED'}
                 else:
                     return {'CANCELLED'}
@@ -61,6 +60,10 @@ class Main(bhqmain.MainChunk['Main', 'Context']):
                 else:
                     return {'CANCELLED'}
         if self.preview:
+            if event.type == 'ESC' and event.value == 'PRESS':
+                if self.cancel(context) != bhqmain.InvokeState.SUCCESSFUL:
+                    log.warning("Unable to properly cancel chunks at user cancelled preview")
+                return {'CANCELLED'}
             return {'PASS_THROUGH'}
         else:
             return {'RUNNING_MODAL'}
