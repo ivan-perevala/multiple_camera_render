@@ -28,7 +28,7 @@ ADDON_PKG = __package__
 
 import bhqrprt4 as bhqrprt
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def get_preferences() -> props.Preferences:
