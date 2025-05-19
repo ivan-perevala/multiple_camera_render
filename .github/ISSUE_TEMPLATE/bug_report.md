@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **Session Log File**
-Please attach the log file from the session in which the problem occurred. The easiest way to get the file is through ```Preferences > Multiple Camera Render > Info > Links > Open Log "..."``` or in file explorer (in addon installation directory): ```./logs/log [session start time].txt```
+Please attach the log file from the session in which the problem occurred.
 
 **To Reproduce**
 Steps to reproduce the behavior:
