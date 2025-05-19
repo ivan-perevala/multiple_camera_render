@@ -6,11 +6,15 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from bpy.types import Object, Context
 
 import bhqmain4 as bhqmain
+
+log = logging.getLogger(__name__)
+_err = log.error
 
 if TYPE_CHECKING:
     from . chunk_main import Main
@@ -51,7 +55,13 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
 
         scene.frame_current = self.frame_current
         scene.render.filepath = self.render_filepath
-        scene.camera = self.camera_ob
         scene.render.use_lock_interface = self.use_lock_interface
+
+        try:
+            getattr(self.camera_ob, "name")
+        except ReferenceError:
+            _err("Initial camera was removed by user, it would not be restored")
+        else:
+            scene.camera = self.camera_ob
 
         return bhqmain.InvokeState.SUCCESSFUL
