@@ -8,13 +8,7 @@ Extension for [Blender](https://www.blender.org/) for sequential rendering from 
 
 ![Camera Order Example](./release/images/camera_order.gif)
 
-The addon was created for prototyping photogrammetric, photometric or volumetric captures of multiple-camera rigs.
-
-It enables quick simulation of not only the location of the cameras, but also the selection of the desired lens, reproduction of inaccuracies from the real world (lens distortion, depth of field, chromatic aberration, etc.). That is, you can set up a scene and create a synthetic dataset for testing in your photogrammetry software.
-
-Obviously, the addon can be used not only for these purposes, but also with any scenes where you need to render from several different cameras - this is also a good use case for it. 
-
-An example of use can be the creation of render proxy [impostors](https://docs.unrealengine.com/en-US/Engine/Content/Tools/RenderToTextureTools/3/index.html) for Unreal or Unity.
+There are many possible uses for this addon - it all depends on your imagination. In general, the idea is that in a scene with multiple cameras, once rendering from one camera is finished, rendering from the next one begins. This applies to both image and animation rendering. Since rendering is usually a lengthy process, the addon also includes the option to preview its functionality in advance.
 
 ## Release Notes
 
