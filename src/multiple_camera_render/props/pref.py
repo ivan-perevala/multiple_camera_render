@@ -72,44 +72,6 @@ class Preferences(AddonPreferences):
         description="Active preferences tab",
     )
 
-    info_section: EnumProperty(
-        items=(
-            (
-                'README',
-                "Readme",
-                "Information about the addon and how to use it",
-                icons.get_id("readme"),
-                (1 << 0),
-            ),
-            (
-                'CREDITS',
-                "Credits",
-                "Thanks to those thanks to whom this addon was created and maintained",
-                icons.get_id("credits"),
-                (1 << 1),
-            ),
-            (
-                'LINKS',
-                "Links",
-                "Useful links related to this addon",
-                icons.get_id("links"),
-                (1 << 2),
-            ),
-            (
-                'LICENSE',
-                "License",
-                "Information about addon license",
-                icons.get_id("license"),
-                (1 << 3),
-            )
-        ),  # type: ignore
-        update=bhqrprt.update_log_setting_changed(log, "info_section"),
-        options={'ENUM_FLAG', 'SKIP_SAVE'},
-        translation_context='Preferences',
-        name="Info Section",
-        description="Sections with information about the addon",
-    )
-
     preview_timestep: FloatProperty(
         options={'SKIP_SAVE'},
         default=0.1,
