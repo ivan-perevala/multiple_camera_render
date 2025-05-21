@@ -6,7 +6,7 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 [project]
-version = "1.0.0"
+version = "4.2.0"
 name = "multiple_camera_render"
 description = "Multiple Camera Render"
 authors = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
@@ -16,36 +16,6 @@ license = { text = "GPL-3.0-or-later" }
 # Python version used by Blender 4.4
 # TODO: Test and update pyproject.toml w.r.t. required Blender version.
 requires-python = ">=3.11"
-
-[project.optional-dependencies]
-dev = ["fake-bpy-module"]
-tests = ["pytest", "py_launch_blender"]
-docs = ["sphinx", "sphinx-intl", "furo"]
-
-# ----------------------------------------------------------------------------------------------------------------------
-# setuptools used here, might be changed because this method considered legacy.
-# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#declaring-the-build-backend
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-# ----------------------------------------------------------------------------------------------------------------------
-# Project uses src file layout, so we need to clarify this here.
-# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#setuptools-specific-configuration
-[tool.setuptools.packages.find]
-where = ["src"]
-
-# ----------------------------------------------------------------------------------------------------------------------
-# Include LICENSE files as package data for project.
-# https://setuptools.pypa.io/en/latest/userguide/datafiles.html#package-data
-[tool.setuptools.package-data]
-"multiple_camera_render" = [
-    "./LICENSE",
-    "./README.md",
-    "wheels/bhqmain-4.2.0-py3-none-any.whl",
-    "wheels/bhqrprt-4.2.0-py3-none-any.whl",
-    "wheels/bhqui-4.2.0-py3-none-any.whl",
-]
 
 # ----------------------------------------------------------------------------------------------------------------------
 # MyPy configuration.
