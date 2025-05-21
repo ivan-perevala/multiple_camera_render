@@ -26,14 +26,10 @@ class Icons:
         'visible',
         'selected',
         'credits',
-        'github',
         'info',
         'license',
-        'links',
-        'patreon',
         'preferences',
         'readme',
-        'youtube',
     )
 
 
@@ -47,14 +43,10 @@ IdentifierType = Literal[
     'visible',
     'selected',
     'credits',
-    'github',
     'info',
     'license',
-    'links',
-    'patreon',
     'preferences',
     'readme',
-    'youtube',
 ]
 
 
