@@ -49,7 +49,7 @@ def test_render(tmpdir, blender, filepath, background, animation, preview, rende
         "--render-output",
         os.path.join(tmpdir, render_output[0]),
         "--python-expr",
-        f"import bpy; bpy.ops.mcr.render('INVOKE_DEFAULT', animation={animation}, preview={preview}, quit=True)",
+        f"import bpy; bpy.ops.render.multiple_camera_render('INVOKE_DEFAULT', animation={animation}, preview={preview}, quit=True)",
         "--python-exit-code",
         "255",
     ])

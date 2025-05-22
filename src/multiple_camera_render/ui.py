@@ -42,27 +42,27 @@ def additional_TOPBAR_MT_render_draw(self, context):
     col.operator_context = 'INVOKE_DEFAULT'
 
     col.operator(
-        operator=main.MCR_OT_render.bl_idname,
+        operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Render Multiple Cameras",
         icon_value=icons.get_id('render'),
     )
 
     props = col.operator(
-        operator=main.MCR_OT_render.bl_idname,
+        operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Render Animation from Multiple Cameras",
         icon_value=icons.get_id('render_animation'),
     )
     props.animation = True
 
     props = col.operator(
-        operator=main.MCR_OT_render.bl_idname,
+        operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Preview",
         icon_value=icons.get_id('preview'),
     )
     props.preview = True
 
     props = col.operator(
-        operator=main.MCR_OT_render.bl_idname,
+        operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Preview Animation",
         icon_value=icons.get_id('preview_animation'),
     )

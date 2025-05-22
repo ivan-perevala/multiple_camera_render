@@ -59,7 +59,7 @@ from . import main
 _classes = (
     props.Preferences,
     props.SceneProps,
-    main.MCR_OT_render,
+    main.RENDER_OT_multiple_camera_render,
     ui.MCR_MT_camera_usage,
     ui.MCR_MT_direction,
 )

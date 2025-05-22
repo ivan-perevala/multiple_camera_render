@@ -33,9 +33,9 @@ from . import chunk_timers
 from . import clockwise_iter
 from . import main
 
-from . main import MCR_OT_render
+from . main import RENDER_OT_multiple_camera_render
 
 __all__ = (
     # file://./main.py
-    "MCR_OT_render",
+    "RENDER_OT_multiple_camera_render",
 )

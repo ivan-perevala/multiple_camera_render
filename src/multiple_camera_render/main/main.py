@@ -21,8 +21,8 @@ log = logging.getLogger(__name__)
 _err = log.error
 
 
-class MCR_OT_render(Operator):
-    bl_idname = "mcr.render"
+class RENDER_OT_multiple_camera_render(Operator):
+    bl_idname = "render.multiple_camera_render"
     bl_label = "Multiple Camera Render"
 
     preview: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
