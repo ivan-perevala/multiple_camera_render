@@ -13,7 +13,7 @@ import pytest
 def blender(request):
     blender = request.config.getoption("--blender")
 
-    if blender is None:
+    if not blender:
         blender = shutil.which("blender")
 
     return blender
