@@ -10,8 +10,9 @@ version = "4.2.0"
 name = "multiple_camera_render"
 description = "Multiple Camera Render"
 authors = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
-maintainers = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
-license = { text = "GPL-3.0-or-later" }
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 
 # Python version used by Blender 4.4
 # TODO: Test and update pyproject.toml w.r.t. required Blender version.
