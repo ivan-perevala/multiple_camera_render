@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-or-later -->
 # Multiple Camera Render
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)](./LICENSE)
-![Spell Check](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml/badge.svg)
+[![Spell Check](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml)
 
 Extension for [Blender](https://www.blender.org/) for sequential rendering from multiple cameras.
 
