@@ -1,0 +1,61 @@
+name: Blender Test (4.2, 4.3, 4.4)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-addon:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        blender_version: ["4.2.0", "4.3.0", "4.4.0"]
+
+    env:
+      BLENDER_VERSION: ${{ matrix.blender_version }}
+      BLENDER_DIR: "${{ github.workspace }}/blender"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Blender
+        id: cache-blender
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.BLENDER_DIR }}
+          key: blender-${{ matrix.blender_version }}
+
+      - name: Download Blender if not cached
+        if: steps.cache-blender.outputs.cache-hit != 'true'
+        run: |
+          BLENDER_MAJOR_MINOR=$(echo "${{ env.BLENDER_VERSION }}" | cut -d. -f1,2)
+          DOWNLOAD_URL="https://download.blender.org/release/Blender${BLENDER_MAJOR_MINOR}/blender-${{ env.BLENDER_VERSION }}-linux-x64.tar.xz"
+
+          mkdir -p "${{ env.BLENDER_DIR }}"
+          wget -qO- "${DOWNLOAD_URL}" | tar -xJ --strip-components=1 -C "${{ env.BLENDER_DIR }}"
+
+      - name: Install pytest in Blender's Python
+        run: |
+          PYTHON_BIN=$(find "${{ env.BLENDER_DIR }}" -type f -name "python3*" | head -n 1)
+          echo "Using Python binary: ${PYTHON_BIN}"
+
+          "${{ env.BLENDER_DIR }}/blender" --background --python-expr \
+          "import subprocess as sp; \
+           sp.run([r'${PYTHON_BIN}', '-m', 'ensurepip'], check=True); \
+           sp.run([r'${PYTHON_BIN}', '-m', 'pip', 'install', '--upgrade', 'pip'], check=True); \
+           sp.run([r'${PYTHON_BIN}', '-m', 'pip', 'install', 'pytest'], check=True)"
+
+      - name: Build Blender extension
+        run: |
+          ${{ env.BLENDER_DIR }}/blender --command extension build --source-dir="${{ github.workspace }}/src/multiple_camera_render" --output-dir="${{ github.workspace }}/dist"
+          echo "Blender extension built successfully."
+          EXTENSION_ZIP=$(find "${{ github.workspace }}/dist" -type f -name "*.zip" | head -n 1)
+          echo "Extension zip file: ${EXTENSION_ZIP}"
+
+      - name: Install Blender extension
+        run: |
+          "${{ env.BLENDER_DIR }}/blender" --background --command extension install "${EXTENSION_ZIP}"
