@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: Blender Test 4.2, 4.3, 4.4
+name: Blender 4.2.0
 description: |
-  This workflow tests the Blender extension for multiple camera rendering
-  across different Blender versions.
+  This workflow tests the Blender extension for multiple camera rendering.
 
 on:
   push:
@@ -17,12 +16,8 @@ jobs:
   test-addon:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        blender_version: ["4.2.0", "4.3.0", "4.4.0"]
-
     env:
-      BLENDER_VERSION: ${{ matrix.blender_version }}
+      BLENDER_VERSION: "4.2.0"
       BLENDER_DIR: "${{ github.workspace }}/blender"
 
     steps:
@@ -34,7 +29,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.BLENDER_DIR }}
-          key: blender-${{ matrix.blender_version }}
+          key: blender-${{ env.BLENDER_VERSION }}
 
       - name: Download Blender if not cached
         if: steps.cache-blender.outputs.cache-hit != 'true'
