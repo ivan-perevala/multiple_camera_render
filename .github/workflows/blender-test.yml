@@ -51,7 +51,7 @@ jobs:
 
       - name: Download wheels to build Blender extension
         run: |
-          "${PYTHON_BIN}" -m pip download --requirement requirements-dev.txt --dest src/multiple_camera_render/wheels
+          "${PYTHON_BIN}" -m pip download -r requirements-dev.txt --dest "src/multiple_camera_render/wheels"
 
       - name: Build Blender extension
         run: |
