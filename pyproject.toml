@@ -6,7 +6,7 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 [project]
-version = "4.2.0"
+version = "4.2.1"
 name = "multiple_camera_render"
 description = "Multiple Camera Render"
 authors = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
@@ -74,3 +74,9 @@ testpaths = ["tests"]
 
 # https://docs.pytest.org/en/stable/example/pythoncollection.html#changing-naming-conventions
 python_files = "test_*.py"
+
+# https://github.com/codespell-project/codespell?tab=readme-ov-file#using-a-config-file
+[tool.codespell]
+skip = './build,./dist,./docs/_build'
+count = true
+quiet-level = 3

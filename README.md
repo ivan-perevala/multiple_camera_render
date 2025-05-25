@@ -4,6 +4,9 @@ SPDX-License-Identifier: GPL-3.0-or-later -->
 
 # Multiple Camera Render
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)](./LICENSE)
+![Spell Check](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml/badge.svg)
+
 Extension for [Blender](https://www.blender.org/) for sequential rendering from multiple cameras.
 
 ![Camera Order Example](./release/images/camera_order.gif)
@@ -12,11 +15,8 @@ There are many possible uses for this addon - it all depends on your imagination
 
 ## Release Notes
 
-* [Version 4.2.0 (latest)](./release/notes/v4.2.0.md)
+* [Version 4.2.1 (latest)](./release/notes/v4.2.1.md)
+* [Version 4.2.0](./release/notes/v4.2.0.md)
 * [Version 3.0.0](./release/notes/v3.0.0.md)
-
-## License
-
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)](./LICENSE)
 
 Copyright © 2020-2025 Vladlen Kuzmin (ssh4), Ivan Perevala (ivpe).
