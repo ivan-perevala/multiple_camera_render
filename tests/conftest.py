@@ -6,3 +6,10 @@ import pytest
 
 def pytest_addoption(parser):
     parser.addoption("--blender", action="store", default="", help="Override for blender executable")
+
+    parser.addoption(
+        "--background-only",
+        action="store_true",
+        default=False,
+        help="Run only tests where background=True",
+    )
