@@ -62,5 +62,5 @@ jobs:
           echo "Blender extension built successfully."
           EXTENSION_ZIP=$(find "${{ github.workspace }}/dist" -type f -name "*.zip" | head -n 1)
           echo "Extension zip file: ${EXTENSION_ZIP}"
-          "${{ env.BLENDER_DIR }}/blender" --background --command extension install "${EXTENSION_ZIP}"
+          "${{ env.BLENDER_DIR }}/blender" --background --command extension install "${EXTENSION_ZIP} --enable"
       
