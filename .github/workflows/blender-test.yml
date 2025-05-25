@@ -60,4 +60,4 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest
+          pytest --blender="${{ env.BLENDER_DIR }}/blender"
