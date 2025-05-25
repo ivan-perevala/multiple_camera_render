@@ -51,6 +51,7 @@ jobs:
 
       - name: Download wheels to build Blender extension
         run: |
+          PYTHON_BIN=$(find "${{ env.BLENDER_DIR }}" -type f -name "python3*" | head -n 1)
           "${PYTHON_BIN}" -m pip download -r requirements-dev.txt --dest "src/multiple_camera_render/wheels"
 
       - name: Build Blender extension
