@@ -38,17 +38,6 @@ jobs:
           mkdir -p "${{ env.BLENDER_DIR }}"
           wget -qO- "${DOWNLOAD_URL}" | tar -xJ --strip-components=1 -C "${{ env.BLENDER_DIR }}"
 
-      - name: Install pytest in Blender's Python
-        run: |
-          PYTHON_BIN=$(find "${{ env.BLENDER_DIR }}" -type f -name "python3*" | head -n 1)
-          echo "Using Python binary: ${PYTHON_BIN}"
-
-          "${{ env.BLENDER_DIR }}/blender" --background --python-expr \
-          "import subprocess as sp; \
-           sp.run([r'${PYTHON_BIN}', '-m', 'ensurepip'], check=True); \
-           sp.run([r'${PYTHON_BIN}', '-m', 'pip', 'install', '--upgrade', 'pip'], check=True); \
-           sp.run([r'${PYTHON_BIN}', '-m', 'pip', 'install', 'pytest'], check=True)"
-
       - name: Download wheels to build Blender extension
         run: |
           PYTHON_BIN=$(find "${{ env.BLENDER_DIR }}" -type f -name "python3*" | head -n 1)
@@ -64,6 +53,11 @@ jobs:
           echo "Extension zip file: ${EXTENSION_ZIP}"
           "${{ env.BLENDER_DIR }}/blender" --command extension install-file --repo user_default --enable "${EXTENSION_ZIP}"
       
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
       - name: Run tests
         run: |
           pytest
