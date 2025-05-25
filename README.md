@@ -6,7 +6,9 @@ SPDX-License-Identifier: GPL-3.0-or-later -->
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)](./LICENSE)
 [![Spell Check](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml)
-[![Blender Test 4.2, 4.3, 4.4](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test.yml)
+[![Blender 4.2.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.2.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.2.0.yml)
+[![Blender 4.3.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.3.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.3.0.yml)
+[![Blender 4.4.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.4.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.4.0.yml)
 
 Extension for [Blender](https://www.blender.org/) for sequential rendering from multiple cameras.
 
