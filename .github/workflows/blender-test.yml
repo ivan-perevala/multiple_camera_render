@@ -64,3 +64,6 @@ jobs:
           echo "Extension zip file: ${EXTENSION_ZIP}"
           "${{ env.BLENDER_DIR }}/blender" --command extension install-file --repo user_default --enable "${EXTENSION_ZIP}"
       
+      - name: Run tests
+        run: |
+          pytest
