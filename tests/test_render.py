@@ -31,8 +31,8 @@ CAMERA_NAMES = (
 
 
 @pytest.mark.parametrize("filepath", (
-    "workbench_7_cameras_clockwise.blend",
-    "workbench_7_cameras_counterclockwise.blend",
+    "cycles_7_cameras_clockwise.blend",
+    "cycles_7_cameras_counterclockwise.blend",
 ))
 @pytest.mark.parametrize("background", (False, True,))
 @pytest.mark.parametrize("animation", (False, True))
