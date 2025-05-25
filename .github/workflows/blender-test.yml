@@ -54,7 +54,7 @@ jobs:
           PYTHON_BIN=$(find "${{ env.BLENDER_DIR }}" -type f -name "python3*" | head -n 1)
           "${PYTHON_BIN}" -m pip download -r requirements-dev.txt --dest "src/multiple_camera_render/wheels"
 
-      - name: Build Blender extension
+      - name: Build and install Blender extension
         run: |
           mkdir -p "${{ github.workspace }}/dist"
 
@@ -62,7 +62,5 @@ jobs:
           echo "Blender extension built successfully."
           EXTENSION_ZIP=$(find "${{ github.workspace }}/dist" -type f -name "*.zip" | head -n 1)
           echo "Extension zip file: ${EXTENSION_ZIP}"
-
-      - name: Install Blender extension
-        run: |
           "${{ env.BLENDER_DIR }}/blender" --background --command extension install "${EXTENSION_ZIP}"
+      
