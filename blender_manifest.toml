@@ -7,12 +7,11 @@
 schema_version = "1.0.0"
 
 id = "multiple_camera_render"
-version = "4.2.0"
+version = "4.2.1"
 name = "Multiple Camera Render (Development)"
 tagline = "Development setup for multiple camera render"
 maintainer = "Ivan Perevala <ivan95perevala@gmail.com>"
 type = "add-on"
-permissions = ["files"]
 website = "https://github.com/ivan-perevala/multiple_camera_render"
 tags = ["Render"]
 blender_version_min = "4.2.0"
@@ -21,6 +20,9 @@ blender_version_min = "4.2.0"
 # manually (typically, using junction links to their code) - this way they can be modified alongside with extension.
 #
 # wheels = []
+
+[permissions]
+files = "Writing execution log files inside extension directory"
 
 license = ["SPDX:GPL-3.0-or-later"]
 
