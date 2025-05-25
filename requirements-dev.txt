@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+bhqmain>=4.2.1
+bhqrprt>=4.2.1
+bhqui>=4.2.1
