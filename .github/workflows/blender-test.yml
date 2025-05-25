@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: Blender Test (4.2, 4.3, 4.4)
+name: Blender Test 4.2, 4.3, 4.4
 description: |
   This workflow tests the Blender extension for multiple camera rendering
   across different Blender versions.
