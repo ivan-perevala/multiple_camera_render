@@ -1,5 +1,11 @@
-name: Spell Check
+# SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
 
+name: Spell Check
+description: |
+  This workflow runs codespell to check for spelling errors in the codebase.
+  
 on:
   pull_request:
   push:
