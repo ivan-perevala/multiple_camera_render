@@ -51,6 +51,8 @@ jobs:
 
       - name: Build Blender extension
         run: |
+          mkdir -p "${{ github.workspace }}/dist"
+          
           ${{ env.BLENDER_DIR }}/blender --command extension build --source-dir="${{ github.workspace }}/src/multiple_camera_render" --output-dir="${{ github.workspace }}/dist"
           echo "Blender extension built successfully."
           EXTENSION_ZIP=$(find "${{ github.workspace }}/dist" -type f -name "*.zip" | head -n 1)
