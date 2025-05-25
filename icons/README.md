@@ -16,4 +16,4 @@ It can be executed on Windows:
 py generate.py
 ```
 
-other platforms have different python command line argument (eg. ```python3``` on Linux, ect.)
+other platforms have different python command line argument (eg. ```python3``` on Linux, etc.)
