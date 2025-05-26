@@ -9,7 +9,7 @@ Here would be described how addon handles output file names.
 
 .. seealso::
 
-    The key here is ``Ouput > File Path`` option. The addon will use the same output behaviour as Blender does, but with slight modifications:
+    The key here is ``Output > File Path`` option. The addon will use the same output behaviour as Blender does, but with slight modifications:
     `docs.blender.org/manual/en/latest/render/output/properties <https://docs.blender.org/manual/en/latest/render/output/properties/output.html#output>`_
 
 
@@ -21,7 +21,7 @@ For rendering animations, it depends on the output file format. If output is vid
 Sequential Rendering
 --------------------
 
-In examples bellow, we would assume that we have a scene with a cameras named ``Camera`` and ``Camera.001``:
+In examples below, we would assume that we have a scene with a cameras named ``Camera`` and ``Camera.001``:
 
 * If no output file name is specified (``//`` in this example), the addon will use the camera name as part of the output file name:
     - With ``Keep Frame Number`` option disabled:
