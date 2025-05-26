@@ -46,9 +46,9 @@ Links
    :maxdepth: 2
    :caption: Contents
 
-   pages/about
    pages/release_notes
-    
+   
+   
 Indices and tables
 ******************
 
