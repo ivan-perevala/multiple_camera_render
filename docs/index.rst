@@ -46,6 +46,7 @@ Links
    :maxdepth: 2
    :caption: Contents
 
+   pages/quickstart
    pages/release_notes
    
    
