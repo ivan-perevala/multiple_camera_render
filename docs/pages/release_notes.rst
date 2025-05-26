@@ -5,11 +5,11 @@
 Release Notes
 =============
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Release Notes
+.. include:: release_notes/v4.2.1.md
+   :parser: myst_parser.sphinx_
 
-   release_notes/v3.0.0.md
-   release_notes/v4.2.0.md
-   release_notes/v4.2.1.md
-    
+.. include:: release_notes/v4.2.0.md
+   :parser: myst_parser.sphinx_
+
+.. include:: release_notes/v3.0.0.md
+   :parser: myst_parser.sphinx_

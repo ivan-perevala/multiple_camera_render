@@ -39,6 +39,10 @@ source_suffix = {
 }
 master_doc = 'index'
 
+exclude_patterns = [
+    "*.md",
+]
+
 autodoc_member_order = "bysource"
 autodoc_mock_imports = []
 
