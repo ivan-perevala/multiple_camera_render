@@ -49,6 +49,7 @@ Links
    pages/quickstart
    pages/naming.rst
    pages/release_notes
+   pages/libraries
    
    
 Indices and tables
