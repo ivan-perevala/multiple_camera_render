@@ -12,7 +12,7 @@ SPDX-License-Identifier: GPL-3.0-or-later -->
 
 Extension for [Blender](https://www.blender.org/) for sequential rendering from multiple cameras.
 
-![Camera Order Example](./release/images/camera_order.gif)
+![Camera Order Example](https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/camera_order.gif)
 
 There are many possible uses for this addon - it all depends on your imagination. In general, the idea is that in a scene with multiple cameras, once rendering from one camera is finished, rendering from the next one begins. This applies to both image and animation rendering. Since rendering is usually a lengthy process, the addon also includes the option to preview its functionality in advance.
 
