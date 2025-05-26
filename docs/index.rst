@@ -47,6 +47,7 @@ Links
    :caption: Contents
 
    pages/quickstart
+   pages/support
    pages/naming.rst
    pages/release_notes
    pages/libraries
