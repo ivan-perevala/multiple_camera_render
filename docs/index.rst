@@ -12,6 +12,11 @@ Multiple Camera Render Manual
    :target: https://www.gnu.org/licenses/gpl-3.0.en.html
 
 .. image::
+   https://readthedocs.org/projects/multiple_camera_render/badge/?version=latest
+   :alt: Documentation Status
+   :target: https://multiple-camera-render.readthedocs.io/latest/
+
+.. image::
    https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml/badge.svg
    :alt: Spell Check
    :target: https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml

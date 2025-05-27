@@ -5,6 +5,9 @@
 Release Notes
 =============
 
+.. .. include:: release_notes/v4.2.2.md
+..    :parser: myst_parser.sphinx_
+
 .. include:: release_notes/v4.2.1.md
    :parser: myst_parser.sphinx_
 
