@@ -20,7 +20,6 @@ log = logging.getLogger(__name__)
 
 class SceneProps(PropertyGroup):
     cameras_usage: EnumProperty(
-        name="Cameras Usage",
         items=[
             (
                 'VISIBLE',
@@ -38,7 +37,10 @@ class SceneProps(PropertyGroup):
             )
         ],
         default='VISIBLE',
-        update=bhqrprt.update_log_setting_changed(log, "camera_usage")
+        options={'HIDDEN'},
+        name="Cameras Usage",
+        description="Which cameras to use for rendering",
+        update=bhqrprt.update_log_setting_changed(log, "cameras_usage"),
     )
 
     direction: EnumProperty(
@@ -65,12 +67,13 @@ class SceneProps(PropertyGroup):
             "The direction in which the cameras will change during the rendering of the sequence (Starting from the "
             "current camera of the scene)"
         ),
-        update=bhqrprt.update_log_setting_changed(log, "direction")
+        update=bhqrprt.update_log_setting_changed(log, "direction"),
     )
 
     keep_frame_in_filepath: BoolProperty(
-        name="Keep Frame Number",
         default=True,
+        options={'HIDDEN'},
+        name="Keep Frame Number",
         description="Write frame number even if not rendering animation",
-        update=bhqrprt.update_log_setting_changed(log, "keep_frame_in_filepath")
+        update=bhqrprt.update_log_setting_changed(log, "keep_frame_in_filepath"),
     )
