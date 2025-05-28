@@ -4,6 +4,11 @@ SPDX-License-Identifier: GPL-3.0-or-later -->
 
 # Multiple Camera Render
 
+<!-- Note:
+Blender_Extensions_Platform-6B9E2B
+is a color of "Approved" message in approval queue on Blender Extensions Platform.
+ -->
+[![Blender Extensions](https://img.shields.io/badge/Blender_Extensions_Platform-6B9E2B)](https://extensions.blender.org/add-ons/multiple-camera-render/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)](./LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/multiple_camera_render/badge/?version=latest)](https://multiple_camera_render.readthedocs.io/latest)
 [![Spell Check](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml)
@@ -19,7 +24,7 @@ There are many possible uses for this addon - it all depends on your imagination
 
 ## Release Notes
 
-* [Version 4.2.2 (upcoming)](./docs/pages/release_notes/v4.2.2.md)
+* [Version 4.2.2 (upcoming)](./docs/pages/release_notes/dev.md)
 * [Version 4.2.1 (latest)](./docs/pages/release_notes/v4.2.1.md)
 * [Version 4.2.0](./docs/pages/release_notes/v4.2.0.md)
 * [Version 3.0.0](./docs/pages/release_notes/v3.0.0.md)

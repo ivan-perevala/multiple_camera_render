@@ -6,6 +6,14 @@
 Multiple Camera Render Manual
 =============================
 
+.. NOTE:
+.. Blender_Extensions_Platform-6B9E2B
+.. is a color of "Approved" message in approval queue on Blender Extensions Platform.
+.. image::
+   https://img.shields.io/badge/Blender_Extensions_Platform-6B9E2B
+   :alt: License
+   :target: https://extensions.blender.org/add-ons/multiple-camera-render/
+
 .. image::
    https://img.shields.io/badge/License-GPLv3-blue
    :alt: License
@@ -42,15 +50,13 @@ Links
 *****
 
 * `GitHub <https://github.com/ivan-perevala/multiple_camera_render>`_
-* `Blender Extensions <https://extensions.blender.org/approval-queue/multiple-camera-render/>`_
-   .. note::
-      The addon is currently in the approval queue, so it may not be available for download yet.
-
+* `Blender Extensions <https://extensions.blender.org/add-ons/multiple-camera-render/>`_
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents
 
+   pages/installation
    pages/quickstart
    pages/support
    pages/naming.rst

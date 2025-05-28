@@ -1,4 +1,4 @@
-# Multiple Camera Render 4.2.2 Release Notes
+# Multiple Camera Render 4.2.2 Release Notes (Upcoming)
 
 * Created [documentation on ReadTheDocs](https://multiple-camera-render.readthedocs.io/latest/) platform. It should provide more clear information about how to use the addon, how to submit issues and about libraries used by this project.
 
