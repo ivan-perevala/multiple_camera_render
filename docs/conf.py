@@ -65,6 +65,10 @@ html_favicon = "_static/favicon.ico"
 html_title = pyproject['project']['description']
 html_logo = "_static/mcr-logo.png"
 
+html_css_files = [
+    'mcr.css',
+]
+
 # https://pradyunsg.me/furo/customisation/
 html_theme_options = {
     "light_css_variables": {
