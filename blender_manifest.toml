@@ -12,7 +12,7 @@ name = "Multiple Camera Render (Development)"
 tagline = "Development setup for multiple camera render"
 maintainer = "Ivan Perevala <ivan95perevala@gmail.com>"
 type = "add-on"
-website = "https://github.com/ivan-perevala/multiple_camera_render"
+website = "https://multiple-camera-render.readthedocs.io/latest/"
 tags = ["Render"]
 blender_version_min = "4.2.0"
 
