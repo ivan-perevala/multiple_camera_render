@@ -12,7 +12,7 @@ a photogrammetry scene captured in Warszaw, Poland. It has 62 cameras and I want
 angle they was captured in real world, but with different lighting.
 
 .. image::
-    https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/general.png
+    https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/general.webp
     :alt: Example scene
     :width: 100%
 
@@ -31,7 +31,7 @@ After that, actual rendering will start. The addon will render all cameras one b
 the rendered images will be saved to the output directory.
 
 .. image::
-    https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/output-files.png
+    https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/output-files.webp
     :alt: Rendering
     :width: 100%
 

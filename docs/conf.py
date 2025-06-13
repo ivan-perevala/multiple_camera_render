@@ -63,7 +63,7 @@ html_static_path = ["_static"]
 html_templates_path = ["_templates"]
 html_favicon = "_static/favicon.ico"
 html_title = pyproject['project']['description']
-html_logo = "_static/mcr-logo.png"
+html_logo = "_static/mcr-logo.webp"
 
 html_css_files = [
     'mcr.css',

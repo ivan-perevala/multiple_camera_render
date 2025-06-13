@@ -10,7 +10,7 @@ In case of any issues, please submit them alongside with a detailed description 
 Addon offers a built-in logging system that might help us to reproduce the issue.
 
 .. image::
-    https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/submit-issue.png
+    https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/submit-issue.webp
    :alt: Submit Issue Button
 
 It would open current log file in your default text editor, so you can copy it and paste into the issue description.
