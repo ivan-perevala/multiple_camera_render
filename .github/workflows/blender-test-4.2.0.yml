@@ -9,8 +9,15 @@ description: |
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
   pull_request:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+    types: [closed]
 
 jobs:
   test-addon:
