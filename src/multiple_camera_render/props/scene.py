@@ -37,7 +37,7 @@ class SceneProps(PropertyGroup):
             )
         ],
         default='VISIBLE',
-        options={'HIDDEN'},
+        options={'SKIP_SAVE'},
         name="Cameras Usage",
         description="Which cameras to use for rendering",
         update=bhqrprt.update_log_setting_changed(log, "cameras_usage"),
@@ -62,7 +62,7 @@ class SceneProps(PropertyGroup):
             ),
         ),
         default='CLOCKWISE',
-        options={'HIDDEN'},
+        options={'SKIP_SAVE'},
         description=(
             "The direction in which the cameras will change during the rendering of the sequence (Starting from the "
             "current camera of the scene)"
@@ -72,7 +72,7 @@ class SceneProps(PropertyGroup):
 
     keep_frame_in_filepath: BoolProperty(
         default=True,
-        options={'HIDDEN'},
+        options={'SKIP_SAVE'},
         name="Keep Frame Number",
         description="Write frame number even if not rendering animation",
         update=bhqrprt.update_log_setting_changed(log, "keep_frame_in_filepath"),
