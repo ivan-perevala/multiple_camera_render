@@ -246,7 +246,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         if cameras.size:
             _dbg(
-                f"Evaluated {cameras.size} cameras (active camera index: {curr_camera_index}) "
+                f"Evaluated {cameras.size} cameras (active camera \"{curr_camera.name_full}\", index: {curr_camera_index}) "
                 f"in {time.time() - dt:.6f} sec."
             )
             return True
