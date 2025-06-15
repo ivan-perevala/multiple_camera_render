@@ -6,7 +6,7 @@
 
 schema_version = "1.0.0"
 
-id = "test_handler_conflict_multilivel"
+id = "test_handler_conflict_multilevel"
 version = "1.0.0"
 name = "Test Handler Conflict Multiple Levels"
 tagline = "Addon for testing handlers conflicts with Multiple Camera Render"
