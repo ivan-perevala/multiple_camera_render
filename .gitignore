@@ -35,3 +35,6 @@ icons/blender_icons_geom.py
 
 # Keep directory layout
 !.gitkeep
+
+# Test wheels
+!lib_handlers_conflict-1.0.0-py3-none-any.whl

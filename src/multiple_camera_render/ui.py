@@ -9,6 +9,8 @@ from __future__ import annotations
 from bpy.types import UILayout, Menu
 
 from . import icons
+from . import ADDON_PKG
+assert ADDON_PKG
 
 
 class MCR_MT_camera_usage(Menu):
@@ -40,6 +42,14 @@ def additional_TOPBAR_MT_render_draw(self, context):
     layout.separator()
     col = layout.column()
     col.operator_context = 'INVOKE_DEFAULT'
+
+    conflicting_addons, conflicting_modules = main.check_handlers_conflicts()
+    if conflicting_addons or conflicting_modules:
+        col.operator(
+            operator="preferences.addon_show",
+            text="Conflicting Add-ons Detected",
+            icon_value=icons.get_id('conflicting_addons')
+        ).module = ADDON_PKG
 
     col.operator(
         operator=main.RENDER_OT_multiple_camera_render.bl_idname,

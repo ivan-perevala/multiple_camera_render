@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: MIT
+
+# NOTE: Use https://packaging.python.org/en/latest/guides/writing-pyproject-toml/ guide reference for editing this file. 
+
+# ----------------------------------------------------------------------------------------------------------------------
+[project]
+name = "lib_handlers_conflict"
+version = "1.0.0"
+authors = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
+description = "Library for testing handlers conflict for Multiple Camera Render add-on"
+license = "GPL-3.0-or-later"
+
+# ----------------------------------------------------------------------------------------------------------------------
+# setuptools used here, might be changed because this method considered legacy.
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#declaring-the-build-backend
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Project uses src file layout, so we need to clarify this here.
+# https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#setuptools-specific-configuration
+[tool.setuptools.packages.find]
+where = ["src"]

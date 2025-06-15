@@ -13,6 +13,8 @@ import math
 import numpy as np
 import os
 import time
+import inspect
+import importlib
 
 import bpy
 from bpy.types import Scene, Context
@@ -21,6 +23,7 @@ from mathutils import Vector
 import bhqmain4 as bhqmain
 import bhqui4 as bhqui
 
+from . chunk_restore import CONFLICTING_HANDLERS
 from . clockwise_iter import ClockwiseIterator
 
 if TYPE_CHECKING:
@@ -39,6 +42,34 @@ class RenderStatus(IntEnum):
     RENDERING = auto()
     COMPLETE = auto()
     CANCELLED = auto()
+
+
+def check_handlers_conflicts() -> tuple[set, set]:
+    r_addons = set()
+    r_modules = set()
+
+    for handler_name in CONFLICTING_HANDLERS:
+        functions = getattr(bpy.app.handlers, handler_name, [])
+        for func in functions:
+            mod = inspect.getmodule(func)
+
+            pkg = mod.__package__
+
+            if pkg.startswith('bl_ext.'):
+                pkg_split = pkg.split('.')
+
+                if len(pkg_split) > 3:
+                    try:
+                        mod = importlib.import_module(name='.'.join(pkg_split[0:3]))
+                    except ModuleNotFoundError:
+                        pass
+
+                r_addons.add(mod)
+
+            else:
+                r_modules.add(mod)
+
+    return r_addons, r_modules
 
 
 class Render(bhqmain.MainChunk['Main', 'Context']):
@@ -261,10 +292,21 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
     def _cancel_progress(self):
         bhqui.progress.complete(identifier=self._PROGRESS_ID)
 
+    def clear_conflicting_handlers(self):
+        for handler_name in CONFLICTING_HANDLERS:
+            handlers: list = getattr(bpy.app.handlers, handler_name)
+            if handlers:
+                log.warning(f"Cleared \"{handler_name}\" handlers which may cause incorrect behavior:")
+                for handle in handlers:
+                    log.warning(f"\t{handle}")
+
+            handlers.clear()
+
     def invoke(self, context):
         if not self._eval_cameras(context):
             return bhqmain.InvokeState.FAILED
 
+        self.clear_conflicting_handlers()
         self._register_handlers()
 
         scene = context.scene
