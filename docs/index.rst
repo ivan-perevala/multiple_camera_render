@@ -61,6 +61,7 @@ Links
    pages/support
    pages/naming.rst
    pages/release_notes
+   pages/conflicts
    pages/libraries
    
    
