@@ -4,19 +4,8 @@
 
 import os
 import subprocess
-import shutil
 
 import pytest
-
-
-@pytest.fixture
-def blender(request):
-    blender = request.config.getoption("--blender")
-
-    if not blender:
-        blender = shutil.which("blender")
-
-    return blender
 
 
 CAMERA_NAMES = (
@@ -38,8 +27,8 @@ CAMERA_NAMES = (
 @pytest.mark.parametrize("animation", (False, True))
 @pytest.mark.parametrize("preview", (False, True))
 @pytest.mark.parametrize("render_output", (("test_####", "test_{_frame:04}_{_camera}.png"),))
-def test_render(request, tmpdir, blender, filepath, background, animation, preview, render_output):
-    if request.config.getoption("--background-only") and not background:
+def test_render(tmpdir, blender, filepath, background, animation, preview, render_output, background_only):
+    if background_only and not background:
         pytest.skip("Skipping test because --background-only option is set")
 
     cli: list = [blender,]
