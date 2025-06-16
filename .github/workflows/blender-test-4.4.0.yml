@@ -103,4 +103,4 @@ jobs:
 
       - name: Run tests
         run: |
-          $BLENDER_PYTHON -m pytest -k "test_conflicts" -s -v --blender="${{ env.BLENDER_DIR }}/blender" --repo user_default --background-only
+          $BLENDER_PYTHON -m pytest -s -v --blender="${{ env.BLENDER_DIR }}/blender" --repo user_default --background-only
