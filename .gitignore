@@ -37,4 +37,4 @@ icons/blender_icons_geom.py
 !.gitkeep
 
 # Test wheels
-!lib_handlers_conflict-1.0.0-py3-none-any.whl
+!lib_handlers_conflict-*-py3-none-any.whl
