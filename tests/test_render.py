@@ -38,13 +38,13 @@ def test_render(tmpdir, blender, filepath, background, animation, preview, rende
 
     cli.extend([
         os.path.abspath(f"tests/data/{filepath}"),
+        "--quiet",
         "--render-output",
         os.path.join(tmpdir, render_output[0]),
         "--python-expr",
         f"import bpy; bpy.ops.render.multiple_camera_render('INVOKE_DEFAULT', animation={animation}, preview={preview}, quit=True)",
         "--python-exit-code",
         "255",
-        "--quiet",
     ])
 
     proc = subprocess.Popen(cli, env=os.environ)
