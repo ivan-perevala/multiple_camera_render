@@ -12,11 +12,14 @@ on:
     paths:
       - 'src/**'
       - 'tests/**'
+      - '.github/workflows/blender-test-4.4.0.yml'
+
   pull_request:
     branches: [main]
     paths:
       - 'src/**'
       - 'tests/**'
+      - '.github/workflows/blender-test-4.4.0.yml'
     types: [closed]
 
 jobs:
