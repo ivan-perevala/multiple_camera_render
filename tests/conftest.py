@@ -6,6 +6,7 @@ import pytest
 import shutil
 import os
 import pathlib
+import subprocess
 
 
 def pytest_addoption(parser):
@@ -34,6 +35,18 @@ def blender(request):
 
     return blender
 
+@pytest.fixture
+def blender_version(blender):
+    if not blender:
+        pytest.skip("Blender executable not found")
+
+    version_output = subprocess.check_output([blender, "--version"], text=True)
+    first_line = version_output[:version_output.find('\n')]
+    version_str = first_line.split(' ')[1].split('.')
+
+    version = int(version_str[0]), int(version_str[1])
+
+    return version
 
 @pytest.fixture
 def repo(request):

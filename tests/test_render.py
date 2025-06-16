@@ -27,7 +27,7 @@ CAMERA_NAMES = (
 @pytest.mark.parametrize("animation", (False, True))
 @pytest.mark.parametrize("preview", (False, True))
 @pytest.mark.parametrize("render_output", (("test_####", "test_{_frame:04}_{_camera}.png"),))
-def test_render(tmpdir, blender, filepath, background, animation, preview, render_output, background_only):
+def test_render(tmpdir, blender, blender_version, filepath, background, animation, preview, render_output, background_only):
     if background_only and not background:
         pytest.skip("Skipping test because --background-only option is set")
 
@@ -38,7 +38,7 @@ def test_render(tmpdir, blender, filepath, background, animation, preview, rende
 
     cli.extend([
         os.path.abspath(f"tests/data/{filepath}"),
-        "--quiet",
+        "--quiet",  # NOTE: Only available in Blender 4.3+
         "--render-output",
         os.path.join(tmpdir, render_output[0]),
         "--python-expr",
@@ -46,6 +46,9 @@ def test_render(tmpdir, blender, filepath, background, animation, preview, rende
         "--python-exit-code",
         "255",
     ])
+
+    if blender_version > (4, 2):
+        cli.remove("--quiet")  # --quiet is not available in Blender 4.2 and earlier
 
     proc = subprocess.Popen(cli, env=os.environ)
 
