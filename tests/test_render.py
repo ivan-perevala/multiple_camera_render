@@ -47,7 +47,7 @@ def test_render(tmpdir, blender, blender_version, filepath, background, animatio
         "255",
     ])
 
-    if blender_version > (4, 2):
+    if blender_version <= (4, 2):
         cli.remove("--quiet")  # --quiet is not available in Blender 4.2 and earlier
 
     proc = subprocess.Popen(cli, env=os.environ)
