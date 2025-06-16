@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+# NOTE: This file is used by github actions to download wheels for the project.
+
 bhqmain>=4.2.1
 bhqrprt>=4.2.1
 bhqui>=4.2.1

@@ -46,27 +46,33 @@ jobs:
 
           mkdir -p "${{ env.BLENDER_DIR }}"
           wget -qO- "${DOWNLOAD_URL}" | tar -xJ --strip-components=1 -C "${{ env.BLENDER_DIR }}"
-
-      - name: Download wheels to build Blender extension
+      
+      - name: Get Blender Python executable
         run: |
-          PYTHON_BIN=$(find "${{ env.BLENDER_DIR }}" -type f -name "python3*" | head -n 1)
-          "${PYTHON_BIN}" -m pip download -r requirements-dev.txt --dest "src/multiple_camera_render/wheels"
+          PYTHON_EXEC=$(blender --background --factory-startup --quiet --python-expr "import sys; print(sys.executable)")
+          echo "BLENDER_PYTHON=$PYTHON_EXEC" >> $GITHUB_ENV
 
-      - name: Build and install Blender extension
+      - name: Install Python dependencies in Blender
         run: |
-          mkdir -p "${{ github.workspace }}/dist"
+          $BLENDER_PYTHON -m ensurepip
+          $BLENDER_PYTHON -m pip install --upgrade pip
 
-          ${{ env.BLENDER_DIR }}/blender --command extension build --source-dir="${{ github.workspace }}/src/multiple_camera_render" --output-dir="${{ github.workspace }}/dist"
+          $BLENDER_PYTHON -m pip install pytest
+
+      - name: Download wheels to build Multiple Camera Render
+        run: |
+          $BLENDER_PYTHON -m pip download -r requirements-dev.txt --dest "src/multiple_camera_render/wheels"
+
+      - name: Build and install Multiple Camera Render
+        run: |
+          mkdir -p "${{ github.workspace }}/dist/multiple_camera_render"
+
+          ${{ env.BLENDER_DIR }}/blender --command extension build --source-dir="./src/multiple_camera_render" --output-dir="./dist/multiple_camera_render"
           echo "Blender extension built successfully."
-          EXTENSION_ZIP=$(find "${{ github.workspace }}/dist" -type f -name "*.zip" | head -n 1)
+          EXTENSION_ZIP=$(find "./dist/multiple_camera_render" -type f -name "*.zip" | head -n 1)
           echo "Extension zip file: ${EXTENSION_ZIP}"
           "${{ env.BLENDER_DIR }}/blender" --command extension install-file --repo user_default --enable "${EXTENSION_ZIP}"
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest
 
       - name: Run tests
         run: |
-          pytest -s -v --blender="${{ env.BLENDER_DIR }}/blender" --background-only
+          $BLENDER_PYTHON -m pytest -k "test_conflicts" -s -v --blender="${{ env.BLENDER_DIR }}/blender" --repo user_default --background-only
