@@ -107,10 +107,12 @@ functions = {
 def register():
     for handler_name, func in functions.items():
         handler: list = getattr(bpy.app.handlers, handler_name)
-        handler.append(func)
+        if func not in handler:
+            handler.append(func)
 
 
 def unregister():
     for handler_name, func in functions.items():
         handler: list = getattr(bpy.app.handlers, handler_name)
-        handler.remove(func)
+        if func in handler:
+            handler.remove(func)
