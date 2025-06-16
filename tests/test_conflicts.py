@@ -18,7 +18,7 @@ def test_conflicts(blender, repo, bl_tests_dir):
         f"bl_ext.{repo}.test_handlers_conflict_from_lib",
 
         "--python-expr",
-        f"import pytest; pytest.main(['-s', '-v', '--repo', '{repo}', \"{bl_tests_dir}/\"])",
+        f"import pytest; import sys; sys.exit(pytest.main(['-s', '-v', '--repo', '{repo}', \"{bl_tests_dir}/\"]))",
 
         "--python-exit-code",
         "255",
