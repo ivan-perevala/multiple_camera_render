@@ -44,6 +44,7 @@ def test_render(tmpdir, blender, filepath, background, animation, preview, rende
         f"import bpy; bpy.ops.render.multiple_camera_render('INVOKE_DEFAULT', animation={animation}, preview={preview}, quit=True)",
         "--python-exit-code",
         "255",
+        "--quiet",
     ])
 
     proc = subprocess.Popen(cli, env=os.environ)
