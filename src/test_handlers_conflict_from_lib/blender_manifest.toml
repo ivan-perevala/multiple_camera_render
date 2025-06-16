@@ -17,5 +17,5 @@ blender_version_min = "4.2.0"
 license = ["SPDX:GPL-3.0-or-later"]
 copyright = ["2020-2025 Ivan Perevala"]
 wheels = [
-    "wheels/lib_handlers_conflict-1.0.0-py3-none-any.whl"
+    "wheels/lib_handlers_conflict-1.0.1-py3-none-any.whl"
 ]

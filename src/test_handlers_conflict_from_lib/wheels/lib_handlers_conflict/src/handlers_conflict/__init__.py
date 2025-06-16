@@ -46,5 +46,5 @@ def register():
 def unregister():
     for handler_name, func in functions.items():
         handler: list = getattr(bpy.app.handlers, handler_name)
-        if func not in handler:
+        if func in handler:
             handler.remove(func)

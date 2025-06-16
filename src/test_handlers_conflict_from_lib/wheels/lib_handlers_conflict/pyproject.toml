@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------------------------------------------------
 [project]
 name = "lib_handlers_conflict"
-version = "1.0.0"
+version = "1.0.1"
 authors = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
 description = "Library for testing handlers conflict for Multiple Camera Render add-on"
 license = "GPL-3.0-or-later"
