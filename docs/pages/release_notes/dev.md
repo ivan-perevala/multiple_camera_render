@@ -4,17 +4,20 @@
 
 * Fixed conflicting situations with other add-ons that are using `bpy.app.handlers`. Now there is proper information about which addons and python modules may cause issues in user preferences:
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/conflicting_addons_v422.webp" />
-</p>
+    <p align="center">
+        <img src="https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/conflicting_addons_v422.webp" />
+    </p>
 
-For convenience also added button which would inform users about that. It would open user preferences so user can decide what to do:
+    For convenience also added button which would inform users about that. It would open user preferences so user can decide what to do:
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/conflict_warn_v422.webp" />
-</p>
+    <p align="center">
+        <img src="https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/conflict_warn_v422.webp" />
+    </p>
 
-If this warning ignored, Multiple Camera Render would temporarily remove third-party addon functions from handlers and bring them back when finishes its job. This may lead to unexpected behavior of other extensions, but only for execution time of Multiple Camera Render operators.
+    If this warning ignored, Multiple Camera Render would temporarily remove third-party addon functions from handlers and bring them back when finishes its job. This may lead to unexpected behavior of other extensions, but only for execution time of Multiple Camera Render operators.
+
+    This is covered by tests as well, because as you can see from [issue report](https://github.com/ivan-perevala/multiple_camera_render/issues/3) this situations may lead to wasting too much of render time (almost 14 hours in issue report).
+
 
 * Minor fixes for scene properties:
     - None of them are supposed to be animated as far as they are evaluated only at initialization of multiple camera rendering, so that fixed now.
