@@ -52,7 +52,7 @@ jobs:
       
       - name: Get Blender Python executable
         run: |
-          PYTHON_EXEC=$(${{ env.BLENDER_DIR }}/blender --background --factory-startup --quiet --python-expr "import sys; print(sys.executable)")
+          PYTHON_EXEC=$("${{ env.BLENDER_DIR }}/blender" --background --factory-startup --quiet --python-expr "import sys; print(sys.executable)")
           echo "BLENDER_PYTHON=$PYTHON_EXEC" >> $GITHUB_ENV
 
       - name: Install Python dependencies in Blender
