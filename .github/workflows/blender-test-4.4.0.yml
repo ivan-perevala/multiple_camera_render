@@ -49,10 +49,10 @@ jobs:
 
           mkdir -p "${{ env.BLENDER_DIR }}"
           wget -qO- "${DOWNLOAD_URL}" | tar -xJ --strip-components=1 -C "${{ env.BLENDER_DIR }}"
-      
+
       - name: Get Blender Python executable
         run: |
-          PYTHON_EXEC=$("${{ env.BLENDER_DIR }}/blender" --background --factory-startup --quiet --python-expr "import sys; print(sys.executable)")
+          PYTHON_EXEC=$("${{ env.BLENDER_DIR }}/blender" --background --factory-startup --python-expr "import sys; print(sys.executable)" 2>/dev/null | tail -n 1)
           echo "BLENDER_PYTHON=$PYTHON_EXEC" >> $GITHUB_ENV
 
       - name: Install Python dependencies in Blender
