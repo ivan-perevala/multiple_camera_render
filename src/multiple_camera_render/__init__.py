@@ -74,18 +74,34 @@ def handler_load_post(_=None):
     bhqrprt.log_bpy_struct_properties(log, struct=scene.mcr)
 
 
+_handlers = (
+    (bpy.app.handlers.load_post, handler_load_post),
+    (bpy.app.handlers.depsgraph_update_pre, main.depsgraph_update_pre),
+    (bpy.app.handlers.depsgraph_update_post, main.depsgraph_update_post),
+)
+
+
 @bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(os.path.dirname(__file__), "logs"))
 def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
 
-    bpy.app.handlers.load_post.append(handler_load_post)
+    for handler, func in _handlers:
+        if func not in handler:
+            handler.append(func)
+        else:
+            log.warning(f"Handler {func} already registered, skipping.")
+
 
 
 @bhqrprt.unregister_reports(log)
 def unregister():
-    bpy.app.handlers.load_post.remove(handler_load_post)
+    for handler, func in reversed(_handlers):
+        if func in handler:
+            handler.remove(func)
+        else:
+            log.warning(f"Handler {func} not found, skipping removal.")
 
     icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)

@@ -25,6 +25,7 @@ import bhqui4 as bhqui
 
 from . chunk_restore import CONFLICTING_HANDLERS
 from . clockwise_iter import ClockwiseIterator
+from .. import ADDON_PKG
 
 if TYPE_CHECKING:
     from . chunk_main import Main
@@ -48,6 +49,10 @@ def check_handlers_conflicts() -> tuple[set, set]:
     r_addons = set()
     r_modules = set()
 
+    whitelist = (
+        ADDON_PKG.split('.'),
+    )
+
     for handler_name in CONFLICTING_HANDLERS:
         functions = getattr(bpy.app.handlers, handler_name, [])
         for func in functions:
@@ -57,6 +62,9 @@ def check_handlers_conflicts() -> tuple[set, set]:
 
             if pkg.startswith('bl_ext.'):
                 pkg_split = pkg.split('.')
+
+                if pkg_split[0:3] in whitelist:
+                    continue
 
                 if len(pkg_split) > 3:
                     try:
