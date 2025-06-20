@@ -12,19 +12,25 @@ def __reload_submodules(lc):
         reload(pref)
     if "scene" in lc:
         reload(scene)
+    if "camera" in lc:
+        reload(camera)
 
 
 __reload_submodules(locals())
 
 from . import pref
 from . import scene
+from . import camera
 
 from . pref import Preferences
 from . scene import SceneProps
+from . camera import CameraProps
 
 __all__ = (
     # file://./pref.py
     "Preferences",
     # file://./scene.py
-    "SceneProps"
+    "SceneProps",
+    # file://./camera.py
+    "CameraProps",
 )

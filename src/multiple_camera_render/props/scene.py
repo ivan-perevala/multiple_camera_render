@@ -14,11 +14,12 @@ from bpy.props import BoolProperty, EnumProperty
 import bhqrprt4 as bhqrprt
 
 from .. import icons
+from .. import main
 
 log = logging.getLogger(__name__)
 
 
-class SceneProps(PropertyGroup):
+class SceneProps(PropertyGroup, main.PersistentPerCamera.eval_scene_flag_properties()):
     cameras_usage: EnumProperty(
         items=[
             (

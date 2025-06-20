@@ -11,7 +11,7 @@ import logging
 
 import bpy
 from bpy.props import PointerProperty
-from bpy.types import Scene, TOPBAR_MT_render
+from bpy.types import Scene, Camera, TOPBAR_MT_render
 from bpy.app.handlers import persistent
 
 # NOTE: Development mode uses different package than release, this should be here for now.
@@ -27,6 +27,7 @@ from bpy.app.handlers import persistent
 ADDON_PKG = __package__
 
 import bhqrprt4 as bhqrprt
+import bhqmain4 as bhqmain
 
 log = logging.getLogger(__name__)
 
@@ -60,12 +61,22 @@ from . main import check_handlers_conflicts
 _classes = (
     props.Preferences,
     props.SceneProps,
+    props.CameraProps,
     main.RENDER_OT_multiple_camera_render,
     ui.MCR_MT_camera_usage,
     ui.MCR_MT_direction,
+    ui.MCR_PT_scene_use_per_camera,
 )
 
 _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
+
+
+@persistent
+def handler_load_pre(_=None):
+    p_main = main.PersistentMain.get_instance()
+    if p_main and p_main():
+        if p_main().cancel(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
+            log.error("Failed to cancel PersistentMain")
 
 
 @persistent
@@ -73,11 +84,19 @@ def handler_load_post(_=None):
     scene = bpy.context.scene
     bhqrprt.log_bpy_struct_properties(log, struct=scene.mcr)
 
+    p_main = main.PersistentMain.get_instance()
+    if p_main is not None:
+        raise RuntimeError("PersistentMain instance already exists, this should not happen.")
+
+    p_main = main.PersistentMain.create()
+    if p_main and p_main():
+        if p_main().invoke(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
+            log.error("Failed to invoke PersistentMain")
+
 
 _handlers = (
+    (bpy.app.handlers.load_pre, handler_load_pre),
     (bpy.app.handlers.load_post, handler_load_post),
-    (bpy.app.handlers.depsgraph_update_pre, main.depsgraph_update_pre),
-    (bpy.app.handlers.depsgraph_update_post, main.depsgraph_update_post),
 )
 
 
@@ -85,6 +104,7 @@ _handlers = (
 def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
+    Camera.mcr = PointerProperty(type=props.CameraProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
 
     for handler, func in _handlers:
@@ -92,7 +112,6 @@ def register():
             handler.append(func)
         else:
             log.warning(f"Handler {func} already registered, skipping.")
-
 
 
 @bhqrprt.unregister_reports(log)
@@ -106,4 +125,5 @@ def unregister():
     icons.Icons.cache.release()
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
+    del Camera.mcr
     del Scene.mcr

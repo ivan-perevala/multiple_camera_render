@@ -18,8 +18,10 @@ def __reload_submodules(lc):
         reload(chunk_timers)
     if "clockwise_iter" in lc:
         reload(clockwise_iter)
-    if "render_preset" in lc:
-        reload(render_preset)
+    if "chunk_persistent_main" in lc:
+        reload(chunk_persistent_main)
+    if "chunk_persistent_per_camera" in lc:
+        reload(chunk_persistent_per_camera)
     if "main" in lc:
         reload(main)
 
@@ -33,19 +35,22 @@ from . import chunk_render
 from . import chunk_restore
 from . import chunk_timers
 from . import clockwise_iter
-from . import render_preset
+from . import chunk_persistent_main
+from . import chunk_persistent_per_camera
 from . import main
 
 from . main import RENDER_OT_multiple_camera_render
 from . chunk_render import check_handlers_conflicts
-from . render_preset import depsgraph_update_pre, depsgraph_update_post
+from . chunk_persistent_main import PersistentMain
+from . chunk_persistent_per_camera import PersistentPerCamera
 
 __all__ = (
     # file://./main.py
     "RENDER_OT_multiple_camera_render",
     # file://./chunk_render.py
     "check_handlers_conflicts",
-    # file://./render_preset.py
-    "depsgraph_update_pre",
-    "depsgraph_update_post"
+    # file://./chunk_main_persistent.py
+    "PersistentMain",
+    # file://./chunk_persistent_per_camera.py
+    "PersistentPerCamera",
 )

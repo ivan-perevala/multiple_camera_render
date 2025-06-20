@@ -6,9 +6,10 @@
 
 from __future__ import annotations
 
-from bpy.types import UILayout, Menu
+from bpy.types import UILayout, Menu, Panel
 
 from . import icons
+from . import main
 from . import ADDON_PKG
 assert ADDON_PKG
 
@@ -33,6 +34,40 @@ class MCR_MT_direction(Menu):
 
         scene_props = context.scene.mcr
         layout.prop(scene_props, "direction", expand=True)
+
+
+class MCR_PT_scene_use_per_camera(Panel):
+    bl_label = "Per Camera"
+
+    bl_space_type = 'TOPBAR'  # dummy.
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 32
+
+    def draw(self, context):
+        layout = self.layout
+        scene_props = context.scene.mcr
+
+        prev_category = ""
+
+        row = layout.row()
+
+        for data_path in main.PersistentPerCamera.SCENE_DATA_PATHS:
+            sep_index = data_path.find('.')
+
+            if sep_index == -1:
+                category = "Scene"
+            else:
+                category = data_path[:sep_index].replace('_', ' ').title()
+
+            if prev_category != category:
+                prev_category = category
+
+                col = row.column(align=True)
+                col.label(text=category)
+
+            flag_name = main.PersistentPerCamera.eval_scene_flag_name(data_path)
+
+            col.prop(scene_props, flag_name)
 
 
 def additional_TOPBAR_MT_render_draw(self, context):
@@ -88,3 +123,5 @@ def additional_TOPBAR_MT_render_draw(self, context):
     col.menu(menu=MCR_MT_direction.bl_idname, icon_value=_get_menu_icon("direction"))
 
     col.prop(scene_props, "keep_frame_in_filepath")
+
+    col.popover(panel=MCR_PT_scene_use_per_camera.__name__)

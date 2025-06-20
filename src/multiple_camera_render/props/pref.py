@@ -155,4 +155,5 @@ class Preferences(AddonPreferences):
                     )
 
                     for mod in conflicting_modules:
-                        col.operator(operator="wm.path_open", text=mod.__name__).filepath = os.path.dirname(mod.__file__)
+                        col.operator(operator="wm.path_open",
+                                     text=mod.__name__).filepath = os.path.dirname(mod.__file__)
