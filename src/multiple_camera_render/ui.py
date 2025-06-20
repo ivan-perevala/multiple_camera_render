@@ -53,7 +53,7 @@ class MCR_PT_scene_use_per_camera(Panel):
 
         row = layout.row()
         row.label(text="Use Flags")
-        
+
         srow = row.row()
         srow.alignment = 'RIGHT'
         srow.label(text="Select")
@@ -137,4 +137,4 @@ def additional_TOPBAR_MT_render_draw(self, context):
 
     col.prop(scene_props, "keep_frame_in_filepath")
 
-    col.popover(panel=MCR_PT_scene_use_per_camera.__name__)
+    col.popover(panel=MCR_PT_scene_use_per_camera.__name__, icon_value=icons.get_id('per_camera'))

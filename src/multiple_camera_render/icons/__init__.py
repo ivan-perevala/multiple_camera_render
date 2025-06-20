@@ -32,6 +32,8 @@ class Icons:
         'readme',
         'conflicting_addons',
         'conflicting_addon',
+        'per_camera',
+        'per_camera_dimmed',
     )
 
 
@@ -51,6 +53,8 @@ IdentifierType = Literal[
     'readme',
     'conflicting_addons',
     'conflicting_addon',
+    'per_camera',
+    'per_camera_dimmed',
 ]
 
 

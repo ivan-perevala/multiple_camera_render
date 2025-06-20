@@ -10,11 +10,13 @@ import logging
 from typing import TYPE_CHECKING, ClassVar
 
 import bpy
-from bpy.types import Context, Camera, Scene, Operator, STATUSBAR_HT_header
+from bpy.types import Context, Camera, Scene, Operator, STATUSBAR_HT_header, UILayout
 from bpy.props import BoolProperty
 
 import bhqmain4 as bhqmain
 import bhqrprt4 as bhqrprt
+
+from .. import icons
 
 if TYPE_CHECKING:
     from . chunk_persistent_main import PersistentMain
@@ -108,8 +110,7 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
     @staticmethod
     def _statusbar_draw_status(self, context):
         layout = self.layout
-
-        layout.label(text="Per Camera Active", icon='ERROR')
+        layout.label(text="Per Camera Active", icon_value=icons.get_id('per_camera_dimmed'))
 
     def _register_per_camera_handler(self):
         if self.depsgraph_update_post not in bpy.app.handlers.depsgraph_update_post:
