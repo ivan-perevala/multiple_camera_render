@@ -64,6 +64,8 @@ _classes = (
     props.CameraProps,
     main.RENDER_OT_multiple_camera_render,
     main.SCENE_OT_mcr_per_camera_enable,
+    main.SCENE_MT_mcr_per_camera_presets,
+    main.SCENE_OT_mcr_per_camera_preset_add,
     ui.MCR_MT_camera_usage,
     ui.MCR_MT_direction,
     ui.MCR_PT_scene_use_per_camera,

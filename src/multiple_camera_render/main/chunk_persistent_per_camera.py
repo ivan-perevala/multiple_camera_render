@@ -10,11 +10,15 @@ import logging
 from typing import TYPE_CHECKING, ClassVar
 
 import bpy
-from bpy.types import Context, Camera, Scene, Operator, STATUSBAR_HT_header, UILayout
+from bpy.types import Context, Camera, Scene, Operator, STATUSBAR_HT_header, Menu
 from bpy.props import BoolProperty
+from bl_operators.presets import AddPresetBase
 
 import bhqmain4 as bhqmain
 import bhqrprt4 as bhqrprt
+import bhqui4 as bhqui
+
+bhqui.template_preset
 
 from .. import icons
 
@@ -109,7 +113,7 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
 
     @staticmethod
     def _statusbar_draw_status(self, context):
-        layout = self.layout
+        layout: UILayout = self.layout
         layout.label(text="Per Camera Active", icon_value=icons.get_id('per_camera_dimmed'))
 
     def _register_per_camera_handler(self):
@@ -290,3 +294,28 @@ class SCENE_OT_mcr_per_camera_enable(Operator):
             per_camera().set_scene_flags_no_update(scene=context.scene, state=not self.disable)
 
         return {'FINISHED'}
+
+
+class SCENE_MT_mcr_per_camera_presets(Menu):
+    bl_label = "Per Camera Presets"
+    preset_subdir = "scene/multiple_camera_render/per_camera"
+    preset_operator = "script.execute_preset"
+    draw = Menu.draw_preset
+
+
+class SCENE_OT_mcr_per_camera_preset_add(AddPresetBase, Operator):
+    bl_idname = "scene.mcr_per_camera_preset_add"
+    bl_label = "Add Scene Per Camera Preset"
+    preset_menu = "SCENE_MT_mcr_per_camera_presets"
+
+    preset_defines = [
+        "scene = bpy.context.scene",
+        "scene_props = scene.mcr",
+    ]
+
+    preset_values = [
+        f"scene_props.{PersistentPerCamera.eval_scene_flag_name(data_path)}"
+        for data_path in PersistentPerCamera.SCENE_DATA_PATHS
+    ]
+
+    preset_subdir = SCENE_MT_mcr_per_camera_presets.preset_subdir

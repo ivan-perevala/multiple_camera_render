@@ -13,6 +13,8 @@ from . import main
 from . import ADDON_PKG
 assert ADDON_PKG
 
+import bhqui4 as bhqui
+
 
 class MCR_MT_camera_usage(Menu):
     bl_idname = "MCR_MT_camera_usage"
@@ -53,6 +55,12 @@ class MCR_PT_scene_use_per_camera(Panel):
 
         row = layout.row()
         row.label(text="Use Flags")
+
+        bhqui.template_preset(
+            row,
+            menu=main.SCENE_MT_mcr_per_camera_presets,
+            operator=main.SCENE_OT_mcr_per_camera_preset_add.bl_idname,
+        )
 
         srow = row.row()
         srow.alignment = 'RIGHT'

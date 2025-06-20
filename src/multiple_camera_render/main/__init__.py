@@ -42,7 +42,7 @@ from . import main
 from . main import RENDER_OT_multiple_camera_render
 from . chunk_render import check_handlers_conflicts
 from . chunk_persistent_main import PersistentMain
-from . chunk_persistent_per_camera import PersistentPerCamera, SCENE_OT_mcr_per_camera_enable
+from . chunk_persistent_per_camera import PersistentPerCamera, SCENE_OT_mcr_per_camera_enable, SCENE_MT_mcr_per_camera_presets, SCENE_OT_mcr_per_camera_preset_add
 
 __all__ = (
     # file://./main.py
@@ -54,4 +54,6 @@ __all__ = (
     # file://./chunk_persistent_per_camera.py
     "PersistentPerCamera",
     "SCENE_OT_mcr_per_camera_enable",
+    "SCENE_MT_mcr_per_camera_presets",
+    "SCENE_OT_mcr_per_camera_preset_add",
 )
