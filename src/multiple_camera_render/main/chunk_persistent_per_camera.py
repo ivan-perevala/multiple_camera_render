@@ -10,10 +10,11 @@ import logging
 from typing import TYPE_CHECKING, ClassVar
 
 import bpy
-from bpy.types import Context, Camera, Scene, Operator
+from bpy.types import Context, Camera, Scene, Operator, STATUSBAR_HT_header
 from bpy.props import BoolProperty
 
 import bhqmain4 as bhqmain
+import bhqrprt4 as bhqrprt
 
 if TYPE_CHECKING:
     from . chunk_persistent_main import PersistentMain
@@ -88,11 +89,6 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         self.prev_camera = None
 
     def invoke(self, context):
-        if self.depsgraph_update_post not in bpy.app.handlers.depsgraph_update_post:
-            bpy.app.handlers.depsgraph_update_post.append(self.depsgraph_update_post)
-        else:
-            log.warning("Handler already exists in depsgraph_update_post")
-
         scene = context.scene
 
         if scene.camera:
@@ -101,15 +97,37 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         else:
             log.debug("No initial camera set in the scene")
 
+        self.conditional_handler_register(scene_props=scene.mcr)
+
         return super().invoke(context)
 
     def cancel(self, context):
-        if self.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post:
-            bpy.app.handlers.depsgraph_update_post.remove(self.depsgraph_update_post)
-        else:
-            log.warning("Handler not found in depsgraph_update_post")
-
+        self._unregister_per_camera_handler()
         return super().cancel(context)
+
+    @staticmethod
+    def _statusbar_draw_status(self, context):
+        layout = self.layout
+
+        layout.label(text="Per Camera Active", icon='ERROR')
+
+    def _register_per_camera_handler(self):
+        if self.depsgraph_update_post not in bpy.app.handlers.depsgraph_update_post:
+            bpy.app.handlers.depsgraph_update_post.append(self.depsgraph_update_post)
+            STATUSBAR_HT_header.append(self._statusbar_draw_status)
+            log.debug("Handler added to \"depsgraph_update_post\"")
+
+    def _unregister_per_camera_handler(self):
+        if self.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post:
+            STATUSBAR_HT_header.remove(self._statusbar_draw_status)
+            bpy.app.handlers.depsgraph_update_post.remove(self.depsgraph_update_post)
+            log.debug("Handler \"depsgraph_update_post\" removed")
+
+    def conditional_handler_register(self, *, scene_props):
+        if self.check_scene_props_use_flags(scene_props=scene_props):
+            self._register_per_camera_handler()
+        else:
+            self._unregister_per_camera_handler()
 
     def depsgraph_update_post(self, scene, dg):
         curr_camera = None
@@ -172,19 +190,20 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         return path_split
 
     @classmethod
+    def check_scene_props_use_flags(cls, *, scene_props) -> bool:
+        for data_path in cls.SCENE_DATA_PATHS:
+            if getattr(scene_props, cls.eval_scene_flag_name(data_path), False):
+                return True
+        return False
+
+    @classmethod
     def eval_scene_flag_properties(cls):
         annotations = dict()
 
         def _property_update(self, context):
-            for data_path in cls.SCENE_DATA_PATHS:
-                if getattr(self, cls.eval_scene_flag_name(data_path), False):
-                    break
-
-            else:
-                print("All disabled")
-                return
-
-            print("Some enabled")
+            per_camera = cls.get_instance()
+            if per_camera and per_camera():
+                per_camera().conditional_handler_register(scene_props=self)
 
         for data_path in cls.SCENE_DATA_PATHS:
             path_split = cls.eval_data_path_split(data_path)
@@ -237,10 +256,14 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                         if hasattr(struct, attr_name):
                             setattr(struct, attr_name, value)
 
-    @classmethod
-    def set_scene_flags_no_update(cls, scene: Scene, state: bool):
-        for data_path in cls.SCENE_DATA_PATHS:
-            scene.mcr[cls.eval_scene_flag_name(data_path)] = state
+    def set_scene_flags_no_update(self, scene: Scene, state: bool):
+        for data_path in self.SCENE_DATA_PATHS:
+            scene.mcr[self.eval_scene_flag_name(data_path)] = state
+
+        if state:
+            self._register_per_camera_handler()
+        else:
+            self._unregister_per_camera_handler()
 
 
 class SCENE_OT_mcr_per_camera_enable(Operator):
@@ -253,7 +276,16 @@ class SCENE_OT_mcr_per_camera_enable(Operator):
         options={'SKIP_SAVE'},
     )
 
+    @classmethod
+    def poll(cls, context):
+        per_camera = PersistentPerCamera.get_instance()
+        return per_camera and per_camera()
+
+    @bhqrprt.operator_report(log)
     def execute(self, context):
-        PersistentPerCamera.set_scene_flags_no_update(scene=context.scene, state=not self.disable)
+        per_camera = PersistentPerCamera.get_instance()
+
+        if per_camera and per_camera():
+            per_camera().set_scene_flags_no_update(scene=context.scene, state=not self.disable)
 
         return {'FINISHED'}
