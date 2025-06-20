@@ -10,7 +10,7 @@ import logging
 from typing import TYPE_CHECKING, ClassVar
 
 import bpy
-from bpy.types import Context, Camera, Scene
+from bpy.types import Context, Camera, Scene, Operator
 from bpy.props import BoolProperty
 
 import bhqmain4 as bhqmain
@@ -175,6 +175,17 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
     def eval_scene_flag_properties(cls):
         annotations = dict()
 
+        def _property_update(self, context):
+            for data_path in cls.SCENE_DATA_PATHS:
+                if getattr(self, cls.eval_scene_flag_name(data_path), False):
+                    break
+
+            else:
+                print("All disabled")
+                return
+
+            print("Some enabled")
+
         for data_path in cls.SCENE_DATA_PATHS:
             path_split = cls.eval_data_path_split(data_path)
 
@@ -189,6 +200,8 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
             annotations[cls.eval_scene_flag_name(data_path)] = BoolProperty(
                 name=item.name,
                 description=item.description,
+                update=_property_update,
+                options={'SKIP_SAVE'}
             )
 
         r_type = type("PerCameraProperties", tuple(), dict(__annotations__=annotations))
@@ -223,3 +236,24 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                     if struct is not _sentinel:
                         if hasattr(struct, attr_name):
                             setattr(struct, attr_name, value)
+
+    @classmethod
+    def set_scene_flags_no_update(cls, scene: Scene, state: bool):
+        for data_path in cls.SCENE_DATA_PATHS:
+            scene.mcr[cls.eval_scene_flag_name(data_path)] = state
+
+
+class SCENE_OT_mcr_per_camera_enable(Operator):
+    bl_idname = "scene.mcr_per_camera_enable"
+    bl_label = "Enable"
+    bl_options = {'REGISTER'}
+
+    disable: BoolProperty(
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    def execute(self, context):
+        PersistentPerCamera.set_scene_flags_no_update(scene=context.scene, state=not self.disable)
+
+        return {'FINISHED'}

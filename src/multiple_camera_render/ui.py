@@ -45,9 +45,22 @@ class MCR_PT_scene_use_per_camera(Panel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_decorate = False
+        layout.use_property_split = False
         scene_props = context.scene.mcr
 
         prev_category = ""
+
+        row = layout.row()
+        row.label(text="Use Flags")
+        
+        srow = row.row()
+        srow.alignment = 'RIGHT'
+        srow.label(text="Select")
+        srow.operator(operator=main.SCENE_OT_mcr_per_camera_enable.bl_idname, text="All").disable = False
+        srow.operator(operator=main.SCENE_OT_mcr_per_camera_enable.bl_idname, text="None").disable = True
+
+        layout.separator(type='LINE')
 
         row = layout.row()
 
