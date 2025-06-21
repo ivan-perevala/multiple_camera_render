@@ -266,6 +266,13 @@ class SCENE_OT_mcr_per_camera_enable(Operator):
         per_camera = PersistentPerCamera.get_instance()
         return per_camera and per_camera()
 
+    @classmethod
+    def description(cls, context, properties):
+        if properties.get('disable'):
+            return "Disable all flags, so nothing would be captured"
+        else:
+            return "Enable all flags, capture everything in the list"
+
     @bhqrprt.operator_report(log)
     def execute(self, context):
         per_camera = PersistentPerCamera.get_instance()
