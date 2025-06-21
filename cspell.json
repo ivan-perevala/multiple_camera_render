@@ -36,6 +36,7 @@
         "setuptools",
         "srow",
         "testpaths",
+        "TOPBAR",
         "Vladlen"
     ],
     "ignoreWords": [],

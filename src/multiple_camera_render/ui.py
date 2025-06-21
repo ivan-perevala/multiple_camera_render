@@ -41,17 +41,15 @@ class MCR_MT_direction(Menu):
 class MCR_PT_scene_use_per_camera(Panel):
     bl_label = "Per Camera"
 
-    bl_space_type = 'TOPBAR'  # dummy.
+    bl_space_type = 'TOPBAR'
     bl_region_type = 'HEADER'
-    bl_ui_units_x = 32
+    bl_ui_units_x = 36
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_decorate = False
         layout.use_property_split = False
         scene_props = context.scene.mcr
-
-        prev_category = ""
 
         row = layout.row()
         row.label(text="Use Flags")
@@ -72,23 +70,15 @@ class MCR_PT_scene_use_per_camera(Panel):
 
         row = layout.row()
 
-        for data_path in main.PersistentPerCamera.SCENE_DATA_PATHS:
-            sep_index = data_path.find('.')
+        for category, data_paths in main.PersistentPerCamera.SCENE_DATA_PATHS_GROUPED.items():
+            col = row.column(align=True)
+            col.label(text=category)
 
-            if sep_index == -1:
-                category = "Scene"
-            else:
-                category = data_path[:sep_index].replace('_', ' ').title()
-
-            if prev_category != category:
-                prev_category = category
-
-                col = row.column(align=True)
-                col.label(text=category)
-
-            flag_name = main.PersistentPerCamera.eval_scene_flag_name(data_path)
-
-            col.prop(scene_props, flag_name)
+            for data_path in data_paths:
+                if data_path is None:
+                    col.separator(type='LINE')
+                else:
+                    col.prop(scene_props, main.PersistentPerCamera.SCENE_FLAG_MAP[data_path])
 
 
 def additional_TOPBAR_MT_render_draw(self, context):
