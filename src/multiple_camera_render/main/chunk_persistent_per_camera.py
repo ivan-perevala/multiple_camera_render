@@ -143,8 +143,16 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
 
     @staticmethod
     def _statusbar_draw_status(self, context):
+        from . chunk_persistent_main import PersistentMain
+
         layout: UILayout = self.layout
-        layout.label(text="Per Camera Active", icon_value=icons.get_id('per_camera_dimmed'))
+
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            if pmain().per_camera.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post:
+                layout.label(text="Per Camera Active", icon_value=icons.get_id('per_camera_dimmed'))
+            else:
+                layout.label(text="Per Camera Suspended", icon_value=icons.get_id('per_camera_dimmed'))
 
     def _register_per_camera_handler(self):
         if self.depsgraph_update_post not in bpy.app.handlers.depsgraph_update_post:
@@ -172,6 +180,7 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         return loaded_default or loaded_state
 
     def depsgraph_update_post(self, scene, dg):
+        print(1)
         curr_camera = None
         if validate_camera_object(scene.camera):
             curr_camera = scene.camera.data
@@ -278,3 +287,4 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                     if struct is not _sentinel:
                         if hasattr(struct, attr_name):
                             setattr(struct, attr_name, value)
+                            print(struct, attr_name, value)

@@ -17,13 +17,14 @@ import inspect
 import importlib
 
 import bpy
-from bpy.types import Scene, Context
+from bpy.types import Scene, Context, Camera
 from mathutils import Vector
 
 import bhqmain4 as bhqmain
 import bhqui4 as bhqui
 
 from . chunk_restore import CONFLICTING_HANDLERS
+from . chunk_persistent_main import PersistentMain
 from . clockwise_iter import ClockwiseIterator
 from . validate_id import validate_camera_object
 from .. import ADDON_PKG
@@ -129,6 +130,11 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         scene.render.filepath = os.path.join(directory, f"{name}{ext}")
 
+    def _pmain_update_scene_properties(self, context: Context, cam: Camera):
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=cam)
+
     def handler_render_pre(self, scene: Scene, _=None):
         self.status = RenderStatus.RENDERING
 
@@ -156,6 +162,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
             if next_camera:
                 scene.camera = next_camera
+                self._pmain_update_scene_properties(context, next_camera.data)
                 self._eval_render_filepath(context)
                 self.status = RenderStatus.NEED_LAUNCH
                 _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
@@ -249,6 +256,8 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         pop_current_camera = next(self.camera_iterator, None)
         assert pop_current_camera == curr_camera
+        
+        self._pmain_update_scene_properties(context, curr_camera.data)
         self._eval_render_filepath(context)
 
         if cameras.size:
@@ -310,10 +319,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             handlers.clear()
 
     def invoke(self, context):
+        self.clear_conflicting_handlers()
         if not self._eval_cameras(context):
             return bhqmain.InvokeState.FAILED
 
-        self.clear_conflicting_handlers()
         self._register_handlers()
 
         scene = context.scene

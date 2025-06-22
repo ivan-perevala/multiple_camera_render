@@ -15,6 +15,7 @@ from bpy.types import Object, Context
 import bhqmain4 as bhqmain
 
 from . validate_id import validate_camera_object
+from . chunk_persistent_main import PersistentMain
 
 log = logging.getLogger(__name__)
 _err = log.error
@@ -76,6 +77,11 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
             if (functions := getattr(bpy.app.handlers, handler_name, None))
         }
 
+    def _pmain_update_scene_properties(self, context: Context, cam: Camera):
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=cam)
+
     def _restore_handlers(self):
         for handler_name, functions in self.handler_callbacks.items():
             getattr(bpy.app.handlers, handler_name)[:] = functions
@@ -106,6 +112,8 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
             scene.camera = self.camera_ob
         else:
             _err("Initial camera was removed by user, it would not be restored")
+
+        self._pmain_update_scene_properties(context, scene.camera.data)
 
         self._restore_handlers()
 
