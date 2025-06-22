@@ -8,6 +8,8 @@ from __future__ import annotations
 def __reload_submodules(lc):
     from importlib import reload
 
+    if "validate_id" in lc:
+        reload(validate_id)
     if "chunk_main" in lc:
         reload(chunk_main)
     if "chunk_render" in lc:
@@ -30,6 +32,7 @@ __reload_submodules(locals())
 del __reload_submodules
 
 
+from . import validate_id
 from . import chunk_main
 from . import chunk_render
 from . import chunk_restore

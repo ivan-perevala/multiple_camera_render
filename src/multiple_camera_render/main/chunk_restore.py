@@ -14,6 +14,8 @@ from bpy.types import Object, Context
 
 import bhqmain4 as bhqmain
 
+from . validate_id import validate_camera_object
+
 log = logging.getLogger(__name__)
 _err = log.error
 
@@ -100,12 +102,10 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         scene.render.filepath = self.render_filepath
         scene.render.use_lock_interface = self.use_lock_interface
 
-        try:
-            getattr(self.camera_ob, "name")
-        except ReferenceError:
-            _err("Initial camera was removed by user, it would not be restored")
-        else:
+        if validate_camera_object(self.camera_ob):
             scene.camera = self.camera_ob
+        else:
+            _err("Initial camera was removed by user, it would not be restored")
 
         self._restore_handlers()
 

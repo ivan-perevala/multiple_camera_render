@@ -25,6 +25,7 @@ import bhqui4 as bhqui
 
 from . chunk_restore import CONFLICTING_HANDLERS
 from . clockwise_iter import ClockwiseIterator
+from . validate_id import validate_camera_object
 from .. import ADDON_PKG
 
 if TYPE_CHECKING:
@@ -148,12 +149,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
                     _info("All cameras from initially evaluated has been processed, processing complete.")
                     return
 
-                try:
-                    getattr(next_camera, "name")
-                except ReferenceError:
-                    _err("Camera from initial array was removed by user")
-                else:
+                if validate_camera_object(next_camera):
                     break
+                else:
+                    _err("Camera from initial array was removed by user")
 
             if next_camera:
                 scene.camera = next_camera

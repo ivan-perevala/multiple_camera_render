@@ -19,8 +19,7 @@ import bhqmain4 as bhqmain
 import bhqrprt4 as bhqrprt
 import bhqui4 as bhqui
 
-bhqui.template_preset
-
+from . validate_id import validate_id, validate_camera_object
 from .. import icons
 
 if TYPE_CHECKING:
@@ -177,14 +176,13 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
 
     def depsgraph_update_post(self, scene, dg):
         curr_camera = None
-        if scene.camera and scene.camera.type == 'CAMERA':
+        if validate_camera_object(scene.camera):
             curr_camera = scene.camera.data
 
         if self.prev_camera != curr_camera:
             prev_camera = self.prev_camera
-            try:
-                getattr(prev_camera, "name_full", None)
-            except ReferenceError:
+
+            if not validate_id(prev_camera):
                 log.warning("Previous camera data is no longer valid, resetting to None")
                 prev_camera = None
 
