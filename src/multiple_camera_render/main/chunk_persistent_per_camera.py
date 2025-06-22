@@ -13,6 +13,7 @@ import bpy
 from bpy.types import Context, Camera, Scene, Operator, STATUSBAR_HT_header, Menu, UILayout
 from bpy.props import BoolProperty
 from bl_operators.presets import AddPresetBase
+import addon_utils
 
 import bhqmain4 as bhqmain
 import bhqrprt4 as bhqrprt
@@ -100,6 +101,13 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         for data_path in names
         if data_path is not None
     )
+
+    # NOTE: Evaluated from UI, because Cycles might be registered after Multiple Camera Render or just disabled.
+    # Similar behavior might take place if some properties was renames/removed/not exist yet in different Blender
+    # versions. That is the only reason why this map is used for UI display and labels not used as `name` argument
+    # for `use_per_camera_*`` flag properties.
+    SCENE_DATA_PATHS_LABEL_MAP: ClassVar[dict[str, str]] = dict()
+
     SCENE_DATA_PATHS_SPLIT: ClassVar[dict[str, list[str]]] = {
         data_path: data_path.split('.')
         for data_path in SCENE_DATA_PATHS
@@ -162,6 +170,11 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         else:
             self._unregister_per_camera_handler()
 
+    @staticmethod
+    def check_cycles() -> bool:
+        loaded_default, loaded_state = addon_utils.check("cycles")
+        return loaded_default or loaded_state
+
     def depsgraph_update_post(self, scene, dg):
         curr_camera = None
         if scene.camera and scene.camera.type == 'CAMERA':
@@ -192,18 +205,8 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
             if per_camera and per_camera():
                 per_camera().conditional_handler_register(scene_props=self)
 
-        for data_path, path_split in cls.SCENE_DATA_PATHS_SPLIT.items():
-            item = Scene
-            for key in path_split:
-                item = item.bl_rna.properties.get(key)
-                if key != path_split[-1] and isinstance(item, bpy.types.PointerProperty):
-                    item = item.fixed_type
-
-            assert isinstance(item, bpy.types.Property), f"{item} is not a property"
-
-            annotations[cls.SCENE_FLAG_MAP[data_path]] = BoolProperty(
-                name=item.name,
-                description=item.description,
+        for data_path, name in cls.SCENE_FLAG_MAP.items():
+            annotations[name] = BoolProperty(
                 update=_property_update,
                 options={'SKIP_SAVE'}
             )
@@ -212,11 +215,49 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
 
         return r_type
 
+    def set_scene_flags_no_update(self, scene: Scene, state: bool):
+        for name in self.SCENE_FLAG_MAP.values():
+            scene.mcr[name] = state
+
+        if state:
+            self._register_per_camera_handler()
+        else:
+            self._unregister_per_camera_handler()
+
+    @classmethod
+    def eval_scene_flag_ui_label(cls, data_path: str) -> None | str:
+        if label := cls.SCENE_DATA_PATHS_LABEL_MAP.get(data_path):
+            return label
+
+        _sentinel = object()
+
+        item = Scene
+        path_split = cls.SCENE_DATA_PATHS_SPLIT[data_path]
+        for key in path_split:
+            item = item.bl_rna.properties.get(key, _sentinel)
+
+            if item is _sentinel:
+                log.debug(f"Item \"{key}\" of data path \"{data_path}\" is missing, would be skipped")
+                break
+
+            if key != path_split[-1] and isinstance(item, bpy.types.PointerProperty):
+                item = item.fixed_type
+        else:
+            if isinstance(item, bpy.types.Property):
+                label = cls.SCENE_DATA_PATHS_LABEL_MAP[data_path] = item.name
+                return label
+
     def dump_scene_properties_to_camera(self, scene: Scene, cam: Camera):
         for data_path, flag_name in self.SCENE_FLAG_MAP.items():
             if scene.mcr.path_resolve(flag_name):
                 idprop_name = self.CAMERA_IDPROP_MAP[data_path]
-                cam.mcr[idprop_name] = scene.path_resolve(data_path)
+
+                try:
+                    value = scene.path_resolve(data_path)
+                except ValueError:
+                    continue
+
+                cam.mcr[idprop_name] = value
 
     def update_scene_properties_from_camera(self, scene: Scene, cam: Camera):
         _sentinel = object()
@@ -240,15 +281,6 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                     if struct is not _sentinel:
                         if hasattr(struct, attr_name):
                             setattr(struct, attr_name, value)
-
-    def set_scene_flags_no_update(self, scene: Scene, state: bool):
-        for name in self.SCENE_FLAG_MAP.values():
-            scene.mcr[name] = state
-
-        if state:
-            self._register_per_camera_handler()
-        else:
-            self._unregister_per_camera_handler()
 
 
 class SCENE_OT_mcr_per_camera_enable(Operator):

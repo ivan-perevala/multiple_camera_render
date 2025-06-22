@@ -43,14 +43,21 @@ class MCR_PT_scene_use_per_camera(Panel):
 
     bl_space_type = 'TOPBAR'
     bl_region_type = 'HEADER'
-    bl_ui_units_x = 36
+    #bl_ui_units_x = 36
 
     def draw(self, context):
         layout = self.layout
+
         layout.use_property_decorate = False
         layout.use_property_split = False
-        scene_props = context.scene.mcr
+        layout.ui_units_x = 32
+        
+        skip_cycles = not main.PersistentPerCamera.check_cycles()
+        if skip_cycles:
+            layout.ui_units_x = 26
 
+        scene_props = context.scene.mcr
+        
         row = layout.row()
         row.label(text="Use Flags")
 
@@ -71,6 +78,9 @@ class MCR_PT_scene_use_per_camera(Panel):
         row = layout.row()
 
         for category, data_paths in main.PersistentPerCamera.SCENE_DATA_PATHS_GROUPED.items():
+            if category == "Cycles" and skip_cycles:
+                continue
+
             col = row.column(align=True)
             col.label(text=category)
 
@@ -78,7 +88,11 @@ class MCR_PT_scene_use_per_camera(Panel):
                 if data_path is None:
                     col.separator(type='LINE')
                 else:
-                    col.prop(scene_props, main.PersistentPerCamera.SCENE_FLAG_MAP[data_path])
+                    col.prop(
+                        scene_props,
+                        main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
+                        text=main.PersistentPerCamera.eval_scene_flag_ui_label(data_path)
+                    )
 
 
 def additional_TOPBAR_MT_render_draw(self, context):

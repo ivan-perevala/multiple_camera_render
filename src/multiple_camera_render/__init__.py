@@ -8,23 +8,17 @@ from __future__ import annotations
 
 import os
 import logging
+from typing import ClassVar
 
 import bpy
 from bpy.props import PointerProperty
 from bpy.types import Scene, Camera, TOPBAR_MT_render
 from bpy.app.handlers import persistent
+import addon_utils
 
-# NOTE: Development mode uses different package than release, this should be here for now.
-#
-# try:
-#     from ... import __package__ as ADDON_PKG
-# except ImportError:
-#     ADDON_PKG = __package__
-# else:
-#     if ADDON_PKG == 'bl_ext':
-#         ADDON_PKG = __package__
 
 ADDON_PKG = __package__
+
 
 import bhqrprt4 as bhqrprt
 import bhqmain4 as bhqmain
