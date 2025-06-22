@@ -113,6 +113,11 @@ def register():
 
 @bhqrprt.unregister_reports(log)
 def unregister():
+    p_main = main.PersistentMain.get_instance()
+    if p_main is not None:
+        if p_main().cancel(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
+            log.warning("Unable to cancel persistent chunk at unregistering")
+
     for handler, func in reversed(_handlers):
         if func in handler:
             handler.remove(func)
