@@ -24,6 +24,11 @@ def __reload_submodules(lc):
         reload(chunk_persistent_main)
     if "chunk_persistent_per_camera" in lc:
         reload(chunk_persistent_per_camera)
+    if "per_camera_enable" in lc:
+        reload(per_camera_enable)
+    if "per_camera_preset" in lc:
+        reload(per_camera_preset)
+
     if "main" in lc:
         reload(main)
 
@@ -40,12 +45,16 @@ from . import chunk_timers
 from . import clockwise_iter
 from . import chunk_persistent_main
 from . import chunk_persistent_per_camera
+from . import per_camera_enable
+from . import per_camera_preset
 from . import main
 
 from . main import RENDER_OT_multiple_camera_render
 from . chunk_render import check_handlers_conflicts
 from . chunk_persistent_main import PersistentMain
-from . chunk_persistent_per_camera import PersistentPerCamera, SCENE_OT_mcr_per_camera_enable, SCENE_MT_mcr_per_camera_presets, SCENE_OT_mcr_per_camera_preset_add
+from . chunk_persistent_per_camera import PersistentPerCamera
+from . per_camera_enable import SCENE_OT_mcr_per_camera_enable
+from . per_camera_preset import SCENE_MT_mcr_per_camera_presets, SCENE_OT_mcr_per_camera_preset_add
 
 __all__ = (
     # file://./main.py
@@ -56,7 +65,9 @@ __all__ = (
     "PersistentMain",
     # file://./chunk_persistent_per_camera.py
     "PersistentPerCamera",
+    # file://./per_camera_enable.py
     "SCENE_OT_mcr_per_camera_enable",
+    # file://./per_camera_preset.py
     "SCENE_MT_mcr_per_camera_presets",
     "SCENE_OT_mcr_per_camera_preset_add",
 )

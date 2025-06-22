@@ -10,14 +10,11 @@ import logging
 from typing import TYPE_CHECKING, ClassVar
 
 import bpy
-from bpy.types import Context, Camera, Scene, Operator, STATUSBAR_HT_header, Menu, UILayout
+from bpy.types import Context, Camera, Scene, STATUSBAR_HT_header, UILayout
 from bpy.props import BoolProperty
-from bl_operators.presets import AddPresetBase
 import addon_utils
 
 import bhqmain4 as bhqmain
-import bhqrprt4 as bhqrprt
-import bhqui4 as bhqui
 
 from . validate_id import validate_id, validate_camera_object
 from .. import icons
@@ -279,60 +276,3 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                     if struct is not _sentinel:
                         if hasattr(struct, attr_name):
                             setattr(struct, attr_name, value)
-
-
-class SCENE_OT_mcr_per_camera_enable(Operator):
-    bl_idname = "scene.mcr_per_camera_enable"
-    bl_label = "Enable"
-    bl_options = {'REGISTER'}
-
-    disable: BoolProperty(
-        default=False,
-        options={'SKIP_SAVE'},
-    )
-
-    @classmethod
-    def poll(cls, context):
-        per_camera = PersistentPerCamera.get_instance()
-        return per_camera and per_camera()
-
-    @classmethod
-    def description(cls, context, properties):
-        if properties.get('disable'):
-            return "Disable all flags, so nothing would be captured"
-        else:
-            return "Enable all flags, capture everything in the list"
-
-    @bhqrprt.operator_report(log)
-    def execute(self, context):
-        per_camera = PersistentPerCamera.get_instance()
-
-        if per_camera and per_camera():
-            per_camera().set_scene_flags_no_update(scene=context.scene, state=not self.disable)
-
-        return {'FINISHED'}
-
-
-class SCENE_MT_mcr_per_camera_presets(Menu):
-    bl_label = "Per Camera Presets"
-    preset_subdir = "scene/multiple_camera_render/per_camera"
-    preset_operator = "script.execute_preset"
-    draw = Menu.draw_preset
-
-
-class SCENE_OT_mcr_per_camera_preset_add(AddPresetBase, Operator):
-    bl_idname = "scene.mcr_per_camera_preset_add"
-    bl_label = "Add Scene Per Camera Preset"
-    preset_menu = "SCENE_MT_mcr_per_camera_presets"
-
-    preset_defines = [
-        "scene = bpy.context.scene",
-        "scene_props = scene.mcr",
-    ]
-
-    preset_values = [
-        f"scene_props.{flag_name}"
-        for flag_name in PersistentPerCamera.SCENE_FLAG_MAP.values()
-    ]
-
-    preset_subdir = SCENE_MT_mcr_per_camera_presets.preset_subdir
