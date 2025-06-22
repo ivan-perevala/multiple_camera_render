@@ -26,11 +26,10 @@ This button will open extensions preferences, where you can see information abou
 
 At this point you can disable conflicting addons, or just ignore the warning.
 
-.. note::
+.. warning::
     It is recommended to disable conflicting addons.
 
 What would happen if you ignore the warning?
 --------------------------------------------
 
-If you ignore the warning, Multiple Camera Render will still work, but there is not guarantee that other addons will function correctly. The idea is that when you would start any of Multiple Camera Render operators it would temporarily remove conflicting functions from Blender handlers, so Multiple Camera Render can work correctly. But this may lead to unexpected behavior of other addons, as they would not be able to use their functionality while Multiple Camera Render is running.
-
+If you ignore the warning, Multiple Camera Render will still work, but there is not guarantee that it will function correctly.

@@ -71,20 +71,10 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         self.camera_ob = None
         self.use_lock_interface = False
 
-    def _capture_handlers(self):
-        self.handler_callbacks = {
-            handler_name: functions[:] for handler_name in CONFLICTING_HANDLERS
-            if (functions := getattr(bpy.app.handlers, handler_name, None))
-        }
-
     def _pmain_update_scene_properties(self, context: Context, cam: Camera):
         pmain = PersistentMain.get_instance()
         if pmain and pmain():
             pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=cam)
-
-    def _restore_handlers(self):
-        for handler_name, functions in self.handler_callbacks.items():
-            getattr(bpy.app.handlers, handler_name)[:] = functions
 
     def invoke(self, context):
         super().invoke(context)
@@ -95,7 +85,6 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         self.render_filepath = scene.render.filepath
         self.camera_ob = scene.camera
         self.use_lock_interface = scene.render.use_lock_interface
-        self._capture_handlers()
 
         return bhqmain.InvokeState.SUCCESSFUL
 
@@ -114,7 +103,5 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
             _err("Initial camera was removed by user, it would not be restored")
 
         self._pmain_update_scene_properties(context, scene.camera.data)
-
-        self._restore_handlers()
 
         return bhqmain.InvokeState.SUCCESSFUL

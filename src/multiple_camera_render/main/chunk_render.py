@@ -19,6 +19,7 @@ import importlib
 import bpy
 from bpy.types import Scene, Context, Camera
 from mathutils import Vector
+import addon_utils
 
 import bhqmain4 as bhqmain
 import bhqui4 as bhqui
@@ -308,21 +309,22 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
     def _cancel_progress(self):
         bhqui.progress.complete(identifier=self._PROGRESS_ID)
 
-    def clear_conflicting_handlers(self):
-        for handler_name in CONFLICTING_HANDLERS:
-            handlers: list = getattr(bpy.app.handlers, handler_name)
-            if handlers:
-                log.warning(f"Cleared \"{handler_name}\" handlers which may cause incorrect behavior:")
-                for handle in handlers:
-                    log.warning(f"\t{handle}")
+    def log_conflicting_handlers(self):
+        conflicting_addons, conflicting_modules = check_handlers_conflicts()
+        if conflicting_addons or conflicting_modules:
+            for mod in conflicting_addons:
+                bl_info = addon_utils.module_bl_info(mod)
+                log.warning(f"Addon \"{bl_info.get('name')}\" from \"{mod.__package__}\" may cause incorrect behavior")
 
-            handlers.clear()
+            for mod in conflicting_modules:
+                log.warning(f"Module \"{mod.__package__}\" may cause incorrect behavior")
 
     def invoke(self, context):
         self.clear_conflicting_handlers()
         if not self._eval_cameras(context):
             return bhqmain.InvokeState.FAILED
 
+        self.log_conflicting_handlers()
         self._register_handlers()
 
         scene = context.scene
