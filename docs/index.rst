@@ -60,6 +60,7 @@ Links
    pages/quickstart
    pages/support
    pages/naming.rst
+   pages/per_camera.rst
    pages/release_notes
    pages/conflicts
    pages/libraries

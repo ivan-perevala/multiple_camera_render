@@ -24,6 +24,7 @@ There are many possible uses for this addon - it all depends on your imagination
 
 ## Release Notes
 
+* [Version 4.3.0 (upcoming)](./docs/pages/release_notes/v4.4.0.md)
 * [Version 4.3.0 (latest)](./docs/pages/release_notes/v4.3.0.md)
 * [Version 4.2.1](./docs/pages/release_notes/v4.2.1.md)
 * [Version 4.2.0](./docs/pages/release_notes/v4.2.0.md)
