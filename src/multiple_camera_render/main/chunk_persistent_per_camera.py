@@ -134,10 +134,12 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
             log.debug("No initial camera set in the scene")
 
         self.conditional_handler_register(scene_props=scene.mcr)
+        self.register_save_pre_handler()
 
         return super().invoke(context)
 
     def cancel(self, context):
+        self.unregister_save_pre_handler()
         self.unregister_per_camera_handler()
         return super().cancel(context)
 
@@ -287,4 +289,17 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                     if struct is not _sentinel:
                         if hasattr(struct, attr_name):
                             setattr(struct, attr_name, value)
-                            print(struct, attr_name, value)
+
+    def register_save_pre_handler(self):
+        if self.save_pre_handler not in bpy.app.handlers.save_pre:
+            bpy.app.handlers.save_pre.append(self.save_pre_handler)
+
+    def unregister_save_pre_handler(self):
+        if self.save_pre_handler in bpy.app.handlers.save_pre:
+            bpy.app.handlers.save_pre.remove(self.save_pre_handler)
+
+    def save_pre_handler(self, fp, _):
+        scene = bpy.context.scene
+        camera = scene.camera
+        if validate_camera_object(camera):
+            self.dump_scene_properties_to_camera(scene, camera.data)
