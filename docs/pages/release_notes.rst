@@ -12,6 +12,9 @@ Release Notes
 Releases:
 ---------
 
+.. include:: release_notes/v4.3.1.md
+   :parser: myst_parser.sphinx_
+
 .. include:: release_notes/v4.3.0.md
    :parser: myst_parser.sphinx_
 
