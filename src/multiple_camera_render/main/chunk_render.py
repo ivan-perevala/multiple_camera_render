@@ -131,11 +131,6 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         scene.render.filepath = os.path.join(directory, f"{name}{ext}")
 
-    def _pmain_update_scene_properties(self, context: Context, cam: Camera):
-        pmain = PersistentMain.get_instance()
-        if pmain and pmain():
-            pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=cam)
-
     def handler_render_pre(self, scene: Scene, _=None):
         self.status = RenderStatus.RENDERING
 
@@ -163,7 +158,11 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
             if next_camera:
                 scene.camera = next_camera
-                self._pmain_update_scene_properties(context, next_camera.data)
+
+                pmain = PersistentMain.get_instance()
+                if pmain and pmain():
+                    pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=next_camera.data)
+
                 self._eval_render_filepath(context)
                 self.status = RenderStatus.NEED_LAUNCH
                 _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
@@ -257,8 +256,11 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         pop_current_camera = next(self.camera_iterator, None)
         assert pop_current_camera == curr_camera
-        
-        self._pmain_update_scene_properties(context, curr_camera.data)
+
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=curr_camera.data)
+
         self._eval_render_filepath(context)
 
         if cameras.size:
@@ -320,7 +322,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
                 log.warning(f"Module \"{mod.__package__}\" may cause incorrect behavior")
 
     def invoke(self, context):
-        self.clear_conflicting_handlers()
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().per_camera.unregister_per_camera_handler()
+
         if not self._eval_cameras(context):
             return bhqmain.InvokeState.FAILED
 
@@ -342,5 +347,9 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         if self.main.preview and context.screen.is_animation_playing:
             bpy.ops.screen.animation_cancel(restore_frame=True)
+
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().per_camera.conditional_handler_register(scene_props=context.scene.mcr)
 
         return super().cancel(context)

@@ -138,7 +138,7 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         return super().invoke(context)
 
     def cancel(self, context):
-        self._unregister_per_camera_handler()
+        self.unregister_per_camera_handler()
         return super().cancel(context)
 
     @staticmethod
@@ -154,13 +154,13 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
             else:
                 layout.label(text="Per Camera Suspended", icon_value=icons.get_id('per_camera_dimmed'))
 
-    def _register_per_camera_handler(self):
+    def register_per_camera_handler(self):
         if self.depsgraph_update_post not in bpy.app.handlers.depsgraph_update_post:
             bpy.app.handlers.depsgraph_update_post.append(self.depsgraph_update_post)
             STATUSBAR_HT_header.append(self._statusbar_draw_status)
             log.debug("Handler added to \"depsgraph_update_post\"")
 
-    def _unregister_per_camera_handler(self):
+    def unregister_per_camera_handler(self):
         if self.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post:
             STATUSBAR_HT_header.remove(self._statusbar_draw_status)
             bpy.app.handlers.depsgraph_update_post.remove(self.depsgraph_update_post)
@@ -169,10 +169,10 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
     def conditional_handler_register(self, *, scene_props):
         for name in self.SCENE_FLAG_MAP.values():
             if getattr(scene_props, name, False):
-                self._register_per_camera_handler()
+                self.register_per_camera_handler()
                 break
         else:
-            self._unregister_per_camera_handler()
+            self.unregister_per_camera_handler()
 
     @staticmethod
     def check_cycles() -> bool:
@@ -226,9 +226,9 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
             scene.mcr[name] = state
 
         if state:
-            self._register_per_camera_handler()
+            self.register_per_camera_handler()
         else:
-            self._unregister_per_camera_handler()
+            self.unregister_per_camera_handler()
 
     @classmethod
     def eval_scene_flag_ui_label(cls, data_path: str) -> None | str:

@@ -71,11 +71,6 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         self.camera_ob = None
         self.use_lock_interface = False
 
-    def _pmain_update_scene_properties(self, context: Context, cam: Camera):
-        pmain = PersistentMain.get_instance()
-        if pmain and pmain():
-            pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=cam)
-
     def invoke(self, context):
         super().invoke(context)
 
@@ -102,6 +97,11 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         else:
             _err("Initial camera was removed by user, it would not be restored")
 
-        self._pmain_update_scene_properties(context, scene.camera.data)
+        if validate_camera_object(scene.camera):
+            pmain = PersistentMain.get_instance()
+            if pmain and pmain():
+                pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=scene.camera.data)
+        else:
+            _err("There is no valid active camera to update scene properties at restore")
 
         return bhqmain.InvokeState.SUCCESSFUL
