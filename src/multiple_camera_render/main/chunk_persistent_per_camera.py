@@ -195,10 +195,12 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
     def eval_scene_flag_properties(cls):
         annotations = dict()
 
+        from . chunk_persistent_main import PersistentMain
+
         def _property_update(self, context):
-            per_camera = cls.get_instance()
-            if per_camera and per_camera():
-                per_camera().conditional_handler_register(scene_props=self)
+            pmain = PersistentMain.get_instance()
+            if pmain and pmain():
+                pmain().per_camera.conditional_handler_register(scene_props=self)
 
         for data_path, name in cls.SCENE_FLAG_MAP.items():
             annotations[name] = BoolProperty(

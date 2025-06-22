@@ -27,6 +27,7 @@
         "msgctxt",
         "mypy",
         "Perevala",
+        "pmain",
         "pylint",
         "pyproject",
         "pyright",

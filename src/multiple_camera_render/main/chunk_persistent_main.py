@@ -10,12 +10,14 @@ from bpy.types import Context
 
 import bhqmain4 as bhqmain
 
-from . import chunk_persistent_per_camera
+from . chunk_persistent_per_camera import PersistentPerCamera
 
 
 class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
+    per_camera: PersistentPerCamera
+
     chunks = {
-        "per_camera": chunk_persistent_per_camera.PersistentPerCamera,
+        "per_camera": PersistentPerCamera,
     }
 
     def __init__(self, main):
