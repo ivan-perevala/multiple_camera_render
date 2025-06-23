@@ -6,33 +6,32 @@
 
 from __future__ import annotations
 
-from bpy.types import UILayout, Menu
+from bpy.types import UILayout, Panel
 
 from . import icons
 from . import ADDON_PKG
 assert ADDON_PKG
 
 
-class MCR_MT_camera_usage(Menu):
-    bl_idname = "MCR_MT_camera_usage"
-    bl_label = "Camera Usage"
+class MCR_PT_options(Panel):
+    bl_label = "Options"
+
+    bl_space_type = 'TOPBAR'
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 12
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         scene_props = context.scene.mcr
-        layout.prop(scene_props, "cameras_usage", expand=True)
 
+        col = layout.column()
 
-class MCR_MT_direction(Menu):
-    bl_idname = "MCR_MT_direction"
-    bl_label = "Direction"
-
-    def draw(self, context):
-        layout = self.layout
-
-        scene_props = context.scene.mcr
-        layout.prop(scene_props, "direction", expand=True)
+        col.prop(scene_props, "cameras_usage", expand=True)
+        col.prop(scene_props, "direction", expand=True)
+        col.prop(scene_props, "keep_frame_in_filepath")
 
 
 def additional_TOPBAR_MT_render_draw(self, context):
@@ -71,12 +70,8 @@ def additional_TOPBAR_MT_render_draw(self, context):
     props.preview = True
     props.animation = True
 
-    scene_props = context.scene.mcr
-
     def _get_menu_icon(attr: str):
+        scene_props = context.scene.mcr
         return col.enum_item_icon(scene_props, attr, getattr(scene_props, attr))
 
-    col.menu(menu=MCR_MT_camera_usage.bl_idname, icon_value=_get_menu_icon("cameras_usage"))
-    col.menu(menu=MCR_MT_direction.bl_idname, icon_value=_get_menu_icon("direction"))
-
-    col.prop(scene_props, "keep_frame_in_filepath")
+    col.popover(panel=MCR_PT_options.__name__, icon_value=_get_menu_icon("cameras_usage"))

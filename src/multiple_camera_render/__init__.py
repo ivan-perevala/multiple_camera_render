@@ -59,8 +59,7 @@ _classes = (
     props.Preferences,
     props.SceneProps,
     main.RENDER_OT_multiple_camera_render,
-    ui.MCR_MT_camera_usage,
-    ui.MCR_MT_direction,
+    ui.MCR_PT_options,
 )
 
 _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
