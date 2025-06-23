@@ -32,6 +32,18 @@ class Icons:
         'readme',
     )
 
+    @classmethod
+    def register(cls):
+        if cls.cache is None:
+            cls.cache = bhqui.IconsCache(
+                directory=os.path.dirname(__file__),
+                data_identifiers=cls.DATA_ICONS_DEFAULT,
+            )
+
+    @classmethod
+    def unregister(cls) -> None:
+        cls.cache = None
+
 
 IdentifierType = Literal[
     'render',
@@ -51,10 +63,6 @@ IdentifierType = Literal[
 
 
 def get_id(identifier: IdentifierType) -> int:
-    if Icons.cache is None:
-        Icons.cache = bhqui.IconsCache(
-            directory=os.path.dirname(__file__),
-            data_identifiers=Icons.DATA_ICONS_DEFAULT,
-        )
-
-    return Icons.cache.get_id(identifier)
+    if Icons.cache:
+        return Icons.cache.get_id(identifier)
+    return 0

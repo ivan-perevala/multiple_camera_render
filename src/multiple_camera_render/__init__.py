@@ -73,6 +73,8 @@ def handler_load_post(_=None):
 
 @bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(os.path.dirname(__file__), "logs"))
 def register():
+    icons.Icons.register()
+
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
@@ -88,3 +90,5 @@ def unregister():
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
     del Scene.mcr
+
+    icons.Icons.unregister()
