@@ -30,8 +30,6 @@ class Icons:
         'license',
         'preferences',
         'readme',
-        'conflicting_addons',
-        'conflicting_addon',
     )
 
 
@@ -49,8 +47,6 @@ IdentifierType = Literal[
     'license',
     'preferences',
     'readme',
-    'conflicting_addons',
-    'conflicting_addon',
 ]
 
 

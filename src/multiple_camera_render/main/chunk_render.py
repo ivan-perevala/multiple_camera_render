@@ -13,18 +13,14 @@ import math
 import numpy as np
 import os
 import time
-import inspect
-import importlib
 
 import bpy
 from bpy.types import Scene, Context
 from mathutils import Vector
-import addon_utils
 
 import bhqmain4 as bhqmain
 import bhqui4 as bhqui
 
-from . chunk_restore import CONFLICTING_HANDLERS
 from . clockwise_iter import ClockwiseIterator
 
 if TYPE_CHECKING:
@@ -43,34 +39,6 @@ class RenderStatus(IntEnum):
     RENDERING = auto()
     COMPLETE = auto()
     CANCELLED = auto()
-
-
-def check_handlers_conflicts() -> tuple[set, set]:
-    r_addons = set()
-    r_modules = set()
-
-    for handler_name in CONFLICTING_HANDLERS:
-        functions = getattr(bpy.app.handlers, handler_name, [])
-        for func in functions:
-            mod = inspect.getmodule(func)
-
-            pkg = mod.__package__
-
-            if pkg.startswith('bl_ext.'):
-                pkg_split = pkg.split('.')
-
-                if len(pkg_split) > 3:
-                    try:
-                        mod = importlib.import_module(name='.'.join(pkg_split[0:3]))
-                    except ModuleNotFoundError:
-                        pass
-
-                r_addons.add(mod)
-
-            else:
-                r_modules.add(mod)
-
-    return r_addons, r_modules
 
 
 class Render(bhqmain.MainChunk['Main', 'Context']):
@@ -293,21 +261,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
     def _cancel_progress(self):
         bhqui.progress.complete(identifier=self._PROGRESS_ID)
 
-    def log_conflicting_handlers(self):
-        conflicting_addons, conflicting_modules = check_handlers_conflicts()
-        if conflicting_addons or conflicting_modules:
-            for mod in conflicting_addons:
-                bl_info = addon_utils.module_bl_info(mod)
-                log.warning(f"Addon \"{bl_info.get('name')}\" from \"{mod.__package__}\" may cause incorrect behavior")
-
-            for mod in conflicting_modules:
-                log.warning(f"Module \"{mod.__package__}\" may cause incorrect behavior")
-
     def invoke(self, context):
         if not self._eval_cameras(context):
             return bhqmain.InvokeState.FAILED
 
-        self.log_conflicting_handlers()
         self._register_handlers()
 
         scene = context.scene

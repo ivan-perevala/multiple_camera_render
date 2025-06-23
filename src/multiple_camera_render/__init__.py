@@ -55,8 +55,6 @@ from . import props
 from . import ui
 from . import main
 
-from . main import check_handlers_conflicts
-
 _classes = (
     props.Preferences,
     props.SceneProps,

@@ -7,29 +7,19 @@ Conflicts
 
 Extension can conflict with other extensions. The reason for this is lays in how Blender API was designed: different extensions can register its functionality to the same Blender handlers. This situation is hard to predict, as far as there is a wide variety of extensions available.
 
-How is it handled?
-------------------
+Known issues:
+*************
 
-User would be notified about conflicts in user interface. If conflict is detected, a new button will appear in top of Multiple Camera Render section of Render Menu:
+* **Individual Camera Properties** - functionality is untested addons cant work in pair.
+* **Auto Active Camera Switcher** - blocks camera from switching which leads to rendering same camera over and over again.
 
-.. image:: https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/conflict_warn_v422.webp
-    :alt: Conflict Warning
-    :align: center
+Why is it not handled?
+**********************
 
+Multiple Camera Render version 4.3.0 was the only version which was able to handle those situations and guaranteed that the addon would work as expected. Unfortunately, this version got an anonymous report on Blender Extensions platform, so in order to make Multiple Camera Render available again it was mandatory to remove this functionality in its entirety. 
 
-This button will open extensions preferences, where you can see information about conflicting addons:
+What does it mean for me?
+*************************
 
-
-.. image:: https://raw.githubusercontent.com/ivan-perevala/multiple_camera_render/main/.github/images/conflicting_addons_v422.webp
-    :alt: Conflicting Addons
-    :align: center
-
-At this point you can disable conflicting addons, or just ignore the warning.
-
-.. warning::
-    It is recommended to disable conflicting addons.
-
-What would happen if you ignore the warning?
---------------------------------------------
-
-If you ignore the warning, Multiple Camera Render will still work, but there is not guarantee that it will function correctly.
+That means that you can use Multiple Camera Render with other extensions, but you should be aware of the fact that some functionality may not work as expected. If you encounter any issues, please report them to the addon developer so they can be addressed in future updates.
+If you are a developer of an extension and you want to make sure that your extension works with Multiple Camera Render, please test it with the latest version of the addon and report any issues you encounter.

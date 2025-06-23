@@ -43,14 +43,6 @@ def additional_TOPBAR_MT_render_draw(self, context):
     col = layout.column()
     col.operator_context = 'INVOKE_DEFAULT'
 
-    conflicting_addons, conflicting_modules = main.check_handlers_conflicts()
-    if conflicting_addons or conflicting_modules:
-        col.operator(
-            operator="preferences.addon_show",
-            text="Conflicting Add-ons Detected",
-            icon_value=icons.get_id('conflicting_addons')
-        ).module = ADDON_PKG
-
     col.operator(
         operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Render Multiple Cameras",

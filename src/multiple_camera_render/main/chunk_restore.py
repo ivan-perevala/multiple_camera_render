@@ -9,7 +9,6 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-import bpy
 from bpy.types import Object, Context
 
 import bhqmain4 as bhqmain
@@ -19,36 +18,6 @@ _err = log.error
 
 if TYPE_CHECKING:
     from . chunk_main import Main
-
-
-CONFLICTING_HANDLERS = (
-    # Render handlers:
-    "render_init",
-    "render_stats",
-    "render_pre",
-    "render_post",
-    "render_complete",
-    "render_write",
-    "render_cancel",
-
-    # Scene frame:
-    "frame_change_pre",
-    "frame_change_post",
-
-    # Animation playback:
-    "animation_playback_pre",
-    "animation_playback_post",
-
-    # Composite:
-    "composite_pre",
-    "composite_post",
-    "composite_cancel",
-
-    # Dependency graph:
-    "depsgraph_update_post",
-    "depsgraph_update_pre",
-)
-"Handlers which may lead to addon conflicting with other addons."
 
 
 class Restore(bhqmain.MainChunk['Main', 'Context']):

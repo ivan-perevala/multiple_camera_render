@@ -26,35 +26,3 @@ def multiple_camera_render_module(repo):
         return importlib.import_module(f"bl_ext.{repo}.multiple_camera_render")
     except ModuleNotFoundError:
         return None
-
-
-@pytest.fixture
-def test_handler_conflict_multilevel_module(repo):
-    try:
-        return importlib.import_module(f"bl_ext.{repo}.test_handler_conflict_multilevel")
-    except ModuleNotFoundError:
-        return None
-
-
-@pytest.fixture
-def test_handler_conflict_one_level_module(repo):
-    try:
-        return importlib.import_module(f"bl_ext.{repo}.test_handler_conflict_one_level")
-    except ModuleNotFoundError:
-        return None
-
-
-@pytest.fixture
-def test_handlers_conflict_from_lib_module(repo):
-    try:
-        return importlib.import_module(f"bl_ext.{repo}.test_handlers_conflict_from_lib")
-    except ModuleNotFoundError:
-        return None
-
-
-@pytest.fixture
-def handlers_conflict_module():
-    try:
-        return importlib.import_module("handlers_conflict")
-    except ModuleNotFoundError:
-        return None

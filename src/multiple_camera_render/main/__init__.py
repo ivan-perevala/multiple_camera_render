@@ -34,11 +34,8 @@ from . import clockwise_iter
 from . import main
 
 from . main import RENDER_OT_multiple_camera_render
-from . chunk_render import check_handlers_conflicts
 
 __all__ = (
     # file://./main.py
     "RENDER_OT_multiple_camera_render",
-    # file://./chunk_render.py
-    "check_handlers_conflicts",
 )

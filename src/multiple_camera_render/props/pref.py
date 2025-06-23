@@ -123,36 +123,3 @@ class Preferences(AddonPreferences):
                 if panel:
                     col = panel.column(align=True)
                     bhqui.draw_wrapped_text(context, col, text=_CREDITS_TEXT, text_ctxt='CREDITS')
-
-        conflicting_addons, conflicting_modules = main.check_handlers_conflicts()
-        if conflicting_addons or conflicting_modules:
-            header, panel = layout.panel("mcr_pref_conflicting_addons", default_closed=False)
-            header.label(text="Conflicting Add-ons", icon_value=icons.get_id('conflicting_addons'))
-
-            if panel:
-                col = panel.column(align=True)
-
-                if conflicting_addons:
-                    bhqui.draw_wrapped_text(
-                        context, col,
-                        text="The following add-ons may interfere with the operation of the add-on:"
-                    )
-
-                    for mod in conflicting_addons:
-                        bl_info: dict = addon_utils.module_bl_info(mod)
-
-                        col.operator(
-                            operator="preferences.addon_show",
-                            text=bl_info.get('name'),
-                            icon_value=icons.get_id('conflicting_addon')
-                        ).module = mod.__package__
-
-                if conflicting_modules:
-                    bhqui.draw_wrapped_text(
-                        context, col,
-                        text="The following modules may interfere with the operation of the addon, "
-                        "they are used by other addons:"
-                    )
-
-                    for mod in conflicting_modules:
-                        col.operator(operator="wm.path_open", text=mod.__name__).filepath = os.path.dirname(mod.__file__)
