@@ -10,7 +10,7 @@ Extension can conflict with other extensions. The reason for this is lays in how
 Known issues:
 *************
 
-* **Individual Camera Properties** - functionality is untested addons cant work in pair.
+* **Individual Camera Properties** - functionality is untested addons can't work in pair.
 * **Auto Active Camera Switcher** - blocks camera from switching which leads to rendering same camera over and over again.
 
 Why is it not handled?
