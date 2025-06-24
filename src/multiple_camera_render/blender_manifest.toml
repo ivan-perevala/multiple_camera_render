@@ -18,7 +18,7 @@ blender_version_min = "4.2.0"
 license = ["SPDX:GPL-3.0-or-later"]
 wheels = [
     "wheels/bhqui-4.2.2-py3-none-any.whl",
-    "wheels/bhqrprt-4.2.4-py3-none-any.whl",
+    "wheels/bhqrprt-4.2.6-py3-none-any.whl",
     "wheels/bhqmain-4.2.1-py3-none-any.whl",
 ]
 copyright = ["2020-2025 Ivan Perevala, Vladlen Kuzmin"]
