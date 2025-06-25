@@ -31,6 +31,10 @@ class RENDER_OT_multiple_camera_render(Operator):
 
     @bhqrprt.operator_report(log)
     def invoke(self, context, event):
+        main = Main.get_instance()
+        if main and main():
+            return {'CANCELLED'}
+
         main = Main.create()
         main().animation = self.animation
         main().preview = self.preview
@@ -46,7 +50,7 @@ class RENDER_OT_multiple_camera_render(Operator):
 
     def modal(self, context, event):
         main = Main.get_instance()
-        if not main():
+        if not (main and main()):
             return {'CANCELLED'}
 
         return main().modal(context, event)

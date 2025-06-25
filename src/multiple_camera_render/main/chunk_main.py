@@ -44,21 +44,27 @@ class Main(bhqmain.MainChunk['Main', 'Context']):
 
     def modal(self, context: Context, event: None | Event):
         if event is None or event.type.startswith('TIMER'):
-            if self.preview or (not bpy.app.is_job_running('RENDER')):
-                if self.render.status == RenderStatus.NEED_LAUNCH:
-                    self.render.launch_render(context)
-            if self.render.status == RenderStatus.COMPLETE:
-                if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
-                    if self.quit:
-                        bpy.ops.wm.quit_blender()
-                    return {'FINISHED'}
-                else:
-                    return {'CANCELLED'}
-            elif self.render.status == RenderStatus.CANCELLED:
-                if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
-                    return {'FINISHED'}
-                else:
-                    return {'CANCELLED'}
+            match self.render.status:
+
+                case RenderStatus.NEED_LAUNCH:
+                    if not self.render.launch_render(context):
+                        log.warning("Unable to launch render")
+                        return {'CANCELLED'}
+
+                case RenderStatus.COMPLETE:
+                    if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
+                        if self.quit:
+                            bpy.ops.wm.quit_blender()
+                        return {'FINISHED'}
+                    else:
+                        return {'CANCELLED'}
+
+                case RenderStatus.CANCELLED:
+                    if self.cancel(context) == bhqmain.InvokeState.SUCCESSFUL:
+                        return {'FINISHED'}
+                    else:
+                        return {'CANCELLED'}
+
         if self.preview:
             if event.type == 'ESC' and event.value == 'PRESS':
                 if self.cancel(context) != bhqmain.InvokeState.SUCCESSFUL:

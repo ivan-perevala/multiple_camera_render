@@ -13,18 +13,14 @@ import math
 import numpy as np
 import os
 import time
-import inspect
-import importlib
 
 import bpy
 from bpy.types import Scene, Context, Camera
 from mathutils import Vector
-import addon_utils
 
 import bhqmain4 as bhqmain
 import bhqui4 as bhqui
 
-from . chunk_restore import CONFLICTING_HANDLERS
 from . chunk_persistent_main import PersistentMain
 from . clockwise_iter import ClockwiseIterator
 from . validate_id import validate_camera_object
@@ -40,47 +36,11 @@ _info = log.info
 
 
 class RenderStatus(IntEnum):
-    NONE = 0
-    PREVIEW = auto()
+    NONE = auto()
     NEED_LAUNCH = auto()
     RENDERING = auto()
     COMPLETE = auto()
     CANCELLED = auto()
-
-
-def check_handlers_conflicts() -> tuple[set, set]:
-    r_addons = set()
-    r_modules = set()
-
-    whitelist = (
-        ADDON_PKG.split('.'),
-    )
-
-    for handler_name in CONFLICTING_HANDLERS:
-        functions = getattr(bpy.app.handlers, handler_name, [])
-        for func in functions:
-            mod = inspect.getmodule(func)
-
-            pkg = mod.__package__
-
-            if pkg.startswith('bl_ext.'):
-                pkg_split = pkg.split('.')
-
-                if pkg_split[0:3] in whitelist:
-                    continue
-
-                if len(pkg_split) > 3:
-                    try:
-                        mod = importlib.import_module(name='.'.join(pkg_split[0:3]))
-                    except ModuleNotFoundError:
-                        pass
-
-                r_addons.add(mod)
-
-            else:
-                r_modules.add(mod)
-
-    return r_addons, r_modules
 
 
 class Render(bhqmain.MainChunk['Main', 'Context']):
@@ -131,82 +91,62 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         scene.render.filepath = os.path.join(directory, f"{name}{ext}")
 
-    def handler_render_pre(self, scene: Scene, _=None):
-        self.status = RenderStatus.RENDERING
-
-    def handler_frame_change(self, scene: Scene, _=None):
-        if self.main.preview:
-            self.handler_render_post(scene)
-
-    def handler_render_post(self, scene: Scene, _=None):
-        context = bpy.context
-
-        def _intern_eval_next_camera():
-            next_camera = None
-
-            while True:
-                next_camera = next(self.camera_iterator, None)
-                if next_camera is None:
-                    self.status = RenderStatus.COMPLETE
-                    _info("All cameras from initially evaluated has been processed, processing complete.")
-                    return
-
-                if validate_camera_object(next_camera):
-                    break
-                else:
-                    _err("Camera from initial array was removed by user")
-
-            if next_camera:
-                scene.camera = next_camera
-
-                pmain = PersistentMain.get_instance()
-                if pmain and pmain():
-                    pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=next_camera.data)
-
-                self._eval_render_filepath(context)
-                self.status = RenderStatus.NEED_LAUNCH
-                _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
-
-        if self.main.animation:
-            if scene.frame_current_final == scene.frame_end:
-                _intern_eval_next_camera()
-        else:
-            _intern_eval_next_camera()
-
-    def handler_render_cancel(self, scene: Scene, _=None):
-        self.status = RenderStatus.CANCELLED
-        _info("Render has been cancelled by user")
-
-    def handler_animation_playback_post(self, scene: Scene, _=None):
-        if self.main.preview:
-            self.status = RenderStatus.CANCELLED
-            _info("Animation playback has been cancelled by user")
-
-    def handler_load_pre(self, scene: Scene, _=None):
+    def cancel_main_on_load_pre(self, scene: Scene, _=None):
         _info("Cancelling because user loaded new file")
         self.main.cancel(bpy.context)
 
-    def _get_handler_callbacks(self):
-        return (
-            (bpy.app.handlers.render_pre, self.handler_render_pre),
-            (bpy.app.handlers.render_post, self.handler_render_post),
-            (bpy.app.handlers.render_cancel, self.handler_render_cancel),
-            (bpy.app.handlers.frame_change_pre, self.handler_frame_change),
-            (bpy.app.handlers.animation_playback_post, self.handler_animation_playback_post),
-            (bpy.app.handlers.load_pre, self.handler_load_pre),
-        )
+    def mark_render_started_on_render_pre(self, scene: Scene, _=None):
+        self.status = RenderStatus.RENDERING
 
-    def _register_handlers(self):
-        for bl_handlers, callback in self._get_handler_callbacks():
+    def mark_need_evaluation_on_render_post(self, scene: Scene, _=None):
+        self.status = RenderStatus.NEED_LAUNCH
+
+    def mark_cancelled_on_render_cancel(self, scene: Scene, _=None):
+        self.status = RenderStatus.CANCELLED
+        _info("Render has been cancelled by user")
+
+    def update_camera_on_first_frame_animation_preview(self, scene: Scene, _=None):
+        assert self.main.preview
+        assert self.main.animation
+
+        if scene.frame_current == scene.frame_start:
+            self.next_camera_update_eval(bpy.context)
+
+    def mark_cancelled_on_animation_playback_post(self, scene: Scene, _=None):
+        assert self.main.preview
+
+        self.status = RenderStatus.CANCELLED
+        _info("Animation playback has been cancelled by user")
+
+    def get_handler_callbacks(self):
+        r_handlers = [(bpy.app.handlers.load_pre, self.cancel_main_on_load_pre),]
+
+        if self.main.preview:
+            r_handlers.append((bpy.app.handlers.animation_playback_post,
+                              self.mark_cancelled_on_animation_playback_post))
+            if self.main.animation:
+                r_handlers.append((bpy.app.handlers.frame_change_pre,
+                                  self.update_camera_on_first_frame_animation_preview))
+
+        else:
+            r_handlers.extend([
+                (bpy.app.handlers.render_pre, self.mark_render_started_on_render_pre),
+                (bpy.app.handlers.render_post, self.mark_need_evaluation_on_render_post),
+                (bpy.app.handlers.render_cancel, self.mark_cancelled_on_render_cancel),
+            ])
+        return r_handlers
+
+    def register_handlers(self):
+        for bl_handlers, callback in self.get_handler_callbacks():
             if callback not in bl_handlers:
                 bl_handlers.append(callback)
 
-    def _unregister_handlers(self):
-        for bl_handlers, callback in reversed(self._get_handler_callbacks()):
+    def unregister_handlers(self):
+        for bl_handlers, callback in reversed(self.get_handler_callbacks()):
             if callback in bl_handlers:
                 bl_handlers.remove(callback)
 
-    def _eval_cameras(self, context: Context) -> bool:
+    def eval_cameras(self, context: Context) -> bool:
         _dbg("Evaluating camera queue")
 
         dt = time.time()
@@ -221,12 +161,12 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
                 objects = context.visible_objects
             case 'SELECTED':
                 objects = context.selected_objects
-                # Active scene camera might be not in selected objects. In this case, switch required.
-                if curr_camera not in objects:
-                    need_switch_camera = True
 
         if not objects:
             return False
+
+        if curr_camera not in objects:
+            need_switch_camera = True
 
         cameras = np.array(objects)
 
@@ -243,25 +183,16 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         indices = np.argsort(angles[mask])
         cameras = cameras[mask][indices]
 
-        if curr_camera is None or curr_camera.type != 'CAMERA' or need_switch_camera:
-            # In case of missing active scene camera or active camera is any other object type than 'CAMERA'.
-            curr_camera = scene.camera = cameras[0]
+        if (not validate_camera_object(curr_camera)) or need_switch_camera:
+            curr_camera = cameras[0]
             curr_camera_index = 0
         else:
             curr_camera_index = np.argmax(cameras == curr_camera)
+
         self.camera_iterator = ClockwiseIterator(cameras, curr_camera_index)
 
         if scene_props.direction == 'COUNTER':
             self.camera_iterator = reversed(self.camera_iterator)
-
-        pop_current_camera = next(self.camera_iterator, None)
-        assert pop_current_camera == curr_camera
-
-        pmain = PersistentMain.get_instance()
-        if pmain and pmain():
-            pmain().per_camera.update_scene_properties_from_camera(scene=context.scene, cam=curr_camera.data)
-
-        self._eval_render_filepath(context)
 
         if cameras.size:
             _dbg(
@@ -273,77 +204,102 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             _err(f"Missing camera objects, search time {time.time() - dt:.6f}")
             return False
 
-    def launch_render(self, context: Context) -> bool:
+    def next_camera_update_eval(self, context: Context) -> bool:
+        scene = context.scene
 
-        self._increase_progress(context)
+        next_camera = None
+        while True:
+            next_camera = next(self.camera_iterator, None)
+            if next_camera is None:
+                self.status = RenderStatus.COMPLETE
+                _info("All cameras from initially evaluated has been processed, processing complete.")
+                return False
+
+            elif validate_camera_object(next_camera):
+                break
+            else:
+                next_camera = None
+                _err("Camera from initial array was removed by user")
+
+        if next_camera is None:
+            _info("Unable to get any valid camera from the originally evaluated")
+            self.status = RenderStatus.CANCELLED
+            return False
+
+        scene.camera = next_camera
+        self._eval_render_filepath(context)
+        self.increase_progress(context)
+        _dbg(f"Updated camera to \"{scene.camera.name_full}\"")
 
         if self.main.preview:
-            if self.main.animation:
-                if not context.screen.is_animation_playing:
-                    scene = context.scene
-                    scene.frame_set(scene.frame_start)
-                    bpy.ops.screen.animation_play()
-            else:
-                bpy.ops.screen.frame_offset(delta=0)
+            for area in context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            region.tag_redraw()
+        return True
 
-            self.status = RenderStatus.PREVIEW
+    def launch_render(self, context: Context) -> bool:
+        if self.main.preview:
+            if not self.main.animation:
+                self.next_camera_update_eval(context)
+
             return True
 
-        res = bpy.ops.render.render(
-            'INVOKE_DEFAULT',
-            animation=self.main.animation,
-            use_viewport=True,
-            write_still=True
-        )
-        return res == {'RUNNING_MODAL'}
+        if self.next_camera_update_eval(context):
+            res = bpy.ops.render.render(
+                'INVOKE_DEFAULT',
+                animation=self.main.animation,
+                use_viewport=True,
+                write_still=True
+            )
+            return res == {'RUNNING_MODAL'}
 
-    def _setup_progress(self):
+        return True
+
+    def setup_progress(self):
         progress = bhqui.progress.get(identifier=self._PROGRESS_ID)
         progress.label = "Multiple Camera Render"
         progress.subtype = 'STEP'
         progress.num_steps = len(self.camera_iterator)
 
-    def _increase_progress(self, context: Context):
+    def increase_progress(self, context: Context):
         progress = bhqui.progress.get(identifier=self._PROGRESS_ID)
         progress.step += 1
         progress.label = context.scene.camera.name
 
-    def _cancel_progress(self):
+    def cancel_progress(self):
         bhqui.progress.complete(identifier=self._PROGRESS_ID)
-
-    def log_conflicting_handlers(self):
-        conflicting_addons, conflicting_modules = check_handlers_conflicts()
-        if conflicting_addons or conflicting_modules:
-            for mod in conflicting_addons:
-                bl_info = addon_utils.module_bl_info(mod)
-                log.warning(f"Addon \"{bl_info.get('name')}\" from \"{mod.__package__}\" may cause incorrect behavior")
-
-            for mod in conflicting_modules:
-                log.warning(f"Module \"{mod.__package__}\" may cause incorrect behavior")
 
     def invoke(self, context):
         pmain = PersistentMain.get_instance()
         if pmain and pmain():
             pmain().per_camera.unregister_per_camera_handler()
 
-        if not self._eval_cameras(context):
+        if not self.eval_cameras(context):
             return bhqmain.InvokeState.FAILED
 
-        self.log_conflicting_handlers()
-        self._register_handlers()
+        self.register_handlers()
 
         scene = context.scene
         scene.render.use_lock_interface = True
 
+        if self.main.preview:
+            if self.main.animation:
+                scene.frame_set(scene.frame_start)
+                bpy.ops.screen.animation_play()
+            else:
+                bpy.ops.screen.animation_cancel()
+
         self.status = RenderStatus.NEED_LAUNCH
 
-        self._setup_progress()
+        self.setup_progress()
 
         return super().invoke(context)
 
     def cancel(self, context):
-        self._cancel_progress()
-        self._unregister_handlers()
+        self.cancel_progress()
+        self.unregister_handlers()
 
         if self.main.preview and context.screen.is_animation_playing:
             bpy.ops.screen.animation_cancel(restore_frame=True)

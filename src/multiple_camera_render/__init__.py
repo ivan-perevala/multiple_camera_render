@@ -50,8 +50,6 @@ from . import props
 from . import ui
 from . import main
 
-from . main import check_handlers_conflicts
-
 _classes = (
     props.Preferences,
     props.SceneProps,
@@ -60,8 +58,7 @@ _classes = (
     main.SCENE_OT_mcr_per_camera_enable,
     main.SCENE_MT_mcr_per_camera_presets,
     main.SCENE_OT_mcr_per_camera_preset_add,
-    ui.MCR_MT_camera_usage,
-    ui.MCR_MT_direction,
+    ui.MCR_PT_scene_use_per_camera,
     ui.MCR_PT_scene_use_per_camera,
 )
 
@@ -99,6 +96,8 @@ _handlers = (
 
 @bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(os.path.dirname(__file__), "logs"))
 def register():
+    icons.Icons.register()
+
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     Camera.mcr = PointerProperty(type=props.CameraProps)
@@ -129,3 +128,5 @@ def unregister():
     _cls_unregister()
     del Camera.mcr
     del Scene.mcr
+
+    icons.Icons.unregister()

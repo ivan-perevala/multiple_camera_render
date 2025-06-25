@@ -69,7 +69,7 @@ jobs:
 
       - name: Build and install selected Blender extensions
         run: |
-          ADDONS=("multiple_camera_render" "test_handler_conflict_multilevel" "test_handler_conflict_one_level" "test_handlers_conflict_from_lib")
+          ADDONS=("multiple_camera_render")
           ADDONS_DIR="${{ github.workspace }}/src"
           DIST_DIR="${{ github.workspace }}/dist"
 
