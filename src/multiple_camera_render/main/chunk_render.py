@@ -227,6 +227,11 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             return False
 
         scene.camera = next_camera
+
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().per_camera.update_scene_properties_from_camera(scene, next_camera.data)
+
         self._eval_render_filepath(context)
         self.increase_progress(context)
         _dbg(f"Updated camera to \"{scene.camera.name_full}\"")

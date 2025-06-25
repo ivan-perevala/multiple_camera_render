@@ -182,7 +182,6 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         return loaded_default or loaded_state
 
     def depsgraph_update_post(self, scene, dg):
-        print(1)
         curr_camera = None
         if validate_camera_object(scene.camera):
             curr_camera = scene.camera.data
