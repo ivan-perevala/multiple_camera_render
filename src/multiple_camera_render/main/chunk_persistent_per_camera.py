@@ -254,10 +254,11 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                 label = cls.SCENE_DATA_PATHS_LABEL_MAP[data_path] = item.name
                 return label
 
-    def dump_scene_properties_to_camera(self, scene: Scene, cam: Camera):
-        for data_path, flag_name in self.SCENE_FLAG_MAP.items():
+    @classmethod
+    def dump_scene_properties_to_camera(cls, scene: Scene, cam: Camera):
+        for data_path, flag_name in cls.SCENE_FLAG_MAP.items():
             if scene.mcr.path_resolve(flag_name):
-                idprop_name = self.CAMERA_IDPROP_MAP[data_path]
+                idprop_name = cls.CAMERA_IDPROP_MAP[data_path]
 
                 try:
                     value = scene.path_resolve(data_path)
@@ -265,6 +266,13 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                     continue
 
                 cam.mcr[idprop_name] = value
+
+    @classmethod
+    def clear_per_camera_data(cls, cam: Camera):
+        for data_path, idprop_name in cls.CAMERA_IDPROP_MAP.items():
+            if idprop_name in cam.mcr:
+                del cam.mcr[idprop_name]
+                print(idprop_name)
 
     def update_scene_properties_from_camera(self, scene: Scene, cam: Camera):
         _sentinel = object()

@@ -42,7 +42,6 @@ class MCR_PT_scene_use_per_camera(Panel):
 
     bl_space_type = 'TOPBAR'
     bl_region_type = 'HEADER'
-    #bl_ui_units_x = 36
 
     def draw(self, context):
         layout = self.layout
@@ -50,16 +49,25 @@ class MCR_PT_scene_use_per_camera(Panel):
         layout.use_property_decorate = False
         layout.use_property_split = False
         layout.ui_units_x = 32
-        
+
         skip_cycles = not main.PersistentPerCamera.check_cycles()
         if skip_cycles:
             layout.ui_units_x = 26
 
         scene_props = context.scene.mcr
-        
+
+        row = layout.row()
+        row.label(text="Per Camera")
+
+        srow = row.row()
+        srow.alignment = 'RIGHT'
+        srow.operator(operator=main.OBJECT_OT_per_camera_dump.bl_idname)
+        srow.operator(operator=main.OBJECT_OT_per_camera_clear.bl_idname)
+
+        layout.separator(type='LINE')
+
         row = layout.row()
         row.label(text="Use Flags")
-
         bhqui.template_preset(
             row,
             menu=main.SCENE_MT_mcr_per_camera_presets,

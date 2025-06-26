@@ -31,6 +31,10 @@ def __reload_submodules(lc):
         reload(per_camera_enable)
     if "per_camera_preset" in lc:
         reload(per_camera_preset)
+    if "per_camera_dump" in lc:
+        reload(per_camera_dump)
+    if "per_camera_clear" in lc:
+        reload(per_camera_clear)
     if "main" in lc:
         reload(main)
 
@@ -52,6 +56,8 @@ from . import chunk_timers
 
 from . import per_camera_enable
 from . import per_camera_preset
+from . import per_camera_dump
+from . import per_camera_clear
 from . import main
 
 from . main import RENDER_OT_multiple_camera_render
@@ -59,6 +65,8 @@ from . chunk_persistent_main import PersistentMain
 from . chunk_persistent_per_camera import PersistentPerCamera
 from . per_camera_enable import SCENE_OT_mcr_per_camera_enable
 from . per_camera_preset import SCENE_MT_mcr_per_camera_presets, SCENE_OT_mcr_per_camera_preset_add
+from . per_camera_dump import OBJECT_OT_per_camera_dump
+from . per_camera_clear import OBJECT_OT_per_camera_clear
 
 __all__ = (
     # file://./main.py
@@ -72,4 +80,8 @@ __all__ = (
     # file://./per_camera_preset.py
     "SCENE_MT_mcr_per_camera_presets",
     "SCENE_OT_mcr_per_camera_preset_add",
+    # file://./per_camera_dump.py
+    "OBJECT_OT_per_camera_dump",
+    # file://./per_camera_clear.py
+    "OBJECT_OT_per_camera_clear",
 )

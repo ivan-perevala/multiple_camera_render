@@ -58,6 +58,8 @@ _classes = (
     main.SCENE_OT_mcr_per_camera_enable,
     main.SCENE_MT_mcr_per_camera_presets,
     main.SCENE_OT_mcr_per_camera_preset_add,
+    main.OBJECT_OT_per_camera_dump,
+    main.OBJECT_OT_per_camera_clear,
     ui.MCR_PT_options,
     ui.MCR_PT_scene_use_per_camera,
 )
