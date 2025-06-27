@@ -9,7 +9,32 @@ from . conftest import set_camera_and_update_depsgraph
 import bpy
 
 
-def test_per_camera():
+def test_per_camera_none():
+    context = bpy.context
+    scene = context.scene
+
+    scene.mcr.use_per_camera_render_resolution_x = False
+
+    set_camera_and_update_depsgraph(0)
+    scene.render.resolution_x = 128
+
+    set_camera_and_update_depsgraph(1)
+    scene.render.resolution_x = 256
+
+    set_camera_and_update_depsgraph(2)
+    scene.render.resolution_x = 512
+
+    set_camera_and_update_depsgraph(0)
+    assert scene.render.resolution_x == 512
+
+    set_camera_and_update_depsgraph(1)
+    assert scene.render.resolution_x == 512
+
+    set_camera_and_update_depsgraph(2)
+    assert scene.render.resolution_x == 512
+
+
+def test_per_camera_resolution_x():
 
     context = bpy.context
     scene = context.scene
@@ -33,7 +58,3 @@ def test_per_camera():
 
     set_camera_and_update_depsgraph(2)
     assert scene.render.resolution_x == 512
-
-
-if __name__ == '__main__':
-    test_per_camera()
