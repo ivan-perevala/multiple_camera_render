@@ -258,7 +258,8 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
                 use_viewport=True,
                 write_still=True
             )
-            return res == {'RUNNING_MODAL'}
+
+            return next(iter(res)) in {'FINISHED', 'RUNNING_MODAL'}
 
         return True
 
