@@ -47,7 +47,8 @@ DATA = {
     "cycles.samples": (64, 128, 256),
     "cycles.time_limit": (1.1, 2.2, 3.3),
     #
-    "cycles.denoiser": ('OPTIX', 'OPENIMAGEDENOISE', 'OPTIX'),
+    "cycles.denoiser": ('OPENIMAGEDENOISE', 'OPENIMAGEDENOISE', 'OPENIMAGEDENOISE'), # 'OPTIX' is omitted as far as its not supported for GitHub actions
+    #
     "cycles.use_denoising": (False, True, False),
     "cycles.denoising_input_passes": ('RGB', 'RGB_ALBEDO', 'RGB_ALBEDO_NORMAL'),
     #
