@@ -6,6 +6,7 @@
 
 import pytest
 import importlib
+import pathlib
 
 import bpy
 
@@ -18,10 +19,22 @@ def pytest_addoption(parser):
         help="Override for repository name (default: user_default)",
     )
 
+    parser.addoption(
+        "--main-tmpdir",
+        action="store",
+        default="",
+        help="Temporary directory which was used by caller test",
+    )
+
 
 @pytest.fixture
 def repo(request):
     return request.config.getoption("--repo")
+
+
+@pytest.fixture
+def main_tmpdir(request):
+    return pathlib.Path(request.config.getoption("--main-tmpdir"))
 
 
 @pytest.fixture
