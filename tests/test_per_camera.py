@@ -5,8 +5,16 @@
 import subprocess
 import os
 
+import pytest
 
-def test_per_camera_set_scene_properties(blender, repo, bl_tests_dir):
+
+@pytest.mark.parametrize("case", (
+    "test_per_camera_simple",
+    "test_per_camera_all",
+    "test_per_camera_clear",
+    "test_per_camera_dump",
+))
+def test_per_camera(blender, repo, bl_tests_dir, case):
     cli: list = [
         blender,
 
@@ -17,7 +25,7 @@ def test_per_camera_set_scene_properties(blender, repo, bl_tests_dir):
         f"bl_ext.{repo}.multiple_camera_render",
 
         "--python-expr",
-        f"import pytest; import sys; sys.exit(pytest.main(['-s', '-v', '--repo', '{repo}', \"{bl_tests_dir}/\"]))",
+        f"import pytest; import sys; sys.exit(pytest.main(['-s', '-v', '--repo', '{repo}', '-k', \"{case}\", \"{bl_tests_dir}/\"]))",
 
         "--python-exit-code",
         "255",
