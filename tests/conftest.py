@@ -72,11 +72,16 @@ def test_scripts_dir():
     return curr_dir / pathlib.Path("test_scripts")
 
 
-def run_blender(bl_tests_dir: str, cli: list[str]):
+def run_blender(blender_version, bl_tests_dir: str, cli: list[str]):
+
+    env = os.environ.copy()
+
+    if blender_version <= (4, 2):
+        env['TBB_MALLOC_DISABLE_REPLACEMENT'] = '1'
 
     proc = subprocess.Popen(
         cli,
-        env=os.environ,
+        env=env,
         stderr=subprocess.PIPE,
         universal_newlines=True,
         cwd=bl_tests_dir,

@@ -16,7 +16,7 @@ from . conftest import run_blender
     "test_per_camera_clear",
     "test_per_camera_dump",
 ))
-def test_per_camera(blender, repo, bl_tests_dir, case):
+def test_per_camera(blender, blender_version, repo, bl_tests_dir, case):
     cli: list = [
         blender,
 
@@ -33,10 +33,10 @@ def test_per_camera(blender, repo, bl_tests_dir, case):
         "255",
     ]
 
-    run_blender(bl_tests_dir, cli)
+    run_blender(blender_version, bl_tests_dir, cli)
 
 
-def test_per_camera_save_active_camera(tmpdir, blender, repo, bl_tests_dir, test_scripts_dir):
+def test_per_camera_save_active_camera(tmpdir, blender, blender_version, repo, bl_tests_dir, test_scripts_dir):
 
     test_blend_filepath = tmpdir / "test_save.blend"
 
@@ -62,7 +62,7 @@ def test_per_camera_save_active_camera(tmpdir, blender, repo, bl_tests_dir, test
 
     ]
 
-    run_blender(bl_tests_dir, cli)
+    run_blender(blender_version, bl_tests_dir, cli)
 
     cli: list = [
         blender,
@@ -80,7 +80,7 @@ def test_per_camera_save_active_camera(tmpdir, blender, repo, bl_tests_dir, test
         "255",
     ]
 
-    run_blender(bl_tests_dir, cli)
+    run_blender(blender_version, bl_tests_dir, cli)
 
 
 def test_per_camera_render(tmpdir, blender, blender_version, repo, bl_tests_dir):
@@ -108,7 +108,7 @@ def test_per_camera_render(tmpdir, blender, blender_version, repo, bl_tests_dir)
     if blender_version <= (4, 2):
         cli.remove("--quiet")  # --quiet is not available in Blender 4.2 and earlier
 
-    run_blender(bl_tests_dir, cli)
+    run_blender(blender_version, bl_tests_dir, cli)
 
     cli = [
         blender,
@@ -132,4 +132,4 @@ def test_per_camera_render(tmpdir, blender, blender_version, repo, bl_tests_dir)
         "255",
     ]
 
-    run_blender(bl_tests_dir, cli)
+    run_blender(blender_version, bl_tests_dir, cli)
