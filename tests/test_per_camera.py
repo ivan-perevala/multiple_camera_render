@@ -7,6 +7,8 @@ import os
 
 import pytest
 
+from . conftest import run_blender
+
 
 @pytest.mark.parametrize("case", (
     "test_per_camera_simple",
@@ -31,22 +33,51 @@ def test_per_camera(blender, repo, bl_tests_dir, case):
         "255",
     ]
 
-    proc = subprocess.Popen(
-        cli,
-        env=os.environ,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        cwd=bl_tests_dir,
-    )
+    run_blender(bl_tests_dir, cli)
 
-    while proc.poll() is None:
-        pass
 
-    assert proc.stderr is not None
-    assert proc.stderr.readable()
+def test_per_camera_save_active_camera(tmpdir, blender, repo, bl_tests_dir, test_scripts_dir):
 
-    errors = proc.stderr.read()
+    test_blend_filepath = tmpdir / "test_save.blend"
 
-    assert not errors
+    cli: list = [
+        blender,
 
-    assert proc.returncode == 0
+        os.path.abspath(f"tests/data/per_camera_clear.blend"),
+        "--background",
+
+        "--addons",
+        f"bl_ext.{repo}.multiple_camera_render",
+
+        "--python",
+        test_scripts_dir / "_test_per_camera_prepare_save_case.py",
+
+        "--python-exit-code",
+        "255",
+
+        "--",
+
+        "test_blend_filepath",
+        test_blend_filepath,
+
+    ]
+
+    run_blender(bl_tests_dir, cli)
+
+    cli: list = [
+        blender,
+
+        test_blend_filepath,
+        "--background",
+
+        "--addons",
+        f"bl_ext.{repo}.multiple_camera_render",
+
+        "--python-expr",
+        f"import pytest; import sys; sys.exit(pytest.main(['-s', '-v', '--repo', '{repo}', '-k', \"test_per_camera_active_camera_saved\", \"{bl_tests_dir}/\"]))",
+
+        "--python-exit-code",
+        "255",
+    ]
+
+    run_blender(bl_tests_dir, cli)

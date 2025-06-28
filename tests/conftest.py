@@ -35,6 +35,7 @@ def blender(request):
 
     return blender
 
+
 @pytest.fixture
 def blender_version(blender):
     if not blender:
@@ -47,6 +48,7 @@ def blender_version(blender):
     version = int(version_str[0]), int(version_str[1])
 
     return version
+
 
 @pytest.fixture
 def repo(request):
@@ -62,3 +64,32 @@ def background_only(request):
 def bl_tests_dir():
     curr_dir = pathlib.Path(os.path.dirname(__file__))
     return (curr_dir / pathlib.Path("../src/bl_tests/")).resolve().as_posix()
+
+
+@pytest.fixture
+def test_scripts_dir():
+    curr_dir = pathlib.Path(os.path.dirname(__file__))
+    return curr_dir / pathlib.Path("test_scripts")
+
+
+def run_blender(bl_tests_dir: str, cli: list[str]):
+
+    proc = subprocess.Popen(
+        cli,
+        env=os.environ,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        cwd=bl_tests_dir,
+    )
+
+    while proc.poll() is None:
+        pass
+
+    assert proc.stderr is not None
+    assert proc.stderr.readable()
+
+    errors = proc.stderr.read()
+
+    assert not errors
+
+    assert proc.returncode == 0
