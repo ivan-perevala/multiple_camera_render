@@ -9,6 +9,7 @@ import importlib
 import pathlib
 
 import bpy
+from bpy.types import Context, Object
 
 
 def pytest_addoption(parser):
@@ -52,9 +53,24 @@ CAMERA_NAMES = (
 )
 
 
-def set_camera_and_update_depsgraph(index: int):
-    scene = bpy.context.scene
-    scene.camera = scene.objects[CAMERA_NAMES[index]]
-
-    dg = bpy.context.evaluated_depsgraph_get()
+def update_depsgraph(context: Context):
+    dg = context.evaluated_depsgraph_get()
     dg.update()
+
+
+def get_camera(index: int) -> Object:
+    context = bpy.context
+    return context.scene.objects[CAMERA_NAMES[index]]
+
+
+def set_camera_and_update_depsgraph(index: int):
+    context = bpy.context
+    scene = context.scene
+    scene.camera = get_camera(index)
+
+    update_depsgraph(context)
+
+def set_active_object(ob: Object):
+    context = bpy.context
+    context.view_layer.objects.active = ob
+    update_depsgraph(context)
