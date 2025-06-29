@@ -18,7 +18,6 @@ import bhqmain4 as bhqmain
 
 from . register_handlers import register_handler, unregister_handler
 from . validate_id import validate_id, validate_camera_object
-from .. import icons
 
 if TYPE_CHECKING:
     from . chunk_persistent_main import PersistentMain
