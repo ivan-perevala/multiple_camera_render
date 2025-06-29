@@ -6,10 +6,6 @@ __pycache__/
 # Wheels
 *.whl
 
-# Translations
-*.mo
-*.pot
-
 # Environments
 .venv
 .venv_win
@@ -35,6 +31,3 @@ icons/blender_icons_geom.py
 
 # Keep directory layout
 !.gitkeep
-
-# Test wheels
-!lib_handlers_conflict-*-py3-none-any.whl
