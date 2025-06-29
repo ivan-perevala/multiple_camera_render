@@ -80,12 +80,14 @@ def test_all_cases_match_to_addon(multiple_camera_render_module):
 
     assert set(PersistentPerCamera.SCENE_DATA_PATHS) == set(DATA.keys())
 
-def test_per_camera_all(multiple_camera_render_module):
+def test_per_camera_all(multiple_camera_render_module, with_select_camera):
     if not TYPE_CHECKING:
         PersistentPerCamera = multiple_camera_render_module.main.PersistentPerCamera
 
     context = bpy.context
     scene = context.scene
+
+    scene.mcr.select_camera = with_select_camera
 
     for data_path, flag_name in PersistentPerCamera.SCENE_FLAG_MAP.items():
         setattr(scene.mcr, flag_name, True)

@@ -10,12 +10,12 @@ import logging
 from typing import TYPE_CHECKING
 
 import bpy
-from bpy.types import Context
+from bpy.types import Context, Object
 
 import bhqmain4 as bhqmain
 
 from .. import get_preferences
-from . validate_id import validate_id, validate_camera_object
+from . validate_id import validate_camera_object
 from . register_handlers import register_handler, unregister_handler
 
 if TYPE_CHECKING:
@@ -25,10 +25,19 @@ log = logging.getLogger(__name__)
 
 
 class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
+    prev_active_ob: None | Object
+
+    def __init__(self, main):
+        self.prev_active_ob = None
+
+        super().__init__(main)
+
     def invoke(self, context):
         scene = context.scene
         addon_pref = get_preferences()
         scene.mcr.select_camera = addon_pref.select_camera
+
+        self.prev_active_ob = context.active_object
 
         self.conditional_handler_register(scene_props=scene.mcr)
 
@@ -61,6 +70,8 @@ class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
     def depsgraph_update_post(self, scene, dg):
         context = bpy.context
 
-        ob = context.active_object
-        if validate_camera_object(ob) and ob != context.scene.camera:
+        ob = context.view_layer.objects.active
+        if validate_camera_object(ob) and ob != self.prev_active_ob:
             context.scene.camera = ob
+
+        self.prev_active_ob = ob

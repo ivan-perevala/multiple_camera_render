@@ -27,6 +27,13 @@ def pytest_addoption(parser):
         help="Temporary directory which was used by caller test",
     )
 
+    parser.addoption(
+        "--with-select-camera",
+        action="store_true",
+        default=False,
+        help="Test with select camera feature",
+    )
+
 
 @pytest.fixture
 def repo(request):
@@ -36,6 +43,11 @@ def repo(request):
 @pytest.fixture
 def main_tmpdir(request):
     return pathlib.Path(request.config.getoption("--main-tmpdir"))
+
+
+@pytest.fixture
+def with_select_camera(request):
+    return request.config.getoption("--with-select-camera")
 
 
 @pytest.fixture
@@ -69,6 +81,7 @@ def set_camera_and_update_depsgraph(index: int):
     scene.camera = get_camera(index)
 
     update_depsgraph(context)
+
 
 def set_active_object(ob: Object):
     context = bpy.context

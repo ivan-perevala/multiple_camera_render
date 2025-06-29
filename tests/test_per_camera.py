@@ -16,7 +16,8 @@ from . conftest import run_blender
     "test_per_camera_clear",
     "test_per_camera_dump",
 ))
-def test_per_camera(blender, blender_version, repo, bl_tests_dir, case):
+@pytest.mark.parametrize("with_select_camera", ("", "'--with-select-camera', "))
+def test_per_camera_bl(blender, blender_version, repo, bl_tests_dir, case, with_select_camera):
     cli: list = [
         blender,
 
@@ -27,7 +28,17 @@ def test_per_camera(blender, blender_version, repo, bl_tests_dir, case):
         f"bl_ext.{repo}.multiple_camera_render",
 
         "--python-expr",
-        f"import pytest; import sys; sys.exit(pytest.main(['-s', '-v', '--repo', '{repo}', '-k', \"{case}\", \"{bl_tests_dir}/\"]))",
+        (
+            f"import pytest; "
+            "import sys; "
+            "(pytest.main(["
+            "'-s', '-v', "
+            f"'--repo', '{repo}', "
+            f"'-k', \"{case}\", "
+            f"{with_select_camera}"
+            f"\"{bl_tests_dir}/\""
+            "]))"
+        ),
 
         "--python-exit-code",
         "255",
@@ -83,7 +94,8 @@ def test_per_camera_save_active_camera(tmpdir, blender, blender_version, repo, b
     run_blender(blender_version, bl_tests_dir, cli)
 
 
-def test_per_camera_render(tmpdir, blender, blender_version, repo, bl_tests_dir):
+@pytest.mark.parametrize("with_select_camera", ("", "'--with-select-camera', "))
+def test_per_camera_render(tmpdir, blender, blender_version, repo, bl_tests_dir, test_scripts_dir, with_select_camera):
 
     cli = [
         blender,
@@ -98,11 +110,16 @@ def test_per_camera_render(tmpdir, blender, blender_version, repo, bl_tests_dir)
         "--addons",
         f"bl_ext.{repo}.multiple_camera_render",
 
-        "--python-expr",
-        f"import bpy; bpy.ops.render.multiple_camera_render('INVOKE_DEFAULT', animation=False, preview=False, quit=True)",
-
         "--python-exit-code",
         "255",
+
+        "--python",
+        test_scripts_dir / "_test_per_camera_prepare_render.py",
+
+        "--",
+
+        f"{with_select_camera}",
+
     ]
 
     if blender_version <= (4, 2):
@@ -123,6 +140,7 @@ def test_per_camera_render(tmpdir, blender, blender_version, repo, bl_tests_dir)
             "'-s', '-v', "
             f"'--repo', '{repo}', "
             "'-k', \"test_per_camera_render\", "
+            f"{with_select_camera}"
             f"'--main-tmpdir', \"{pathlib.Path(tmpdir).as_posix()}\", "
             f"\"{bl_tests_dir}/\""
             "]))"
