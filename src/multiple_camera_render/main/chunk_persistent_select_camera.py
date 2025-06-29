@@ -30,7 +30,7 @@ class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         addon_pref = get_preferences()
         scene.mcr.select_camera = addon_pref.select_camera
 
-        self.conditional_handler_register(scene.mcr)
+        self.conditional_handler_register(scene_props=scene.mcr)
 
         return super().invoke(context)
 
@@ -40,7 +40,7 @@ class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
 
         return super().cancel(context)
 
-    def conditional_handler_register(self, scene_props):
+    def conditional_handler_register(self, *, scene_props):
         if scene_props.select_camera:
             if register_handler(
                 bpy.app.handlers.depsgraph_update_post,
@@ -54,6 +54,9 @@ class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
     def unregister_select_camera_handler(self):
         if unregister_handler(bpy.app.handlers.depsgraph_update_post, self.depsgraph_update_post):
             log.debug("Unregistered select camera depsgraph handler")
+
+    def is_handler_active(self):
+        return self.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post
 
     def depsgraph_update_post(self, scene, dg):
         context = bpy.context

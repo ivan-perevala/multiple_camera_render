@@ -33,6 +33,7 @@ class Icons:
         'per_camera',
         'per_camera_dimmed',
         'select_camera',
+        'select_camera_dimmed',
     )
 
     @classmethod
@@ -65,6 +66,7 @@ IdentifierType = Literal[
     'per_camera',
     'per_camera_dimmed',
     'select_camera',
+    'select_camera_dimmed',
 ]
 
 

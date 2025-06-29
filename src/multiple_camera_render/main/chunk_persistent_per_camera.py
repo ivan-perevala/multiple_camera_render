@@ -10,12 +10,13 @@ import logging
 from typing import TYPE_CHECKING, ClassVar
 
 import bpy
-from bpy.types import Context, Camera, Scene, STATUSBAR_HT_header, UILayout
+from bpy.types import Context, Camera, Scene
 from bpy.props import BoolProperty
 import addon_utils
 
 import bhqmain4 as bhqmain
 
+from . register_handlers import register_handler, unregister_handler
 from . validate_id import validate_id, validate_camera_object
 from .. import icons
 
@@ -143,29 +144,12 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         self.unregister_per_camera_handler()
         return super().cancel(context)
 
-    @staticmethod
-    def _statusbar_draw_status(self, context):
-        from . chunk_persistent_main import PersistentMain
-
-        layout: UILayout = self.layout
-
-        pmain = PersistentMain.get_instance()
-        if pmain and pmain():
-            if pmain().per_camera.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post:
-                layout.label(text="Per Camera Active", icon_value=icons.get_id('per_camera_dimmed'))
-            else:
-                layout.label(text="Per Camera Suspended", icon_value=icons.get_id('per_camera_dimmed'))
-
     def register_per_camera_handler(self):
-        if self.depsgraph_update_post not in bpy.app.handlers.depsgraph_update_post:
-            bpy.app.handlers.depsgraph_update_post.append(self.depsgraph_update_post)
-            STATUSBAR_HT_header.append(self._statusbar_draw_status)
+        if register_handler(bpy.app.handlers.depsgraph_update_post, self.depsgraph_update_post):
             log.debug("Handler added to \"depsgraph_update_post\"")
 
     def unregister_per_camera_handler(self):
-        if self.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post:
-            STATUSBAR_HT_header.remove(self._statusbar_draw_status)
-            bpy.app.handlers.depsgraph_update_post.remove(self.depsgraph_update_post)
+        if unregister_handler(bpy.app.handlers.depsgraph_update_post, self.depsgraph_update_post):
             log.debug("Handler \"depsgraph_update_post\" removed")
 
     def conditional_handler_register(self, *, scene_props):
@@ -175,6 +159,9 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
                 break
         else:
             self.unregister_per_camera_handler()
+
+    def is_handler_active(self):
+        return self.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post
 
     @staticmethod
     def check_cycles() -> bool:

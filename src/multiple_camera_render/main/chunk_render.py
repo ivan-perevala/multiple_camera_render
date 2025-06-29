@@ -314,7 +314,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         pmain = PersistentMain.get_instance()
         if pmain and pmain():
             scene_props = context.scene.mcr
-            pmain().per_camera.conditional_handler_register(scene_props)
-            pmain().select_camera.conditional_handler_register(scene_props)
+            pmain().per_camera.conditional_handler_register(scene_props=scene_props)
+            pmain().select_camera.conditional_handler_register(scene_props=scene_props)
 
         return super().cancel(context)

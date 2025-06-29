@@ -86,7 +86,7 @@ class SceneProps(PropertyGroup, main.PersistentPerCamera.eval_scene_flag_propert
 
         pmain = main.PersistentMain.get_instance()
         if pmain and pmain():
-            pmain().select_camera.conditional_handler_register(self)
+            pmain().select_camera.conditional_handler_register(scene_props=self)
 
     select_camera: BoolProperty(
         update=_select_camera_update,
