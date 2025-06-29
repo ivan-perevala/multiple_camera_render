@@ -281,6 +281,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         pmain = PersistentMain.get_instance()
         if pmain and pmain():
             pmain().per_camera.unregister_per_camera_handler()
+            pmain().select_camera.unregister_select_camera_handler()
 
         if not self.eval_cameras(context):
             return bhqmain.InvokeState.FAILED
@@ -312,6 +313,8 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         pmain = PersistentMain.get_instance()
         if pmain and pmain():
-            pmain().per_camera.conditional_handler_register(scene_props=context.scene.mcr)
+            scene_props = context.scene.mcr
+            pmain().per_camera.conditional_handler_register(scene_props)
+            pmain().select_camera.conditional_handler_register(scene_props)
 
         return super().cancel(context)

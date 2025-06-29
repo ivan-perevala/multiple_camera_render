@@ -13,7 +13,7 @@ import bhqrprt4 as bhqrprt
 import bhqui4 as bhqui
 
 from bpy.types import AddonPreferences, Context
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty, BoolProperty
 import addon_utils
 
 from .. import icons
@@ -86,6 +86,13 @@ class Preferences(AddonPreferences):
         description="Time step for cameras to be changed in preview mode",
     )
 
+    select_camera: BoolProperty(
+        default=False,
+        options={'SKIP_SAVE'},
+        name="Set Selected as Active Camera",
+        description="Selecting camera would make it active by default",
+    )
+
     def draw(self, context: Context):
         layout = self.layout
         layout.use_property_split = True
@@ -101,6 +108,11 @@ class Preferences(AddonPreferences):
                 header.label(text="Preview", icon_value=icons.get_id('preview'))
                 if panel:
                     col.prop(self, "preview_timestep")
+
+                header, panel = col.panel("mcr_pref_select_camera", default_closed=False)
+                header.label(text="Select Camera", icon_value=icons.get_id('select_camera'))
+                if panel:
+                    col.prop(self, "select_camera")
 
             case 'INFO':
 

@@ -10,6 +10,8 @@ def __reload_submodules(lc):
 
     if "validate_id" in lc:
         reload(validate_id)
+    if "register_handlers" in lc:
+        reload(register_handlers)
     if "clockwise_iter" in lc:
         reload(clockwise_iter)
 
@@ -44,6 +46,7 @@ del __reload_submodules
 
 
 from . import validate_id
+from . import register_handlers
 from . import clockwise_iter
 
 from . import chunk_persistent_main

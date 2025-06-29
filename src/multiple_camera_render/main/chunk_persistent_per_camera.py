@@ -272,7 +272,6 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
         for data_path, idprop_name in cls.CAMERA_IDPROP_MAP.items():
             if idprop_name in cam.mcr:
                 del cam.mcr[idprop_name]
-                print(idprop_name)
 
     def update_scene_properties_from_camera(self, scene: Scene, cam: Camera):
         _sentinel = object()

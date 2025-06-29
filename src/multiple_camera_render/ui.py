@@ -144,3 +144,12 @@ def additional_TOPBAR_MT_render_draw(self, context):
 
     col.popover(panel=MCR_PT_options.__name__, icon_value=_get_menu_icon("cameras_usage"))
     col.popover(panel=MCR_PT_scene_use_per_camera.__name__, icon_value=icons.get_id('per_camera'))
+
+
+def additional_VIEW3D_HT_header_draw(self, context):
+    layout: UILayout = self.layout
+    row = layout.row()
+
+    scene = context.scene
+
+    row.prop(scene.mcr, "select_camera", icon_only=True, icon_value=icons.get_id('select_camera'))

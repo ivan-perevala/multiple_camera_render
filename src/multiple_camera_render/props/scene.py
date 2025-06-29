@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 
-from bpy.types import PropertyGroup
+from bpy.types import PropertyGroup, Context
 from bpy.props import BoolProperty, EnumProperty
 
 import bhqrprt4 as bhqrprt
@@ -77,4 +77,21 @@ class SceneProps(PropertyGroup, main.PersistentPerCamera.eval_scene_flag_propert
         name="Keep Frame Number",
         description="Write frame number even if not rendering animation",
         update=bhqrprt.update_log_setting_changed(log, "keep_frame_in_filepath"),
+    )
+
+    _update_log_select_camera = bhqrprt.update_log_setting_changed(log, "select_camera")
+
+    def _select_camera_update(self, context: Context):
+        self._update_log_select_camera(context)
+
+        pmain = main.PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().select_camera.conditional_handler_register(self)
+
+    select_camera: BoolProperty(
+        update=_select_camera_update,
+        default=False,
+        name="Set Selected as Active Camera",
+        description="Select camera would make it scene active",
+        options={'SKIP_SAVE'},
     )

@@ -12,7 +12,7 @@ from typing import ClassVar
 
 import bpy
 from bpy.props import PointerProperty
-from bpy.types import Scene, Camera, TOPBAR_MT_render
+from bpy.types import Scene, Camera, TOPBAR_MT_render, VIEW3D_HT_header
 from bpy.app.handlers import persistent
 import addon_utils
 
@@ -104,6 +104,7 @@ def register():
     Scene.mcr = PointerProperty(type=props.SceneProps)
     Camera.mcr = PointerProperty(type=props.CameraProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
+    VIEW3D_HT_header.append(ui.additional_VIEW3D_HT_header_draw)
 
     for handler, func in _handlers:
         if func not in handler:
@@ -126,6 +127,7 @@ def unregister():
             log.warning(f"Handler {func} not found, skipping removal.")
 
     icons.Icons.cache.release()
+    VIEW3D_HT_header.remove(ui.additional_VIEW3D_HT_header_draw)
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     _cls_unregister()
     del Camera.mcr
