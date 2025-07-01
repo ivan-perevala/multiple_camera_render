@@ -31,6 +31,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
     "myst_parser",
+    "sphinxcontrib.video",
 ]
 
 source_suffix = {

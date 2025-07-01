@@ -6,3 +6,4 @@ sphinx
 sphinx-intl
 furo
 myst-parser
+sphinxcontrib-video

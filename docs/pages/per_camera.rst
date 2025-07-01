@@ -5,3 +5,9 @@
 Per Camera
 ==========
 
+Allows to store scene and render settings per-camera:
+
+.. video::
+    ./videos/per_camera_feature.mp4
+    :caption: Per Camera Feature
+    :width: 100%

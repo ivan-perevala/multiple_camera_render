@@ -5,3 +5,9 @@
 Select Camera
 =============
 
+Allows to make selected camera scene's active.
+
+.. video::
+    ./videos/select_camera_feature.mp4
+    :caption: Select Camera Feature
+    :width: 100%
