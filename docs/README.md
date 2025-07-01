@@ -6,20 +6,20 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 # Building the documentation
 
-Please, make sure you have [requirements.txt](../requirements.txt) installed to build this documentation.
+Please, make sure you have [requirements.txt](../requirements-docs.txt) installed to build this documentation.
 
-Jump into docs directory like this:
+So the command to build:
+```sh
+sphinx-build -M html "./docs" "./docs/_build"
+```
+
+To create `.pot` files for localization run:
+
+Jump into docs directory:
 
 ```sh
 cd docs
 ```
-
-So the command to build:
-```sh
-sphinx-build -M html "." "_build"
-```
-
-To create `.pot` files for localization run:
 
 ```sh
 sphinx-build -M gettext "" "_build"
