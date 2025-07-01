@@ -59,8 +59,9 @@ Links
    pages/installation
    pages/quickstart
    pages/support
-   pages/naming.rst
-   pages/per_camera.rst
+   pages/naming
+   pages/select_camera
+   pages/per_camera
    pages/release_notes
    pages/conflicts
    pages/libraries
