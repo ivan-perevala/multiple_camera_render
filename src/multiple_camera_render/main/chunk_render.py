@@ -15,7 +15,7 @@ import os
 import time
 
 import bpy
-from bpy.types import Scene, Context, Camera
+from bpy.types import Scene, Context
 from mathutils import Vector
 
 import bhqmain4 as bhqmain
@@ -24,7 +24,6 @@ import bhqui4 as bhqui
 from . chunk_persistent_main import PersistentMain
 from . clockwise_iter import ClockwiseIterator
 from . validate_id import validate_camera_object
-from .. import ADDON_PKG
 
 if TYPE_CHECKING:
     from . chunk_main import Main

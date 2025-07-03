@@ -6,7 +6,6 @@
 
 from __future__ import annotations
 
-import os
 import logging
 
 import bhqrprt4 as bhqrprt
@@ -14,10 +13,8 @@ import bhqui4 as bhqui
 
 from bpy.types import AddonPreferences, Context
 from bpy.props import EnumProperty, FloatProperty, BoolProperty
-import addon_utils
 
 from .. import icons
-from .. import main
 from .. import ADDON_PKG
 assert ADDON_PKG
 
