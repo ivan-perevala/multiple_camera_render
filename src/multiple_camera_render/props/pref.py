@@ -24,6 +24,11 @@ log = logging.getLogger(__name__)
 _CREDITS_TEXT = """
 Vladlen Kuzmin (ssh4) - the idea of creating an extension.
 Ivan Perevala (ivpe) - engineering, development, maintenance.
+
+Indirect contributors:
+
+ymt3d - the idea of select camera feature.
+Alexander Bicukow (Sasha) - the idea of per-camera feature.
 """[1:]
 
 
@@ -46,11 +51,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """[1:]
 
 _README_TEXT = """
-Multiple Camera Render
+You can find all the essential functionality in Topbar > Render section. There you would find a bunch of operators for rendering and simulating sequential rendering as well as options for running them.
 
-Extension for sequential rendering from multiple cameras.
-
-You can find all the functionality in Topbar > Render section. There you would find a bunch of operators for rendering and simulating sequential rendering as well as options for running them.
+In right corner of 3D view header you can find "Select Camera" switch. This would help selecting cameras.
 
 If you have any issues, please, use GitHub issue tracker to submit the issue. It would be nice if you would attach some related log files to tracker.
 
