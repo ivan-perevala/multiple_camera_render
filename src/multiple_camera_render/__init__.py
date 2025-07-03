@@ -8,22 +8,18 @@ from __future__ import annotations
 
 import os
 import logging
-from typing import ClassVar
 
 import bpy
 from bpy.props import PointerProperty
 from bpy.types import Scene, Camera, TOPBAR_MT_render, VIEW3D_HT_header
 from bpy.app.handlers import persistent
-import addon_utils
-
 
 ADDON_PKG = __package__
 
+log = logging.getLogger(__name__)
 
 import bhqrprt4 as bhqrprt
 import bhqmain4 as bhqmain
-
-log = logging.getLogger(__name__)
 
 
 def get_preferences() -> props.Preferences:
@@ -64,36 +60,15 @@ _classes = (
     ui.MCR_PT_scene_use_per_camera,
 )
 
+from . main.register_handlers import register_handler, unregister_handler
+
 _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
 
 
 @persistent
-def handler_load_pre(_=None):
-    p_main = main.PersistentMain.get_instance()
-    if p_main and p_main():
-        if p_main().cancel(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
-            log.error("Failed to cancel PersistentMain")
-
-
-@persistent
-def handler_load_post(_=None):
+def log_scene_properties_on_load_post(_=None):
     scene = bpy.context.scene
     bhqrprt.log_bpy_struct_properties(log, struct=scene.mcr)
-
-    p_main = main.PersistentMain.get_instance()
-    if p_main is not None:
-        raise RuntimeError("PersistentMain instance already exists, this should not happen.")
-
-    p_main = main.PersistentMain.create()
-    if p_main and p_main():
-        if p_main().invoke(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
-            log.error("Failed to invoke PersistentMain")
-
-
-_handlers = (
-    (bpy.app.handlers.load_pre, handler_load_pre),
-    (bpy.app.handlers.load_post, handler_load_post),
-)
 
 
 @bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(os.path.dirname(__file__), "logs"))
@@ -106,25 +81,15 @@ def register():
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
     VIEW3D_HT_header.append(ui.additional_VIEW3D_HT_header_draw)
 
-    for handler, func in _handlers:
-        if func not in handler:
-            handler.append(func)
-        else:
-            log.warning(f"Handler {func} already registered, skipping.")
+    register_handler(bpy.app.handlers.load_post, log_scene_properties_on_load_post)
+    main.PersistentMain.register()
 
 
 @bhqrprt.unregister_reports(log)
 def unregister():
-    p_main = main.PersistentMain.get_instance()
-    if p_main is not None:
-        if p_main().cancel(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
-            log.warning("Unable to cancel persistent chunk at unregistering")
+    main.PersistentMain.unregister()
 
-    for handler, func in reversed(_handlers):
-        if func in handler:
-            handler.remove(func)
-        else:
-            log.warning(f"Handler {func} not found, skipping removal.")
+    unregister_handler(bpy.app.handlers.load_post, log_scene_properties_on_load_post)
 
     icons.Icons.cache.release()
     VIEW3D_HT_header.remove(ui.additional_VIEW3D_HT_header_draw)
