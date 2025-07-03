@@ -5,15 +5,14 @@
 Release Notes
 =============
 
-Upcoming:
+.. Upcoming:
+.. ---------
+
+Releases:
 ---------
 
 .. include:: release_notes/v4.4.0.md
    :parser: myst_parser.sphinx_
-
-
-Releases:
----------
 
 .. include:: release_notes/v4.3.2.md
    :parser: myst_parser.sphinx_
