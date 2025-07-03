@@ -35,7 +35,9 @@ class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
     def invoke(self, context):
         scene = context.scene
         addon_pref = get_preferences()
-        scene.mcr.select_camera = addon_pref.select_camera
+
+        if addon_pref.select_camera:
+            scene.mcr.select_camera = True
 
         self.prev_active_ob = context.active_object
 
