@@ -24,12 +24,23 @@ There are many possible uses for this addon - it all depends on your imagination
 
 ## Release Notes
 
+* [Version 5.0.0 (upcoming)](./docs/pages/release_notes/v5.0.0.md)
 * [Version 4.4.0 (latest)](./docs/pages/release_notes/v4.4.0.md)
+
+
+<details><summary>
+<b>Previous versions:</b>
+</summary>
+
 * [Version 4.3.2](./docs/pages/release_notes/v4.3.2.md)
 * [Version 4.3.1](./docs/pages/release_notes/v4.3.1.md)
 * [Version 4.3.0](./docs/pages/release_notes/v4.3.0.md)
 * [Version 4.2.1](./docs/pages/release_notes/v4.2.1.md)
 * [Version 4.2.0](./docs/pages/release_notes/v4.2.0.md)
 * [Version 3.0.0](./docs/pages/release_notes/v3.0.0.md)
+
+</details></summary>
+
+---
 
 Copyright © 2020-2025 Vladlen Kuzmin (ssh4), Ivan Perevala (ivpe).

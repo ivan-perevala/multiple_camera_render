@@ -7,9 +7,9 @@
 schema_version = "1.0.0"
 
 id = "multiple_camera_render"
-version = "4.4.0"
+version = "5.0.0"
 name = "Multiple Camera Render"
-tagline = "Sequential rendering from multiple cameras"
+tagline = "Sequence render; Per-camera settings; Select camera; Make markers"
 maintainer = "Ivan Perevala <ivan95perevala@gmail.com>"
 type = "add-on"
 website = "https://mcr.readthedocs.io/"

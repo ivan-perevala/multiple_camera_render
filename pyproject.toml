@@ -6,7 +6,7 @@
 
 # ----------------------------------------------------------------------------------------------------------------------
 [project]
-version = "4.4.0"
+version = "5.0.0"
 name = "multiple_camera_render"
 description = "Multiple Camera Render"
 authors = [{ name = "Ivan Perevala", email = "ivan95perevala@gmail.com" }]
