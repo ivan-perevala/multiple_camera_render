@@ -22,7 +22,7 @@ import bhqmain4 as bhqmain
 import bhqui4 as bhqui
 
 from . chunk_persistent_main import PersistentMain
-from . clockwise_iter import ClockwiseIterator
+from . clockwise_iter import ClockwiseIterator, ClockwiseCameraIterator, CameraOrder, CameraUsage
 from . validate_id import validate_camera_object
 
 if TYPE_CHECKING:
@@ -152,50 +152,22 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         scene = context.scene
         scene_props = scene.mcr
-        curr_camera = scene.camera
-        need_switch_camera = False
 
-        match scene_props.cameras_usage:
-            case 'VISIBLE':
-                objects = context.visible_objects
-            case 'SELECTED':
-                objects = context.selected_objects
+        camera_iterator = ClockwiseCameraIterator(
+            context,
+            usage=CameraUsage[scene_props.usage],
+            order=CameraOrder[scene_props.order],
+        )
 
-        if not objects:
-            return False
+        if scene_props.reverse:
+            camera_iterator = reversed(camera_iterator)
 
-        if curr_camera not in objects:
-            need_switch_camera = True
+        self.camera_iterator = camera_iterator
+        count = len(self.camera_iterator)
 
-        cameras = np.array(objects)
-
-        angles = np.full(len(objects), np.nan, dtype=np.float32)
-        for i, ob in enumerate(objects):
-            if 'CAMERA' == ob.type:
-                x, y = -Vector([ob.matrix_world[0][2], ob.matrix_world[1][2]]).normalized()
-                angles[i] = math.atan2(x, y)
-
-        mask = ~np.isnan(angles)
-        if not mask.any():
-            return False
-
-        indices = np.argsort(angles[mask])
-        cameras = cameras[mask][indices]
-
-        if (not validate_camera_object(curr_camera)) or need_switch_camera:
-            curr_camera = cameras[0]
-            curr_camera_index = 0
-        else:
-            curr_camera_index = np.argmax(cameras == curr_camera)
-
-        self.camera_iterator = ClockwiseIterator(cameras, curr_camera_index)
-
-        if scene_props.direction == 'COUNTER':
-            self.camera_iterator = reversed(self.camera_iterator)
-
-        if cameras.size:
+        if count:
             _dbg(
-                f"Evaluated {cameras.size} cameras (active camera \"{curr_camera.name_full}\", index: {curr_camera_index}) "
+                f"Evaluated {count} cameras) "
                 f"in {time.time() - dt:.6f} sec."
             )
             return True

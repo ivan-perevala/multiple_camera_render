@@ -34,6 +34,9 @@ class Icons:
         'per_camera_dimmed',
         'select_camera',
         'select_camera_dimmed',
+        'markers',
+        'outliner',
+        'outliner_reverse',
     )
 
     @classmethod
@@ -67,6 +70,9 @@ IdentifierType = Literal[
     'per_camera_dimmed',
     'select_camera',
     'select_camera_dimmed',
+    'markers',
+    'outliner',
+    'outliner_reverse',
 ]
 
 

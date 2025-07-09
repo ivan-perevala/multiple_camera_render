@@ -11,7 +11,7 @@ import logging
 
 import bpy
 from bpy.props import PointerProperty
-from bpy.types import Scene, Camera, TOPBAR_MT_render, VIEW3D_HT_header
+from bpy.types import Scene, Camera, TOPBAR_MT_render, VIEW3D_HT_header, TIME_MT_marker
 from bpy.app.handlers import persistent
 
 ADDON_PKG = __package__
@@ -19,7 +19,6 @@ ADDON_PKG = __package__
 log = logging.getLogger(__name__)
 
 import bhqrprt4 as bhqrprt
-import bhqmain4 as bhqmain
 
 
 def get_preferences() -> props.Preferences:
@@ -43,8 +42,8 @@ del __reload_submodules
 
 from . import icons
 from . import props
-from . import ui
 from . import main
+from . import ui
 
 _classes = (
     props.Preferences,
@@ -56,6 +55,7 @@ _classes = (
     main.SCENE_OT_mcr_per_camera_preset_add,
     main.OBJECT_OT_per_camera_dump,
     main.OBJECT_OT_per_camera_clear,
+    main.MARKER_create_from_cameras,
     ui.MCR_PT_options,
     ui.MCR_PT_scene_use_per_camera,
 )
@@ -80,6 +80,7 @@ def register():
     Camera.mcr = PointerProperty(type=props.CameraProps)
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
     VIEW3D_HT_header.append(ui.additional_VIEW3D_HT_header_draw)
+    TIME_MT_marker.append(ui.additional_TIME_MT_marker_draw)
 
     register_handler(bpy.app.handlers.load_post, log_scene_properties_on_load_post)
     main.PersistentMain.register()
@@ -94,6 +95,7 @@ def unregister():
     icons.Icons.cache.release()
     VIEW3D_HT_header.remove(ui.additional_VIEW3D_HT_header_draw)
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
+    TIME_MT_marker.remove(ui.additional_TIME_MT_marker_draw)
     _cls_unregister()
     del Camera.mcr
     del Scene.mcr
