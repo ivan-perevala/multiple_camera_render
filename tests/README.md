@@ -9,10 +9,11 @@ Tests are long running because they involve actual rendering, so they are suppos
 Examples of tests for different Blender versions on Windows:
 
 ```powershell
-pytest --blender="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe"
-pytest --blender="C:/Program Files/Blender Foundation/Blender 4.3/blender.exe"
-pytest --blender="C:/Program Files/Blender Foundation/Blender 4.4/blender.exe"
-pytest --blender="C:/Program Files (x86)/Steam/steamapps/common/Blender/blender.exe"
+pytest --blender="C:/Program Files/Blender Foundation/Blender 4.2/blender.exe" --repo=user_default
+pytest --blender="C:/Program Files/Blender Foundation/Blender 4.3/blender.exe" --repo=user_default
+pytest --blender="C:/Program Files/Blender Foundation/Blender 4.4/blender.exe" --repo=user_default
+pytest --blender="C:/Program Files/Blender Foundation/Blender 4.5/blender.exe" --repo=user_default
+pytest --blender="C:/Program Files (x86)/Steam/steamapps/common/Blender/blender.exe" --repo=user_default
 ```
 
 * You would need pytest installed.

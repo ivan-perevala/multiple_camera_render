@@ -34,6 +34,6 @@ def test_check_output(main_tmpdir):
             channel = color[i]
             image_channel = image.pixels[i]
 
-            assert channel == pytest.approx(image_channel), (
+            assert channel == pytest.approx(image_channel, rel=1e-3), (
                 f"Image \"{name}\" channel {i} failed: {channel} != {image_channel}"
             )

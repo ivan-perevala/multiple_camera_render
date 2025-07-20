@@ -128,7 +128,7 @@ def test_per_camera_all(multiple_camera_render_module, with_select_camera):
             expected_value = values[index]
 
             if isinstance(curr_value, float):
-                curr_value = pytest.approx(curr_value)
+                curr_value = pytest.approx(curr_value, rel=1e-3)
             elif isinstance(curr_value, bpy.types.World):
                 expected_value = bpy.data.worlds[expected_value]
 

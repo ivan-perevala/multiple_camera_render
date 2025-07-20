@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Blender 4.5.0 LTS
+description: |
+  This workflow tests the Blender extension for multiple camera rendering.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/blender-test-4.5.0.yml'
+
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/blender-test-4.5.0.yml'
+    types: [closed]
+
+jobs:
+  test-addon:
+    runs-on: ubuntu-latest
+
+    env:
+      BLENDER_VERSION: "4.5.0"
+      BLENDER_DIR: "${{ github.workspace }}/blender"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Blender
+        id: cache-blender
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.BLENDER_DIR }}
+          key: blender-${{ env.BLENDER_VERSION }}
+
+      - name: Download Blender if not cached
+        if: steps.cache-blender.outputs.cache-hit != 'true'
+        run: |
+          BLENDER_MAJOR_MINOR=$(echo "${{ env.BLENDER_VERSION }}" | cut -d. -f1,2)
+          DOWNLOAD_URL="https://download.blender.org/release/Blender${BLENDER_MAJOR_MINOR}/blender-${{ env.BLENDER_VERSION }}-linux-x64.tar.xz"
+
+          mkdir -p "${{ env.BLENDER_DIR }}"
+          wget -qO- "${DOWNLOAD_URL}" | tar -xJ --strip-components=1 -C "${{ env.BLENDER_DIR }}"
+
+      - name: Get Blender Python executable
+        run: |
+          PYTHON_EXEC=$("${{ env.BLENDER_DIR }}/blender" --background --factory-startup --python-expr "import sys; print(sys.executable)" 2>/dev/null | grep -E '^/' | tail -n 1)
+          echo "BLENDER_PYTHON=$PYTHON_EXEC" >> $GITHUB_ENV
+          echo "Using: $BLENDER_PYTHON"
+
+      - name: Install Python dependencies in Blender
+        run: |
+          $BLENDER_PYTHON -m ensurepip
+          $BLENDER_PYTHON -m pip install --upgrade pip
+
+          $BLENDER_PYTHON -m pip install pytest
+
+      - name: Download wheels to build Multiple Camera Render
+        run: |
+          $BLENDER_PYTHON -m pip download -r requirements-dev.txt --dest "src/multiple_camera_render/wheels"
+
+      - name: Build and install selected Blender extensions
+        run: |
+          ADDONS=("multiple_camera_render")
+          ADDONS_DIR="${{ github.workspace }}/src"
+          DIST_DIR="${{ github.workspace }}/dist"
+
+          mkdir -p "$DIST_DIR"
+
+          for ADDON_NAME in "${ADDONS[@]}"; do
+            ADDON_PATH="$ADDONS_DIR/$ADDON_NAME"
+            OUTPUT_DIR="$DIST_DIR/$ADDON_NAME"
+
+            if [ -d "$ADDON_PATH" ]; then
+              mkdir -p "$OUTPUT_DIR"
+
+              echo "Building addon: $ADDON_NAME"
+              "${{ env.BLENDER_DIR }}/blender" --command extension build --source-dir="$ADDON_PATH" --output-dir="$OUTPUT_DIR"
+
+              EXTENSION_ZIP=$(find "$OUTPUT_DIR" -type f -name "*.zip" | head -n 1)
+              if [ -f "$EXTENSION_ZIP" ]; then
+                echo "Installing: $EXTENSION_ZIP"
+                "${{ env.BLENDER_DIR }}/blender" --command extension install-file --repo user_default --enable "$EXTENSION_ZIP"
+              else
+                echo "No zip found for addon: $ADDON_NAME"
+                exit 1
+              fi
+            else
+              echo "Addon directory does not exist: $ADDON_PATH"
+              exit 1
+            fi
+          done
+
+          echo "All listed Blender addons built and installed."
+
+      - name: Run tests
+        run: |
+          $BLENDER_PYTHON -m pytest -s -v --blender="${{ env.BLENDER_DIR }}/blender" --repo user_default --background-only
