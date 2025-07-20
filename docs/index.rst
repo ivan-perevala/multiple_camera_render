@@ -44,6 +44,12 @@ Multiple Camera Render Manual
    :alt: Blender 4.4.0
    :target: https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.4.0.yml
 
+.. image::
+   https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.5.0.yml/badge.svg
+   :alt: Blender 4.5.0 LTS
+   :target: https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.5.0.yml
+
+
 There are many possible uses for this addon - it all depends on your imagination. In general, the idea is that in a scene with multiple cameras, once rendering from one camera is finished, rendering from the next one begins. This applies to both image and animation rendering. Since rendering is usually a lengthy process, the addon also includes the option to preview its functionality in advance.
 
 Links
