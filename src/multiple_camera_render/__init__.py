@@ -11,7 +11,7 @@ import logging
 
 import bpy
 from bpy.props import PointerProperty
-from bpy.types import Scene, Camera, TOPBAR_MT_render, VIEW3D_HT_header, TIME_MT_marker
+from bpy.types import Scene, Camera, TOPBAR_MT_render, VIEW3D_HT_header, TIME_MT_marker, UI_MT_button_context_menu
 from bpy.app.handlers import persistent
 
 ADDON_PKG = __package__
@@ -77,9 +77,11 @@ def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     Camera.mcr = PointerProperty(type=props.CameraProps)
+
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
     VIEW3D_HT_header.append(ui.additional_VIEW3D_HT_header_draw)
     TIME_MT_marker.append(ui.additional_TIME_MT_marker_draw)
+    UI_MT_button_context_menu.append(ui.additional_UI_MT_button_context_menu)
 
     register_handler(bpy.app.handlers.load_post, log_scene_properties_on_load_post)
     main.PersistentMain.register()
@@ -92,9 +94,12 @@ def unregister():
     unregister_handler(bpy.app.handlers.load_post, log_scene_properties_on_load_post)
 
     icons.Icons.cache.release()
+
+    UI_MT_button_context_menu.remove(ui.additional_UI_MT_button_context_menu)
     VIEW3D_HT_header.remove(ui.additional_VIEW3D_HT_header_draw)
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
     TIME_MT_marker.remove(ui.additional_TIME_MT_marker_draw)
+
     _cls_unregister()
     del Camera.mcr
     del Scene.mcr
