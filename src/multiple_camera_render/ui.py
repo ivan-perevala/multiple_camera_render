@@ -68,6 +68,10 @@ class MCR_PT_scene_use_per_camera(Panel):
 
         row = layout.row()
         row.label(text="Use Flags")
+
+        wm = context.window_manager
+        row.prop(wm.mcr, "scene_per_camera_flag_search", icon='VIEWZOOM', text="")
+
         bhqui.template_preset(
             row,
             menu=main.SCENE_MT_mcr_per_camera_presets,
@@ -84,22 +88,42 @@ class MCR_PT_scene_use_per_camera(Panel):
 
         row = layout.row()
 
-        for category, data_paths in main.PersistentPerCamera.SCENE_DATA_PATHS_GROUPED.items():
-            if category == "Cycles" and skip_cycles:
-                continue
+        if wm.mcr.scene_per_camera_flag_search:
+            search_split = wm.mcr.scene_per_camera_flag_search.split(': ')
+            row.alignment = 'CENTER'
 
-            col = row.column(align=True)
-            col.label(text=category)
+            if len(search_split) == 2:
+                category, label = search_split
+                possible_data_paths = main.PersistentPerCamera.SCENE_DATA_PATHS_GROUPED[category]
 
-            for data_path in data_paths:
-                if data_path is None:
-                    col.separator(type='LINE')
-                else:
-                    col.prop(
-                        scene_props,
-                        main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
-                        text=main.PersistentPerCamera.eval_scene_flag_ui_label(data_path)
-                    )
+                for data_path in possible_data_paths:
+                    if data_path and main.PersistentPerCamera.eval_scene_flag_ui_label(data_path) == label:
+                        row.prop(
+                            scene_props,
+                            main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
+                            text=main.PersistentPerCamera.eval_scene_flag_ui_label(data_path)
+                        )
+                        break
+            else:
+                row.label(text="Not Found", icon='ERROR')
+
+        else:
+            for category, data_paths in main.PersistentPerCamera.SCENE_DATA_PATHS_GROUPED.items():
+                if category == "Cycles" and skip_cycles:
+                    continue
+
+                col = row.column(align=True)
+                col.label(text=category)
+
+                for data_path in data_paths:
+                    if data_path is None:
+                        col.separator(type='LINE')
+                    else:
+                        col.prop(
+                            scene_props,
+                            main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
+                            text=main.PersistentPerCamera.eval_scene_flag_ui_label(data_path)
+                        )
 
 
 def additional_TOPBAR_MT_render_draw(self: Panel, context: Context):

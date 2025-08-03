@@ -11,7 +11,7 @@ import logging
 
 import bpy
 from bpy.props import PointerProperty
-from bpy.types import Scene, Camera, TOPBAR_MT_render, VIEW3D_HT_header, UI_MT_button_context_menu
+from bpy.types import Scene, Camera, WindowManager, TOPBAR_MT_render, VIEW3D_HT_header, UI_MT_button_context_menu
 from bpy.app.handlers import persistent
 
 ADDON_PKG = __package__
@@ -50,6 +50,7 @@ _classes = (
     props.Preferences,
     props.SceneProps,
     props.CameraProps,
+    props.WMProps,
     main.RENDER_OT_multiple_camera_render,
     main.SCENE_OT_mcr_per_camera_enable,
     main.SCENE_MT_mcr_per_camera_presets,
@@ -78,6 +79,7 @@ def register():
     _cls_register()
     Scene.mcr = PointerProperty(type=props.SceneProps)
     Camera.mcr = PointerProperty(type=props.CameraProps)
+    WindowManager.mcr = PointerProperty(type=props.WMProps)
 
     TOPBAR_MT_render.append(ui.additional_TOPBAR_MT_render_draw)
     VIEW3D_HT_header.append(ui.additional_VIEW3D_HT_header_draw)
@@ -100,6 +102,7 @@ def unregister():
     TOPBAR_MT_render.remove(ui.additional_TOPBAR_MT_render_draw)
 
     _cls_unregister()
+    del WindowManager.mcr
     del Camera.mcr
     del Scene.mcr
 
