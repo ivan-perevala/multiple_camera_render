@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from bpy.types import UILayout, Panel
+from bpy.types import UILayout, Panel, Context, Menu, Scene
 
 from . import icons
 from . import main
@@ -102,7 +102,7 @@ class MCR_PT_scene_use_per_camera(Panel):
                     )
 
 
-def additional_TOPBAR_MT_render_draw(self, context):
+def additional_TOPBAR_MT_render_draw(self: Panel, context: Context):
     from . import main
 
     layout: UILayout = self.layout
@@ -146,10 +146,28 @@ def additional_TOPBAR_MT_render_draw(self, context):
     col.popover(panel=MCR_PT_scene_use_per_camera.__name__, icon_value=icons.get_id('per_camera'))
 
 
-def additional_VIEW3D_HT_header_draw(self, context):
+def additional_VIEW3D_HT_header_draw(self: Panel, context: Context):
     layout: UILayout = self.layout
     row = layout.row()
 
     scene = context.scene
 
     row.prop(scene.mcr, "select_camera", icon_only=True, icon_value=icons.get_id('select_camera'))
+
+
+def additional_UI_MT_button_context_menu(self: Menu, context: Context):
+    layout = self.layout
+
+    if context.property:
+        data_block, data_path, _array_index = context.property
+
+        scene = context.scene
+
+        if data_block == scene and data_path in main.PersistentPerCamera.SCENE_DATA_PATHS:
+            layout.separator(type='LINE')
+
+            col = layout.column(align=True)
+            col.use_property_split = False
+            col.use_property_decorate = True
+
+            col.prop(scene.mcr, main.PersistentPerCamera.SCENE_FLAG_MAP[data_path], text="Use Per Camera")
