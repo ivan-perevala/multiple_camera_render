@@ -15,6 +15,7 @@ is a color of "Approved" message in approval queue on Blender Extensions Platfor
 [![Blender 4.2.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.2.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.2.0.yml)
 [![Blender 4.3.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.3.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.3.0.yml)
 [![Blender 4.4.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.4.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.4.0.yml)
+[![Blender 4.5.0 LTS](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.5.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.5.0.yml)
 
 Extension for [Blender](https://www.blender.org/) for sequential rendering from multiple cameras.
 
