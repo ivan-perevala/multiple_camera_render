@@ -70,7 +70,6 @@ def log_scene_properties_on_load_post(_=None):
     scene = bpy.context.scene
     bhqrprt.log_bpy_struct_properties(log, struct=scene.mcr)
 
-
 @bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(os.path.dirname(__file__), "logs"))
 def register():
     icons.Icons.register()

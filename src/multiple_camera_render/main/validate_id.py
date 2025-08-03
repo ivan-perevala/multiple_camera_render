@@ -7,19 +7,21 @@ from __future__ import annotations
 from bpy.types import ID, Object
 
 
-def validate_id(id: None | ID) -> bool:
+def validate_id(id: None | ID, check_attr: str = "name_full") -> bool:
     """Validate id data block is not None and not deleted.
 
     :param id: ID data block.
     :type id: None | ID
-    :return: Valid state.
+    :param check_attr: Attribute to try access, defaults to "name_full"
+    :type check_attr: str, optional
+    :return:  Valid state.
     :rtype: bool
     """
     if id is None:
         return False
 
     try:
-        getattr(id, "name_full")
+        getattr(id, check_attr)
     except ReferenceError:
         return False
     else:

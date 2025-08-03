@@ -37,6 +37,11 @@ class Icons:
         'markers',
         'outliner',
         'outliner_reverse',
+        'frame_current',
+        'frame_markers_in_range',
+        'frame_selected_markers',
+        'frame_markers_in_range_reverse',
+        'frame_selected_markers_reverse',
     )
 
     @classmethod
@@ -73,6 +78,11 @@ IdentifierType = Literal[
     'markers',
     'outliner',
     'outliner_reverse',
+    'frame_current',
+    'frame_markers_in_range',
+    'frame_selected_markers',
+    'frame_markers_in_range_reverse',
+    'frame_selected_markers_reverse',
 ]
 
 

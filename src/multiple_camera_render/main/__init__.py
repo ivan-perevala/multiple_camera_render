@@ -74,7 +74,7 @@ from . per_camera_preset import SCENE_MT_mcr_per_camera_presets, SCENE_OT_mcr_pe
 from . per_camera_dump import OBJECT_OT_per_camera_dump
 from . per_camera_clear import OBJECT_OT_per_camera_clear
 from . markers import MARKER_create_from_cameras
-from . clockwise_iter import CameraUsage, CameraOrder, CameraProperties
+from . clockwise_iter import CameraUsage, CameraOrder, CameraProperties, FrameUsage
 
 __all__ = (
     # file://./main.py
@@ -97,4 +97,6 @@ __all__ = (
     # file://./clockwise_iter.py
     "CameraUsage",
     "CameraOrder",
+    "CameraProperties",
+    "FrameUsage",
 )

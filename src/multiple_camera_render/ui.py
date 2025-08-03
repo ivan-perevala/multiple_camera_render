@@ -34,6 +34,17 @@ class MCR_PT_options(Panel):
 
         layout.separator(type='LINE')
 
+        col = layout.column()
+        col.prop(scene_props, "frame_usage", expand=True)
+
+        scol = layout.column()
+        scol.enabled = scene_props.frame_usage in {
+            main.FrameUsage.MARKERS_IN_RANGE.name,
+            main.FrameUsage.SELECTED_MARKERS.name
+        }
+
+        scol.prop(scene_props, "frame_usage_reverse")
+
         layout.prop(scene_props, "keep_frame_in_filepath")
 
 
@@ -107,11 +118,6 @@ def additional_TOPBAR_MT_render_draw(self, context):
 
     layout: UILayout = self.layout
     layout.separator()
-
-    if not main.RENDER_OT_multiple_camera_render.poll(context):
-        layout.label(text="Multiple Camera Render", icon_value=icons.get_id('render'))
-        layout.label(text="unavailable (markers used)")
-        return
 
     col = layout.column()
     col.operator_context = 'INVOKE_DEFAULT'

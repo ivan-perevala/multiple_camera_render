@@ -9,11 +9,11 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from bpy.types import Object, Context
+from bpy.types import Object, Context, TimelineMarker
 
 import bhqmain4 as bhqmain
 
-from . validate_id import validate_camera_object
+from . validate_id import validate_camera_object, validate_id
 from . chunk_persistent_main import PersistentMain
 
 log = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
     render_filepath: str
     camera_ob: None | Object
     use_lock_interface: bool
-    handler_callbacks: dict[str, list]
+    marker_cameras: list[tuple[TimelineMarker, Object]]
 
     def __init__(self, main):
         super().__init__(main)
@@ -39,6 +39,7 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         self.render_filepath = ""
         self.camera_ob = None
         self.use_lock_interface = False
+        self.marker_cameras = []
 
     def invoke(self, context):
         super().invoke(context)
@@ -49,6 +50,7 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         self.render_filepath = scene.render.filepath
         self.camera_ob = scene.camera
         self.use_lock_interface = scene.render.use_lock_interface
+        self.marker_cameras = [(marker, marker.camera) for marker in scene.timeline_markers if marker.camera]
 
         return bhqmain.InvokeState.SUCCESSFUL
 
@@ -56,6 +58,15 @@ class Restore(bhqmain.MainChunk['Main', 'Context']):
         super().cancel(context)
 
         scene = context.scene
+
+        for marker, camera in self.marker_cameras:
+            if validate_id(marker, "frame"):
+                if validate_id(camera):
+                    marker.camera = camera
+                else:
+                    _err(f"Unable to restore camera for marker \"{marker.frame}\", invalid object")
+            else:
+                _err(f"Unable to restore marker camera for deleted marker")
 
         scene.frame_current = self.frame_current
         scene.render.filepath = self.render_filepath

@@ -59,6 +59,9 @@ class ClockwiseIterator:
     def __reversed__(self):
         return CounterClockwiseIterator(self.array, self.start_index)
 
+    def reset(self):
+        self._i = self.start_index
+        self._is_first_elem = False
 
 class CounterClockwiseIterator(ClockwiseIterator):
     "Reversed clockwise iterator."
@@ -88,6 +91,12 @@ class CameraUsage(IntEnum):
 class CameraOrder(IntEnum):
     CLOCKWISE = auto()
     ORIGINAL = auto()
+
+
+class FrameUsage(IntEnum):
+    CURRENT = auto()
+    MARKERS_IN_RANGE = auto()
+    SELECTED_MARKERS = auto()
 
 
 class CameraProperties:
@@ -201,3 +210,27 @@ class ClockwiseCameraIterator(ClockwiseIterator):
             start_index = 0
 
         super().__init__(array=cameras, start_index=start_index)
+
+
+class ClockwiseFrameIterator(ClockwiseIterator):
+    def __init__(self, context: Context, usage: FrameUsage):
+        scene = context.scene
+
+        if usage == FrameUsage.CURRENT:
+            super().__init__(array=[scene.frame_current], start_index=0)
+            return
+
+        array = np.empty(len(scene.timeline_markers), dtype=np.int32)
+        scene.timeline_markers.foreach_get("frame", array)
+
+        if usage == FrameUsage.SELECTED_MARKERS:
+            mask = np.empty(len(scene.timeline_markers), np.bool_)
+            scene.timeline_markers.foreach_get("select", mask)
+            array = array[mask]
+
+        start_index = 0
+        start, = np.where(array == scene.frame_current)
+        if start:
+            start_index = start[0]
+
+        super().__init__(array=array, start_index=start_index)

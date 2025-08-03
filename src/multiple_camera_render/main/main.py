@@ -28,15 +28,15 @@ class RENDER_OT_multiple_camera_render(Operator):
     animation: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
     quit: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
 
-    @classmethod
-    def poll(cls, context):
-        scene = context.scene
+    # @classmethod
+    # def poll(cls, context):
+    #     scene = context.scene
 
-        for marker in scene.timeline_markers:
-            if marker.camera:
-                return False
+    #     for marker in scene.timeline_markers:
+    #         if marker.camera:
+    #             return False
 
-        return True
+    #     return True
 
     @bhqrprt.operator_report(log)
     def invoke(self, context, event):
@@ -94,7 +94,7 @@ class RENDER_OT_multiple_camera_render(Operator):
         if properties.animation:
             if properties.preview:
                 return "Preview animation process. Not actual render would be performed"
-            return "Render animation sequentionally from multiple cameras"
+            return "Render animation sequentially from multiple cameras"
         else:
             if properties.preview:
                 return "Preview camera order. Not actual render would be performed"
