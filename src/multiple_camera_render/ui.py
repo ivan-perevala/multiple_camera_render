@@ -30,11 +30,22 @@ class MCR_PT_options(Panel):
 
         scene_props = context.scene.mcr
 
-        col = layout.column()
+        scene_props.draw_camera_usage_properties(layout)
 
-        col.prop(scene_props, "cameras_usage", expand=True)
-        col.prop(scene_props, "direction", expand=True)
-        col.prop(scene_props, "keep_frame_in_filepath")
+        layout.separator(type='LINE')
+
+        col = layout.column()
+        col.prop(scene_props, "frame_usage", expand=True)
+
+        scol = layout.column()
+        scol.enabled = scene_props.frame_usage in {
+            main.FrameUsage.MARKERS_IN_RANGE.name,
+            main.FrameUsage.SELECTED_MARKERS.name
+        }
+
+        scol.prop(scene_props, "frame_usage_reverse")
+
+        layout.prop(scene_props, "keep_frame_in_filepath")
 
 
 class MCR_PT_scene_use_per_camera(Panel):
@@ -133,8 +144,12 @@ def additional_TOPBAR_MT_render_draw(self: Panel, context: Context):
 
     layout: UILayout = self.layout
     layout.separator()
+
     col = layout.column()
     col.operator_context = 'INVOKE_DEFAULT'
+
+    scene = context.scene
+    scene_props = scene.mcr
 
     col.operator(
         operator=main.RENDER_OT_multiple_camera_render.bl_idname,
@@ -164,11 +179,10 @@ def additional_TOPBAR_MT_render_draw(self: Panel, context: Context):
     props.preview = True
     props.animation = True
 
-    def _get_menu_icon(attr: str):
-        scene_props = context.scene.mcr
-        return col.enum_item_icon(scene_props, attr, getattr(scene_props, attr))
+    attr = "usage"
+    icon_value = col.enum_item_icon(scene_props, attr, getattr(scene_props, attr))
 
-    col.popover(panel=MCR_PT_options.__name__, icon_value=_get_menu_icon("cameras_usage"))
+    col.popover(panel=MCR_PT_options.__name__, icon_value=icon_value)
     col.popover(panel=MCR_PT_scene_use_per_camera.__name__, icon_value=icons.get_id('per_camera'))
 
 
@@ -179,6 +193,15 @@ def additional_VIEW3D_HT_header_draw(self: Panel, context: Context):
     scene = context.scene
 
     row.prop(scene.mcr, "select_camera", icon_only=True, icon_value=icons.get_id('select_camera'))
+
+
+def additional_TIME_MT_marker_draw(self, context):
+    layout: UILayout = self.layout
+    col = layout.column()
+
+    col.separator(type='LINE')
+
+    col.operator(operator=main.MARKER_create_from_cameras.bl_idname, icon_value=icons.get_id('markers'))
 
 
 def additional_UI_MT_button_context_menu(self: Menu, context: Context):

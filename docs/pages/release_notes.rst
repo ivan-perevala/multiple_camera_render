@@ -5,8 +5,11 @@
 Release Notes
 =============
 
-.. Upcoming:
-.. ---------
+Upcoming:
+---------
+
+.. include:: release_notes/v5.0.0.md
+   :parser: myst_parser.sphinx_
 
 Releases:
 ---------

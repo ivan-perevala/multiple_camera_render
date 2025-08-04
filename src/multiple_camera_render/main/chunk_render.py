@@ -22,7 +22,7 @@ import bhqmain4 as bhqmain
 import bhqui4 as bhqui
 
 from . chunk_persistent_main import PersistentMain
-from . clockwise_iter import ClockwiseIterator
+from . clockwise_iter import ClockwiseCameraIterator, CameraOrder, CameraUsage, ClockwiseFrameIterator, FrameUsage
 from . validate_id import validate_camera_object
 
 if TYPE_CHECKING:
@@ -45,7 +45,8 @@ class RenderStatus(IntEnum):
 class Render(bhqmain.MainChunk['Main', 'Context']):
     "Handles render pipeline and camera change."
 
-    camera_iterator: None | ClockwiseIterator
+    camera_iterator: None | ClockwiseCameraIterator
+    frame_iterator: None | ClockwiseFrameIterator
 
     status: RenderStatus
 
@@ -54,6 +55,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
     def __init__(self, main):
         super().__init__(main)
         self.camera_iterator = None
+        self.frame_iterator = None
         self.status = RenderStatus.NONE
 
     def _eval_render_filename_frame(self, context: Context, name: str) -> str:
@@ -145,6 +147,32 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             if callback in bl_handlers:
                 bl_handlers.remove(callback)
 
+    def eval_frames(self, context: Context) -> bool:
+        if self.main.animation:
+            _dbg("Frame evaluation skipped for animation")
+            return True
+
+        _dbg("Evaluating frames queue")
+
+        scene = context.scene
+
+        frame_iterator = ClockwiseFrameIterator(context, usage=FrameUsage[scene.mcr.frame_usage])
+
+        count = len(frame_iterator)
+
+        if not count:
+            _err(f"Missing frames to render")
+            return False
+
+        if scene.mcr.frame_usage_reverse:
+            self.frame_iterator = reversed(frame_iterator)
+        else:
+            self.frame_iterator = frame_iterator
+
+        _dbg(f"Evaluated {count} frame(s) to render")
+
+        return True
+
     def eval_cameras(self, context: Context) -> bool:
         _dbg("Evaluating camera queue")
 
@@ -152,56 +180,42 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         scene = context.scene
         scene_props = scene.mcr
-        curr_camera = scene.camera
-        need_switch_camera = False
 
-        match scene_props.cameras_usage:
-            case 'VISIBLE':
-                objects = context.visible_objects
-            case 'SELECTED':
-                objects = context.selected_objects
+        camera_iterator = ClockwiseCameraIterator(
+            context,
+            usage=CameraUsage[scene_props.usage],
+            order=CameraOrder[scene_props.order],
+        )
 
-        if not objects:
-            return False
+        if scene_props.reverse:
+            camera_iterator = reversed(camera_iterator)
 
-        if curr_camera not in objects:
-            need_switch_camera = True
+        self.camera_iterator = camera_iterator
+        count = len(self.camera_iterator)
 
-        cameras = np.array(objects)
-
-        angles = np.full(len(objects), np.nan, dtype=np.float32)
-        for i, ob in enumerate(objects):
-            if 'CAMERA' == ob.type:
-                x, y = -Vector([ob.matrix_world[0][2], ob.matrix_world[1][2]]).normalized()
-                angles[i] = math.atan2(x, y)
-
-        mask = ~np.isnan(angles)
-        if not mask.any():
-            return False
-
-        indices = np.argsort(angles[mask])
-        cameras = cameras[mask][indices]
-
-        if (not validate_camera_object(curr_camera)) or need_switch_camera:
-            curr_camera = cameras[0]
-            curr_camera_index = 0
-        else:
-            curr_camera_index = np.argmax(cameras == curr_camera)
-
-        self.camera_iterator = ClockwiseIterator(cameras, curr_camera_index)
-
-        if scene_props.direction == 'COUNTER':
-            self.camera_iterator = reversed(self.camera_iterator)
-
-        if cameras.size:
+        if count:
             _dbg(
-                f"Evaluated {cameras.size} cameras (active camera \"{curr_camera.name_full}\", index: {curr_camera_index}) "
+                f"Evaluated {count} cameras) "
                 f"in {time.time() - dt:.6f} sec."
             )
             return True
         else:
             _err(f"Missing camera objects, search time {time.time() - dt:.6f}")
             return False
+
+    def next_frame_update_eval(self, context: Context) -> bool:
+        if not self.frame_iterator:
+            return False
+
+        scene = context.scene
+
+        next_frame = next(self.frame_iterator, None)
+
+        if next_frame:
+            if scene.frame_current != next_frame:
+                scene.frame_set(next_frame)
+                return True
+        return False
 
     def next_camera_update_eval(self, context: Context) -> bool:
         scene = context.scene
@@ -210,9 +224,11 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         while True:
             next_camera = next(self.camera_iterator, None)
             if next_camera is None:
-                self.status = RenderStatus.COMPLETE
-                _info("All cameras from initially evaluated has been processed, processing complete.")
-                return False
+                if not self.next_frame_update_eval(context):
+                    self.status = RenderStatus.COMPLETE
+                    _info("All cameras from initially evaluated has been processed, processing complete.")
+                    return False
+                self.camera_iterator.reset()
 
             elif validate_camera_object(next_camera):
                 break
@@ -262,11 +278,26 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         return True
 
+    def clear_marker_cameras(self, context: Context):
+        scene = context.scene
+
+        num_cleared = 0
+
+        for marker in scene.timeline_markers:
+            if marker.camera:
+                marker.camera = None
+                num_cleared += 1
+
+        _dbg(f"Cleared {num_cleared} camera marker(s)")
+
     def setup_progress(self):
         progress = bhqui.progress.get(identifier=self._PROGRESS_ID)
         progress.label = "Multiple Camera Render"
         progress.subtype = 'STEP'
         progress.num_steps = len(self.camera_iterator)
+
+        if self.frame_iterator:
+            progress.num_steps *= len(self.camera_iterator)
 
     def increase_progress(self, context: Context):
         progress = bhqui.progress.get(identifier=self._PROGRESS_ID)
@@ -282,8 +313,15 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             pmain().per_camera.unregister_per_camera_handler()
             pmain().select_camera.unregister_select_camera_handler()
 
+        if not self.eval_frames(context):
+            return bhqmain.InvokeState.FAILED
+
+        self.next_frame_update_eval(context)
+
         if not self.eval_cameras(context):
             return bhqmain.InvokeState.FAILED
+
+        self.clear_marker_cameras(context)
 
         self.register_handlers()
 

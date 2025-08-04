@@ -14,6 +14,8 @@ def __reload_submodules(lc):
         reload(register_handlers)
     if "clockwise_iter" in lc:
         reload(clockwise_iter)
+    if "markers" in lc:
+        reload(markers)
 
     if "chunk_persistent_main" in lc:
         reload(chunk_persistent_main)
@@ -48,6 +50,7 @@ del __reload_submodules
 from . import validate_id
 from . import register_handlers
 from . import clockwise_iter
+from . import markers
 
 from . import chunk_persistent_main
 from . import chunk_persistent_per_camera
@@ -70,6 +73,8 @@ from . per_camera_enable import SCENE_OT_mcr_per_camera_enable
 from . per_camera_preset import SCENE_MT_mcr_per_camera_presets, SCENE_OT_mcr_per_camera_preset_add
 from . per_camera_dump import OBJECT_OT_per_camera_dump
 from . per_camera_clear import OBJECT_OT_per_camera_clear
+from . markers import MARKER_create_from_cameras
+from . clockwise_iter import CameraUsage, CameraOrder, CameraProperties, FrameUsage
 
 __all__ = (
     # file://./main.py
@@ -87,4 +92,11 @@ __all__ = (
     "OBJECT_OT_per_camera_dump",
     # file://./per_camera_clear.py
     "OBJECT_OT_per_camera_clear",
+    # file://./markers.py
+    "MARKER_create_from_cameras",
+    # file://./clockwise_iter.py
+    "CameraUsage",
+    "CameraOrder",
+    "CameraProperties",
+    "FrameUsage",
 )

@@ -13,64 +13,14 @@ from bpy.props import BoolProperty, EnumProperty
 
 import bhqrprt4 as bhqrprt
 
-from .. import icons
 from .. import main
 
 log = logging.getLogger(__name__)
 
+from .. import icons
 
-class SceneProps(PropertyGroup, main.PersistentPerCamera.eval_scene_flag_properties()):
-    cameras_usage: EnumProperty(
-        items=[
-            (
-                'VISIBLE',
-                "Visible",
-                "Render from all visible cameras",
-                icons.get_id('visible'),
-                0
-            ),
-            (
-                'SELECTED',
-                "Selected",
-                "Render only from selected cameras",
-                icons.get_id('selected'),
-                1
-            )
-        ],
-        default='VISIBLE',
-        options={'SKIP_SAVE'},
-        name="Cameras Usage",
-        description="Which cameras to use for rendering",
-        update=bhqrprt.update_log_setting_changed(log, "cameras_usage"),
-    )
 
-    direction: EnumProperty(
-        name="Direction",
-        items=(
-            (
-                'CLOCKWISE',
-                "Clockwise",
-                "",
-                icons.get_id('clockwise'),
-                0
-            ),
-            (
-                'COUNTER',
-                "Counter",
-                "",
-                icons.get_id('counter'),
-                1
-            ),
-        ),
-        default='CLOCKWISE',
-        options={'SKIP_SAVE'},
-        description=(
-            "The direction in which the cameras will change during the rendering of the sequence (Starting from the "
-            "current camera of the scene)"
-        ),
-        update=bhqrprt.update_log_setting_changed(log, "direction"),
-    )
-
+class SceneProps(PropertyGroup, main.CameraProperties, main.PersistentPerCamera.eval_scene_flag_properties()):
     keep_frame_in_filepath: BoolProperty(
         default=True,
         options={'SKIP_SAVE'},
@@ -94,4 +44,45 @@ class SceneProps(PropertyGroup, main.PersistentPerCamera.eval_scene_flag_propert
         name="Set Selected as Active Camera",
         description="Select camera would make it scene active",
         options={'SKIP_SAVE'},
+    )
+
+    def _frame_usage_items(self, context: Context):
+        return (
+            (
+                main.FrameUsage.CURRENT.name,
+                "Current",
+                "Render current frame from multiple cameras",
+                icons.get_id('frame_current'),
+                main.FrameUsage.CURRENT.value
+            ),
+            None,
+            (
+                main.FrameUsage.MARKERS_IN_RANGE.name,
+                "Markers in Range",
+                "Render from multiple cameras at each marker in scene frame range",
+                icons.get_id('frame_markers_in_range_reverse' if self.frame_usage_reverse else 'frame_markers_in_range'),
+                main.FrameUsage.MARKERS_IN_RANGE.value
+            ),
+            (
+                main.FrameUsage.SELECTED_MARKERS.name,
+                "Selected Markers",
+                "Render from multiple cameras at each selected marker",
+                icons.get_id('frame_selected_markers_reverse' if self.frame_usage_reverse else 'frame_selected_markers'),
+                main.FrameUsage.SELECTED_MARKERS.value
+            )
+        )
+
+    frame_usage: EnumProperty(
+        items=_frame_usage_items,
+        options={'SKIP_SAVE'},
+        default=main.FrameUsage.CURRENT.value,
+        name="Frame Usage",
+        description="Which frames to use for sequential rendering. Does nothing for animation rendering"
+    )
+
+    frame_usage_reverse: BoolProperty(
+        default=False,
+        options={'SKIP_SAVE'},
+        name="Reverse",
+        description="Iterate markers in reverse"
     )
