@@ -31,17 +31,6 @@ class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
         "per_camera": PersistentPerCamera,
     }
 
-    @staticmethod
-    def _statusbar_draw_status(self, context):
-        layout: UILayout = self.layout
-
-        pmain = PersistentMain.get_instance()
-        if pmain and pmain():
-            if pmain().per_camera.is_handler_active():
-                layout.label(text="Per Camera Active", icon_value=icons.get_id('per_camera_dimmed'))
-            if pmain().select_camera.is_handler_active():
-                layout.label(text="Select Camera Active", icon_value=icons.get_id('select_camera_dimmed'))
-
     def __init__(self, main):
         super().__init__(main)
 
@@ -52,6 +41,34 @@ class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
     def cancel(self, context):
         STATUSBAR_HT_header.remove(self._statusbar_draw_status)
         return super().cancel(context)
+
+    @classmethod
+    def register(cls):
+        register_handler(bpy.app.handlers.load_post, cls.create_and_invoke_on_load_post)
+        bpy.app.timers.register(cls.create_and_invoke, first_interval=0.1)
+
+        register_handler(bpy.app.handlers.load_pre, cls.cancel_on_load_pre)
+
+    @classmethod
+    def unregister(cls):
+        unregister_handler(bpy.app.handlers.load_pre, cls.cancel_on_load_pre)
+        unregister_handler(bpy.app.handlers.load_post, cls.create_and_invoke_on_load_post)
+
+        pmain = cls.get_instance()
+        if pmain and pmain():
+            if pmain().cancel(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
+                log.warning(f"Unable to unregister {cls.__name__} instance")
+
+    @staticmethod
+    def _statusbar_draw_status(self, context):
+        layout: UILayout = self.layout
+
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            if pmain().per_camera.is_handler_active():
+                layout.label(text="Per Camera Active", icon_value=icons.get_id('per_camera_dimmed'))
+            if pmain().select_camera.is_handler_active():
+                layout.label(text="Select Camera Active", icon_value=icons.get_id('select_camera_dimmed'))
 
     @classmethod
     def create_and_invoke(cls):
@@ -86,20 +103,3 @@ class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
                 log.debug(f"{cls.__name__} was cancelled on load pre")
         else:
             log.warning("There is no instance to cancel before loading new file")
-
-    @classmethod
-    def register(cls):
-        register_handler(bpy.app.handlers.load_post, cls.create_and_invoke_on_load_post)
-        bpy.app.timers.register(cls.create_and_invoke, first_interval=0.1)
-
-        register_handler(bpy.app.handlers.load_pre, cls.cancel_on_load_pre)
-
-    @classmethod
-    def unregister(cls):
-        unregister_handler(bpy.app.handlers.load_pre, cls.cancel_on_load_pre)
-        unregister_handler(bpy.app.handlers.load_post, cls.create_and_invoke_on_load_post)
-
-        pmain = cls.get_instance()
-        if pmain and pmain():
-            if pmain().cancel(bpy.context) != bhqmain.InvokeState.SUCCESSFUL:
-                log.warning(f"Unable to unregister {cls.__name__} instance")

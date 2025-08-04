@@ -58,6 +58,55 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         self.frame_iterator = None
         self.status = RenderStatus.NONE
 
+    def invoke(self, context):
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            pmain().per_camera.unregister_per_camera_handler()
+            pmain().select_camera.unregister_select_camera_handler()
+
+        if not self.eval_frames(context):
+            return bhqmain.InvokeState.FAILED
+
+        self.next_frame_update_eval(context)
+
+        if not self.eval_cameras(context):
+            return bhqmain.InvokeState.FAILED
+
+        self.clear_marker_cameras(context)
+
+        self.register_handlers()
+
+        scene = context.scene
+        scene.render.use_lock_interface = True
+
+        if self.main.preview:
+            if self.main.animation:
+                scene.frame_set(scene.frame_start)
+                bpy.ops.screen.animation_play()
+            else:
+                bpy.ops.screen.animation_cancel()
+
+        self.status = RenderStatus.NEED_LAUNCH
+
+        self.setup_progress()
+
+        return super().invoke(context)
+
+    def cancel(self, context):
+        self.cancel_progress()
+        self.unregister_handlers()
+
+        if self.main.preview and context.screen.is_animation_playing:
+            bpy.ops.screen.animation_cancel(restore_frame=True)
+
+        pmain = PersistentMain.get_instance()
+        if pmain and pmain():
+            scene_props = context.scene.mcr
+            pmain().per_camera.conditional_handler_register(scene_props=scene_props)
+            pmain().select_camera.conditional_handler_register(scene_props=scene_props)
+
+        return super().cancel(context)
+
     def _eval_render_filename_frame(self, context: Context, name: str) -> str:
         scene = context.scene
 
@@ -71,7 +120,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             digits = end_index - start_index + 1
             name = f"{name[:start_index]}{scene.frame_current:0{digits}d}{name[end_index + 1:]}"
         else:
-            name += f"{scene.frame_current:04d}"  # Default behaviour
+            name += f"{scene.frame_current:04d}"  # Default behavior
 
         return name
 
@@ -315,52 +364,3 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
     def cancel_progress(self):
         bhqui.progress.complete(identifier=self._PROGRESS_ID)
-
-    def invoke(self, context):
-        pmain = PersistentMain.get_instance()
-        if pmain and pmain():
-            pmain().per_camera.unregister_per_camera_handler()
-            pmain().select_camera.unregister_select_camera_handler()
-
-        if not self.eval_frames(context):
-            return bhqmain.InvokeState.FAILED
-
-        self.next_frame_update_eval(context)
-
-        if not self.eval_cameras(context):
-            return bhqmain.InvokeState.FAILED
-
-        self.clear_marker_cameras(context)
-
-        self.register_handlers()
-
-        scene = context.scene
-        scene.render.use_lock_interface = True
-
-        if self.main.preview:
-            if self.main.animation:
-                scene.frame_set(scene.frame_start)
-                bpy.ops.screen.animation_play()
-            else:
-                bpy.ops.screen.animation_cancel()
-
-        self.status = RenderStatus.NEED_LAUNCH
-
-        self.setup_progress()
-
-        return super().invoke(context)
-
-    def cancel(self, context):
-        self.cancel_progress()
-        self.unregister_handlers()
-
-        if self.main.preview and context.screen.is_animation_playing:
-            bpy.ops.screen.animation_cancel(restore_frame=True)
-
-        pmain = PersistentMain.get_instance()
-        if pmain and pmain():
-            scene_props = context.scene.mcr
-            pmain().per_camera.conditional_handler_register(scene_props=scene_props)
-            pmain().select_camera.conditional_handler_register(scene_props=scene_props)
-
-        return super().cancel(context)
