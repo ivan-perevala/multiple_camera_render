@@ -98,12 +98,13 @@ class MCR_PT_scene_use_per_camera(Panel):
 
                 for data_path in possible_data_paths:
                     if data_path and main.PersistentPerCamera.eval_scene_flag_ui_label(data_path) == label:
-                        row.prop(
-                            scene_props,
-                            main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
-                            text=main.PersistentPerCamera.eval_scene_flag_ui_label(data_path)
-                        )
-                        break
+                        if label := main.PersistentPerCamera.eval_scene_flag_ui_label(data_path):
+                            row.prop(
+                                scene_props,
+                                main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
+                                text=label
+                            )
+                            break
             else:
                 row.label(text="Not Found", icon='ERROR')
 
@@ -119,11 +120,12 @@ class MCR_PT_scene_use_per_camera(Panel):
                     if data_path is None:
                         col.separator(type='LINE')
                     else:
-                        col.prop(
-                            scene_props,
-                            main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
-                            text=main.PersistentPerCamera.eval_scene_flag_ui_label(data_path)
-                        )
+                        if label := main.PersistentPerCamera.eval_scene_flag_ui_label(data_path):
+                            col.prop(
+                                scene_props,
+                                main.PersistentPerCamera.SCENE_FLAG_MAP[data_path],
+                                text=label
+                            )
 
 
 def additional_TOPBAR_MT_render_draw(self: Panel, context: Context):

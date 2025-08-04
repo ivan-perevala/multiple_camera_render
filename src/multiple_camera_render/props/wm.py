@@ -15,10 +15,10 @@ from .. import main
 class WMProps(PropertyGroup):
     def _search_scene_per_camera_flag(self, context: Context, edit_text: str):
         return tuple(
-            (f"{category}: {main.PersistentPerCamera.eval_scene_flag_ui_label(data_path)}", data_path)
+            f"{category}: {label}"
             for category, names in main.PersistentPerCamera.SCENE_DATA_PATHS_GROUPED.items()
             for data_path in names
-            if data_path is not None
+            if data_path is not None and (label := main.PersistentPerCamera.eval_scene_flag_ui_label(data_path))
         )
 
     scene_per_camera_flag_search: StringProperty(
