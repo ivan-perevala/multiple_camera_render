@@ -204,7 +204,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
             return False
 
     def next_frame_update_eval(self, context: Context) -> bool:
-        if not self.frame_iterator:
+        if not self.frame_iterator:  # Animation rendering
             return False
 
         scene = context.scene
@@ -223,6 +223,7 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         next_camera = None
         while True:
             next_camera = next(self.camera_iterator, None)
+
             if next_camera is None:
                 if not self.next_frame_update_eval(context):
                     self.status = RenderStatus.COMPLETE
@@ -246,6 +247,14 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         pmain = PersistentMain.get_instance()
         if pmain and pmain():
             pmain().per_camera.update_scene_properties_from_camera(scene, next_camera.data)
+
+        # Exceptional use-case for non-animation rendering with "Markers in Range" frame usage:
+        if (
+            self.frame_iterator
+            and (FrameUsage[scene.mcr.frame_usage] == FrameUsage.MARKERS_IN_RANGE)
+            and (scene.frame_start > scene.frame_current or scene.frame_current > scene.frame_end)
+        ):
+            return self.next_camera_update_eval(context)
 
         self._eval_render_filepath(context)
         self.increase_progress(context)
