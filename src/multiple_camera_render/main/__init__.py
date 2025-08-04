@@ -19,6 +19,8 @@ def __reload_submodules(lc):
 
     if "chunk_persistent_main" in lc:
         reload(chunk_persistent_main)
+    if "per_camera_data_paths" in lc:
+        reload(per_camera_data_paths)
     if "chunk_persistent_per_camera" in lc:
         reload(chunk_persistent_per_camera)
 
@@ -53,6 +55,7 @@ from . import clockwise_iter
 from . import markers
 
 from . import chunk_persistent_main
+from . import per_camera_data_paths
 from . import chunk_persistent_per_camera
 
 from . import chunk_main
