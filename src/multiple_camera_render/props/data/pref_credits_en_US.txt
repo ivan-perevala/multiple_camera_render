@@ -1,0 +1,7 @@
+Vladlen Kuzmin (ssh4) - the idea of creating an extension.
+Ivan Perevala (ivpe) - engineering, development, maintenance.
+
+Indirect contributors:
+
+ymt3d - the idea of select camera feature.
+Alexander Bicukow (Sasha) - the idea of per-camera feature.
