@@ -18,6 +18,7 @@ log = logging.getLogger(__name__)
 class MARKER_create_from_cameras(Operator, CameraProperties):
     bl_idname = "marker.create_from_cameras"
     bl_label = "Markers From Cameras"
+    bl_description = "Create markers with camera objects binded"
     bl_options = {'REGISTER', 'UNDO'}
 
     step: IntProperty(
