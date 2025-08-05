@@ -22,6 +22,9 @@ requires-python = ">=3.11"
 # MyPy configuration.
 # https://mypy.readthedocs.io/en/stable/config_file.html#using-a-pyproject-toml-file
 [tool.mypy]
+# Stubs path
+mypy_path = "stubs"
+
 # Type-checks the interior of functions without type annotations.
 check_untyped_defs = true
 
@@ -41,6 +44,8 @@ warn_unused_ignores = true
 # PyLint configuration.
 # https://pylint.readthedocs.io/en/stable/user_guide/usage/run.html
 [tool.pylint]
+prefer-stubs = 1
+
 # The type of string formatting that logging methods do. `old` means using % formatting, `new` is for `{}` formatting.
 logging-format-style = "fstr"
 
@@ -49,14 +54,19 @@ disable = """
 missing-module-docstring,
 """
 
-# ----------------------------------------------------------------------------------------------------------------------
-[tool.pyright]
-# Generate or suppress diagnostics for imports that have no corresponding source file.
-reportMissingModuleSource = false
+# # ----------------------------------------------------------------------------------------------------------------------
+# # Pyright configuration.
+# # https://microsoft.github.io/pyright/#/configuration?id=main-configuration-options[tool.pyright]
+# include = ["src"]
 
-# Generate or suppress diagnostics for type annotations that use invalid type expression forms or are semantically
-# invalid.
-reportInvalidTypeForm = false
+# stubPath = "./stubs"
+
+# # Generate or suppress diagnostics for imports that have no corresponding source file.
+# reportMissingModuleSource = false
+
+# # Generate or suppress diagnostics for type annotations that use invalid type expression forms or are semantically
+# # invalid.
+# reportInvalidTypeForm = false
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Pytest configuration

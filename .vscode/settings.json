@@ -12,5 +12,6 @@
     "editor.rulers": [
         120,
     ],
-    "autoDocstring.docstringFormat": "sphinx"
+    "autoDocstring.docstringFormat": "sphinx",
+    "python.analysis.stubPath": "stubs",
 }
