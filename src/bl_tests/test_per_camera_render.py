@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
-import bpy
+import bpy  # pyright: ignore [reportMissingModuleSource]
 import os
 import pytest
 

@@ -4,14 +4,14 @@
 
 from __future__ import annotations
 
-from bpy.types import UILayout
+from bpy.types import Menu, Context
 
 from .. import main
 from .. import icons
 
 
-def additional_TIME_MT_marker_draw(self, context):
-    layout: UILayout = self.layout
+def additional_TIME_MT_marker_draw(self: Menu, context: Context):
+    layout = self.layout
     col = layout.column()
 
     col.separator(type='LINE')

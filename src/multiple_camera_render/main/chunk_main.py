@@ -2,14 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 
-import bpy
-from bpy.types import Context, Event
+import bpy   # pyright: ignore [reportMissingModuleSource]
+from bpy.types import Context, Event   # pyright: ignore [reportMissingModuleSource]
 
 import bhqmain4 as bhqmain
 

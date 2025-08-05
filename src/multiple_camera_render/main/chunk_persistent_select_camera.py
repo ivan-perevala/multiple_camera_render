@@ -2,15 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
 
-import bpy
-from bpy.types import Context, Object
+import bpy   # pyright: ignore [reportMissingModuleSource]
+from bpy.types import Context, Object, Scene   # pyright: ignore [reportMissingModuleSource]
 
 import bhqmain4 as bhqmain
 
@@ -41,7 +39,7 @@ class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
 
         self.prev_active_ob = context.active_object
 
-        self.conditional_handler_register(scene_props=scene.mcr)
+        self.conditional_handler_register(scene)
 
         return super().invoke(context)
 
@@ -51,8 +49,8 @@ class PersistentSelectCamera(bhqmain.MainChunk['PersistentMain', 'Context']):
 
         return super().cancel(context)
 
-    def conditional_handler_register(self, *, scene_props):
-        if scene_props.select_camera:
+    def conditional_handler_register(self, scene: Scene):
+        if scene.mcr.select_camera:
             if register_handler(
                 bpy.app.handlers.depsgraph_update_post,
                 self.depsgraph_update_post,

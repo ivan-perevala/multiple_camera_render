@@ -2,17 +2,23 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import os
 import logging
 
-import bpy
-from bpy.props import PointerProperty
-from bpy.types import Scene, Camera, WindowManager, TOPBAR_MT_render, VIEW3D_HT_header, TIME_MT_marker, UI_MT_button_context_menu
-from bpy.app.handlers import persistent
+import bpy  # pyright: ignore [reportMissingModuleSource]
+from bpy.props import PointerProperty   # pyright: ignore [reportMissingModuleSource]
+from bpy.types import (  # pyright: ignore [reportMissingModuleSource]
+    Scene,
+    Camera,
+    WindowManager,
+    TOPBAR_MT_render,
+    VIEW3D_HT_header,
+    TIME_MT_marker,
+    UI_MT_button_context_menu
+)
+from bpy.app.handlers import persistent   # pyright: ignore [reportMissingModuleSource]
 
 ADDON_PKG = __package__
 
@@ -70,6 +76,7 @@ _cls_register, _cls_unregister = bpy.utils.register_classes_factory(_classes)
 def log_scene_properties_on_load_post(_=None):
     scene = bpy.context.scene
     bhqrprt.log_bpy_struct_properties(log, struct=scene.mcr)
+
 
 @bhqrprt.register_reports(log, props.Preferences, directory=os.path.join(os.path.dirname(__file__), "logs"))
 def register():

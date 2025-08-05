@@ -2,12 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
-from bpy.types import Menu, Operator
-from bl_operators.presets import AddPresetBase
+from bpy.types import Menu, Operator   # pyright: ignore [reportMissingModuleSource]
+from bl_operators.presets import AddPresetBase   # pyright: ignore [reportMissingModuleSource]
 
 from . chunk_persistent_per_camera import PersistentPerCamera
 

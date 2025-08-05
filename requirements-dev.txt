@@ -4,6 +4,7 @@
 
 # NOTE: This file is used by github actions to download wheels for the project.
 
+numpy==1.26.4
 bhqmain>=4.2.1
 bhqrprt>=4.2.6
 bhqui>=4.2.2

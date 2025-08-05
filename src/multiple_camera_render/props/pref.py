@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
@@ -73,7 +71,7 @@ class Preferences(AddonPreferences):
         options={'HIDDEN', 'SKIP_SAVE'},
         name="Tab",
         description="Active preferences tab",
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     preview_timestep: FloatProperty(
         options={'SKIP_SAVE'},
@@ -84,14 +82,14 @@ class Preferences(AddonPreferences):
         subtype='TIME_ABSOLUTE',
         name="Preview Timestep",
         description="Time step for cameras to be changed in preview mode",
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     select_camera: BoolProperty(
         default=False,
         options={'SKIP_SAVE'},
         name="Set Selected as Active Camera",
         description="Selecting camera would make it active by default",
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     def draw(self, context: Context):
         layout = self.layout

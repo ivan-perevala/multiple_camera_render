@@ -2,11 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from . conftest import set_camera_and_update_depsgraph
 
-import bpy
+import bpy  # pyright: ignore [reportMissingModuleSource]
 import pytest
 
 from typing import TYPE_CHECKING
@@ -47,7 +45,8 @@ DATA = {
     "cycles.samples": (64, 128, 256),
     "cycles.time_limit": (1.1, 2.2, 3.3),
     #
-    "cycles.denoiser": ('OPENIMAGEDENOISE', 'OPENIMAGEDENOISE', 'OPENIMAGEDENOISE'), # 'OPTIX' is omitted as far as its not supported for GitHub actions
+    # 'OPTIX' is omitted as far as its not supported for GitHub actions
+    "cycles.denoiser": ('OPENIMAGEDENOISE', 'OPENIMAGEDENOISE', 'OPENIMAGEDENOISE'),
     #
     "cycles.use_denoising": (False, True, False),
     "cycles.denoising_input_passes": ('RGB', 'RGB_ALBEDO', 'RGB_ALBEDO_NORMAL'),
@@ -74,11 +73,13 @@ DATA = {
     "world": ('World', 'World.001', 'World.002'),
 }
 
+
 def test_all_cases_match_to_addon(multiple_camera_render_module):
     if not TYPE_CHECKING:
         PersistentPerCamera = multiple_camera_render_module.main.PersistentPerCamera
 
     assert set(PersistentPerCamera.SCENE_DATA_PATHS) == set(DATA.keys())
+
 
 def test_per_camera_all(multiple_camera_render_module, with_select_camera):
     if not TYPE_CHECKING:

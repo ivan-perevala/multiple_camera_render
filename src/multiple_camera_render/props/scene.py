@@ -2,13 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 
-from bpy.types import PropertyGroup, Context
+from bpy.types import PropertyGroup, Context, Scene
 from bpy.props import BoolProperty, EnumProperty
 
 import bhqrprt4 as bhqrprt
@@ -27,16 +25,17 @@ class SceneProps(PropertyGroup, main.CameraProperties, main.PersistentPerCamera.
         name="Keep Frame Number",
         description="Write frame number even if not rendering animation",
         update=bhqrprt.update_log_setting_changed(log, "keep_frame_in_filepath"),
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     _update_log_select_camera = bhqrprt.update_log_setting_changed(log, "select_camera")
 
-    def _select_camera_update(self, context: Context):
+    def _select_camera_update(self: PropertyGroup, context: Context):
         self._update_log_select_camera(context)
 
         pmain = main.PersistentMain.get_instance()
         if pmain and pmain():
-            pmain().select_camera.conditional_handler_register(scene_props=self)
+            scene: Scene = self.id_data
+            pmain().select_camera.conditional_handler_register(scene)
 
     select_camera: BoolProperty(
         update=_select_camera_update,
@@ -44,7 +43,7 @@ class SceneProps(PropertyGroup, main.CameraProperties, main.PersistentPerCamera.
         name="Set Selected as Active Camera",
         description="Select camera would make it scene active",
         options={'SKIP_SAVE'},
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     def _frame_usage_items(self, context: Context):
         return (
@@ -78,11 +77,11 @@ class SceneProps(PropertyGroup, main.CameraProperties, main.PersistentPerCamera.
         default=main.FrameUsage.CURRENT.value,
         name="Frame Usage",
         description="Which frames to use for sequential rendering. Does nothing for animation rendering"
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     frame_usage_reverse: BoolProperty(
         default=False,
         options={'SKIP_SAVE'},
         name="Reverse",
         description="Iterate markers in reverse"
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]

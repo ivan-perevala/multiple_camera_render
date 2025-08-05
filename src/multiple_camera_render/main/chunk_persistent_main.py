@@ -2,15 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 
-import bpy
-from bpy.types import Context, STATUSBAR_HT_header, UILayout
-from bpy.app.handlers import persistent
+import bpy   # pyright: ignore [reportMissingModuleSource]
+from bpy.types import Context, STATUSBAR_HT_header   # pyright: ignore [reportMissingModuleSource]
+from bpy.app.handlers import persistent   # pyright: ignore [reportMissingModuleSource]
+import bl_ui   # pyright: ignore [reportMissingModuleSource]
 
 import bhqmain4 as bhqmain
 
@@ -60,8 +59,8 @@ class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
                 log.warning(f"Unable to unregister {cls.__name__} instance")
 
     @staticmethod
-    def _statusbar_draw_status(self, context):
-        layout: UILayout = self.layout
+    def _statusbar_draw_status(self: bl_ui.space_statusbar.STATUSBAR_HT_header, context: Context):
+        layout = self.layout
 
         pmain = PersistentMain.get_instance()
         if pmain and pmain():

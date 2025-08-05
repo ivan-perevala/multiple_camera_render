@@ -2,14 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
 
-from bpy.types import Object, Context, TimelineMarker
+from bpy.types import Object, Context, TimelineMarker   # pyright: ignore [reportMissingModuleSource]
 
 import bhqmain4 as bhqmain
 

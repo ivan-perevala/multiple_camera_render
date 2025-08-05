@@ -14,7 +14,7 @@ from . import per_camera_panel
 
 
 def additional_TOPBAR_MT_render_draw(self: Panel, context: Context):
-    layout: UILayout = self.layout
+    layout = self.layout
     layout.separator()
 
     col = layout.column()
@@ -29,21 +29,21 @@ def additional_TOPBAR_MT_render_draw(self: Panel, context: Context):
         icon_value=icons.get_id('render'),
     )
 
-    props = col.operator(
+    props: main.RENDER_OT_multiple_camera_render = col.operator(
         operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Render Animation from Multiple Cameras",
         icon_value=icons.get_id('render_animation'),
     )
     props.animation = True
 
-    props = col.operator(
+    props: main.RENDER_OT_multiple_camera_render = col.operator(
         operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Preview",
         icon_value=icons.get_id('preview'),
     )
     props.preview = True
 
-    props = col.operator(
+    props: main.RENDER_OT_multiple_camera_render = col.operator(
         operator=main.RENDER_OT_multiple_camera_render.bl_idname,
         text="Preview Animation",
         icon_value=icons.get_id('preview_animation'),

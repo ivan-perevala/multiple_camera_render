@@ -2,13 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 import logging
 import numpy as np
 
-from bpy.types import Operator
-from bpy.props import IntProperty, BoolProperty
+from bpy.types import Operator   # pyright: ignore [reportMissingModuleSource]
+from bpy.props import IntProperty, BoolProperty   # pyright: ignore [reportMissingModuleSource]
 
 import bhqrprt4 as bhqrprt
 
@@ -28,14 +26,14 @@ class MARKER_create_from_cameras(Operator, CameraProperties):
         options={'HIDDEN', 'SKIP_SAVE'},
         name="Step",
         description="Step between markers"
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     clear_range: BoolProperty(
         default=False,
         options={'HIDDEN', 'SKIP_SAVE'},
         name="Clear Range",
         description="Clear existing markers within range"
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     def draw(self, context):
         layout = self.layout

@@ -2,14 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 
-from bpy.types import Operator
-from bpy.props import BoolProperty
+from bpy.types import Operator   # pyright: ignore [reportMissingModuleSource]
+from bpy.props import BoolProperty   # pyright: ignore [reportMissingModuleSource]
 
 import bhqrprt4 as bhqrprt
 
@@ -26,7 +24,7 @@ class SCENE_OT_mcr_per_camera_enable(Operator):
     disable: BoolProperty(
         default=False,
         options={'SKIP_SAVE'},
-    )
+    )   # pyright: ignore [reportInvalidTypeForm]
 
     @classmethod
     def poll(cls, context):

@@ -2,14 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 import pytest
 import importlib
 import pathlib
 
-import bpy
-from bpy.types import Context, Object
+import bpy  # pyright: ignore [reportMissingModuleSource]
+from bpy.types import Context, Object  # pyright: ignore [reportMissingModuleSource]
 
 
 def pytest_addoption(parser):

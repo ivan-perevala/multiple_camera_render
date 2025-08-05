@@ -2,11 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
-from bpy.types import PropertyGroup
+from bpy.types import PropertyGroup   # pyright: ignore [reportMissingModuleSource]
 
 
 class CameraProps(PropertyGroup):

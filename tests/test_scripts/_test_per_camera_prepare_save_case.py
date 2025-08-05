@@ -2,13 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 # NOTE: This script prepares data for:
 # file://./../../src/bl_tests/test_per_camera_active_camera_saved.py
 # What it doing is sets render resolution and scene flag. Camera id properties should stay untouched before saving.
 
-import bpy
+import bpy  # pyright: ignore [reportMissingModuleSource]
 
 import os
 import sys

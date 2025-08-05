@@ -2,17 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 from typing import TYPE_CHECKING
 
-import bpy
-from bpy.types import Context, Camera, Scene
-from bpy.props import BoolProperty
-import addon_utils
+import bpy   # pyright: ignore [reportMissingModuleSource]
+from bpy.types import Context, Camera, Scene, Depsgraph, PropertyGroup   # pyright: ignore [reportMissingModuleSource]
+from bpy.props import BoolProperty   # pyright: ignore [reportMissingModuleSource]
+import addon_utils   # pyright: ignore [reportMissingModuleSource]
 
 import bhqmain4 as bhqmain
 
@@ -43,7 +41,7 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
         else:
             log.debug("No initial camera set in the scene")
 
-        self.conditional_handler_register(scene_props=scene.mcr)
+        self.conditional_handler_register(scene)
         self.register_save_pre_handler()
 
         return super().invoke(context)
@@ -61,9 +59,9 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
         if unregister_handler(bpy.app.handlers.depsgraph_update_post, self.depsgraph_update_post):
             log.debug("Handler \"depsgraph_update_post\" removed")
 
-    def conditional_handler_register(self, *, scene_props):
+    def conditional_handler_register(self, scene: Scene):
         for name in self.SCENE_FLAG_MAP.values():
-            if getattr(scene_props, name, False):
+            if getattr(scene.mcr, name, False):
                 self.register_per_camera_handler()
                 break
         else:
@@ -77,7 +75,7 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
         loaded_default, loaded_state = addon_utils.check("cycles")
         return loaded_default or loaded_state
 
-    def depsgraph_update_post(self, scene, dg):
+    def depsgraph_update_post(self, scene: Scene, dg: Depsgraph):
         curr_camera = None
         if validate_camera_object(scene.camera):
             curr_camera = scene.camera.data
@@ -103,12 +101,13 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
 
         from . chunk_persistent_main import PersistentMain
 
-        def _property_update(self, context):
+        def _property_update(self: PropertyGroup, context: Context):
             pmain = PersistentMain.get_instance()
             if pmain and pmain():
-                pmain().per_camera.conditional_handler_register(scene_props=self)
+                scene: Scene = self.id_data
+                pmain().per_camera.conditional_handler_register(scene)
 
-        for data_path, name in cls.SCENE_FLAG_MAP.items():
+        for _data_path, name in cls.SCENE_FLAG_MAP.items():
             annotations[name] = BoolProperty(
                 update=_property_update,
                 options={'SKIP_SAVE'}

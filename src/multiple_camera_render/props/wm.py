@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 from bpy.types import PropertyGroup, Context
@@ -26,4 +24,4 @@ class WMProps(PropertyGroup):
         search=_search_scene_per_camera_flag,
         name="Search",
         description="Search for option flag",
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]

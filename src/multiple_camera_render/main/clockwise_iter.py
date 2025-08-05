@@ -2,16 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 import math
 import numpy as np
 from enum import auto, IntEnum
 from typing import TYPE_CHECKING
 
-from bpy.types import Object, Context, UILayout
-from bpy.props import BoolProperty, EnumProperty
-from mathutils import Vector
+from bpy.types import Object, Context, UILayout   # pyright: ignore [reportMissingModuleSource]
+from bpy.props import BoolProperty, EnumProperty   # pyright: ignore [reportMissingModuleSource]
+from mathutils import Vector   # pyright: ignore [reportMissingModuleSource]
 
 from . validate_id import validate_camera_object
 from .. import icons
@@ -62,6 +60,7 @@ class ClockwiseIterator:
     def reset(self):
         self._i = self.start_index
         self._is_first_elem = False
+
 
 class CounterClockwiseIterator(ClockwiseIterator):
     "Reversed clockwise iterator."
@@ -124,7 +123,7 @@ class CameraProperties:
         options={'SKIP_SAVE'},
         name="Cameras Usage",
         description="Which cameras to use for rendering",
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     def _order_items(self, context: Context):
         return (
@@ -153,14 +152,14 @@ class CameraProperties:
             "The direction in which the cameras will change during the rendering of the sequence (Starting from the "
             "current camera of the scene)"
         ),
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     reverse: BoolProperty(
         default=False,
         options={'SKIP_SAVE'},
         name="Reverse",
         description="Iterate cameras in reverse order",
-    )
+    )  # pyright: ignore [reportInvalidTypeForm]
 
     def draw_camera_usage_properties(self, layout: UILayout):
         col = layout.column()
@@ -182,7 +181,7 @@ class ClockwiseCameraIterator(ClockwiseIterator):
 
         active_camera = context.scene.camera
 
-        cameras: list | npt.NDArray[Object] = []
+        cameras: list | npt.NDArray[object] = []  # pyright: ignore [reportInvalidTypeForm]
 
         if len(objects):
             match order:

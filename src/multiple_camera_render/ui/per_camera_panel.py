@@ -55,8 +55,16 @@ class MCR_PT_scene_use_per_camera(Panel):
         srow = row.row()
         srow.alignment = 'RIGHT'
         srow.label(text="Select")
-        srow.operator(operator=main.SCENE_OT_mcr_per_camera_enable.bl_idname, text="All").disable = False
-        srow.operator(operator=main.SCENE_OT_mcr_per_camera_enable.bl_idname, text="None").disable = True
+        
+        props: main.SCENE_OT_mcr_per_camera_enable = srow.operator(
+            operator=main.SCENE_OT_mcr_per_camera_enable.bl_idname,
+            text="All")
+        props.disable = False
+
+        props: main.SCENE_OT_mcr_per_camera_enable = srow.operator(
+            operator=main.SCENE_OT_mcr_per_camera_enable.bl_idname,
+            text="None")
+        props.disable = True
 
         layout.separator(type='LINE')
 

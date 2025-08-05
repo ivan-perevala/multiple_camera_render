@@ -2,11 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 import sys
 
-import bpy
+import bpy  # pyright: ignore [reportMissingModuleSource]
 
 if __name__ == '__main__':
     context = bpy.context

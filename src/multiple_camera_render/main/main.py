@@ -2,15 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 
-import bpy
-from bpy.types import Operator
-from bpy.props import BoolProperty
+import bpy   # pyright: ignore [reportMissingModuleSource]
+from bpy.types import Operator   # pyright: ignore [reportMissingModuleSource]
+from bpy.props import BoolProperty   # pyright: ignore [reportMissingModuleSource]
 
 import bhqmain4 as bhqmain
 import bhqrprt4 as bhqrprt
@@ -24,19 +22,9 @@ class RENDER_OT_multiple_camera_render(Operator):
     bl_idname = "render.multiple_camera_render"
     bl_label = "Multiple Camera Render"
 
-    preview: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
-    animation: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
-    quit: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})
-
-    # @classmethod
-    # def poll(cls, context):
-    #     scene = context.scene
-
-    #     for marker in scene.timeline_markers:
-    #         if marker.camera:
-    #             return False
-
-    #     return True
+    preview: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})  # pyright: ignore [reportInvalidTypeForm]
+    animation: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})  # pyright: ignore [reportInvalidTypeForm]
+    quit: BoolProperty(default=False, options={'HIDDEN', 'SKIP_SAVE'})  # pyright: ignore [reportInvalidTypeForm]
 
     @bhqrprt.operator_report(log)
     def invoke(self, context, event):
@@ -90,7 +78,7 @@ class RENDER_OT_multiple_camera_render(Operator):
         return {'FINISHED'}
 
     @classmethod
-    def description(cls, context, properties):
+    def description(cls, context, properties: RENDER_OT_multiple_camera_render):
         if properties.animation:
             if properties.preview:
                 return "Preview animation process. Not actual render would be performed"

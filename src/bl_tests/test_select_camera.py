@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
-import bpy
+import bpy  # pyright: ignore [reportMissingModuleSource]
 
 from . conftest import get_camera, set_active_object
 

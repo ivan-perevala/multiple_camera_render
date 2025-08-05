@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
 
 def register_handler(handlers: list, func, before=None) -> bool:
     if func not in handlers:

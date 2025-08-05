@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from bpy.types import ID, Object
+from bpy.types import ID, Object   # pyright: ignore [reportMissingModuleSource]
 
 
 def validate_id(id: None | ID, check_attr: str = "name_full") -> bool:

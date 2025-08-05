@@ -2,13 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 import logging
 
-from bpy.types import Operator
+from bpy.types import Operator   # pyright: ignore [reportMissingModuleSource]
 
 import bhqrprt4 as bhqrprt
 

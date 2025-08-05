@@ -2,21 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# type: ignore
-
 from __future__ import annotations
 
 from enum import IntEnum, auto
 from typing import TYPE_CHECKING
 import logging
-import math
-import numpy as np
 import os
 import time
 
-import bpy
-from bpy.types import Scene, Context
-from mathutils import Vector
+import bpy   # pyright: ignore [reportMissingModuleSource]
+from bpy.types import Scene, Context   # pyright: ignore [reportMissingModuleSource]
 
 import bhqmain4 as bhqmain
 import bhqui4 as bhqui
@@ -101,9 +96,9 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
 
         pmain = PersistentMain.get_instance()
         if pmain and pmain():
-            scene_props = context.scene.mcr
-            pmain().per_camera.conditional_handler_register(scene_props=scene_props)
-            pmain().select_camera.conditional_handler_register(scene_props=scene_props)
+            scene = context.scene
+            pmain().per_camera.conditional_handler_register(scene)
+            pmain().select_camera.conditional_handler_register(scene)
 
         return super().cancel(context)
 
