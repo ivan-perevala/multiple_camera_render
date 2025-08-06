@@ -48,6 +48,7 @@
         "pythonpath",
         "scol",
         "setuptools",
+        "SOBOL",
         "srow",
         "testpaths",
         "timestep",
