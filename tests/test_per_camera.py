@@ -11,6 +11,7 @@ from . conftest import run_blender
 
 
 @pytest.mark.parametrize("case", (
+    "test_per_camera_attr_coverage",
     "test_per_camera_simple",
     "test_per_camera_all",
     "test_per_camera_clear",
@@ -31,7 +32,7 @@ def test_per_camera_bl(blender, blender_version, repo, bl_tests_dir, case, with_
         (
             f"import pytest; "
             "import sys; "
-            "(pytest.main(["
+            "sys.exit(pytest.main(["
             "'-s', '-v', "
             f"'--repo', '{repo}', "
             f"'-k', \"{case}\", "

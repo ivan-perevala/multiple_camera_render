@@ -53,7 +53,8 @@
         "testpaths",
         "timestep",
         "TOPBAR",
-        "Vladlen"
+        "Vladlen",
+        "whitepoint"
     ],
     "ignoreWords": [],
     "import": [],
