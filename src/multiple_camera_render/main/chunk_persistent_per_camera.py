@@ -5,7 +5,8 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+import hashlib
+from typing import TYPE_CHECKING, ClassVar
 
 import bpy   # pyright: ignore [reportMissingModuleSource]
 from bpy.types import Context, Camera, Scene, Depsgraph, PropertyGroup   # pyright: ignore [reportMissingModuleSource]
@@ -24,13 +25,106 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
+class PerCameraAttribute:
+    data_path: str
+    split: list[str]
+    label: str
+    md5: str
+
+    @property
+    def scene_flag(self) -> str:
+        return f"use_per_camera_{self.md5}"
+
+    @property
+    def camera_idprop_name(self) -> str:
+        return f"scene_{self.md5}"
+
+    def __init__(self, data_path: list[str], label: str):
+        self.data_path = '.'.join(data_path)
+        self.split = data_path
+        self.label = label
+
+        self.md5 = hashlib.md5(
+            bytes(self.data_path, encoding='utf-8'),
+            usedforsecurity=False
+        ).hexdigest()
+
+
 class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCameraDataPaths):
     prev_camera: Camera | None
+
+    scene_data_path_grouped: ClassVar[dict[str, list[PerCameraAttribute]]] = dict()
 
     def __init__(self, main):
         super().__init__(main)
 
         self.prev_camera = None
+
+    @classmethod
+    def eval_per_camera_data_paths(cls, context: Context):
+        scene = context.scene
+
+        level0_data_paths = (
+            "render",
+            "view_settings",
+            "cycles",
+            "eevee",
+        )
+
+        struct_blacklist = {
+            bpy.types.BakeSettings,
+        }
+
+        scene_data_path_grouped = dict()
+
+        curr_section: None | str = None
+
+        def _eval_scene_data_path_members_grouped(*, struct: bpy.types.Struct, data_path: list[str]):
+            nonlocal curr_section, scene_data_path_grouped
+
+            attr = getattr(struct, data_path[-1], None)
+
+            if attr is None:
+                return
+
+            if type(attr) in struct_blacklist:
+                return
+
+            attr_struct: bpy.types.Struct = attr.bl_rna
+
+            if not curr_section:
+                curr_section = attr_struct.name
+
+            section_data = scene_data_path_grouped.get(curr_section)
+            if not section_data:
+                section_data = scene_data_path_grouped[curr_section] = []
+
+            pointer_identifiers = []
+
+            for prop in attr.bl_rna.properties:
+                if prop.identifier in {'rna_type', 'name'}:
+                    continue
+
+                if prop.type == 'POINTER':
+                    prop: bpy.types.PointerProperty
+
+                    if prop.is_readonly:
+                        pointer_identifiers.append(prop.identifier)
+                else:
+                    if not prop.is_readonly:
+                        section_data.append(PerCameraAttribute(
+                            data_path=data_path + [prop.identifier],
+                            label=prop.name
+                        ))
+
+            for identifier in pointer_identifiers:
+                if section_data and section_data[-1]:
+                    section_data.append(None)
+                _eval_scene_data_path_members_grouped(struct=attr, data_path=data_path + [identifier])
+
+        for name in level0_data_paths:
+            _eval_scene_data_path_members_grouped(struct=scene, data_path=[name])
+            curr_section = None
 
     def invoke(self, context):
         scene = context.scene

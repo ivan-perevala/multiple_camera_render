@@ -48,6 +48,8 @@ class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
 
         register_handler(bpy.app.handlers.load_pre, cls.cancel_on_load_pre)
 
+        PersistentPerCamera.eval_per_camera_data_paths(bpy.context)
+
     @classmethod
     def unregister(cls):
         unregister_handler(bpy.app.handlers.load_pre, cls.cancel_on_load_pre)
