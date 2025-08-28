@@ -11,8 +11,8 @@ from typing import ClassVar
 import bhqrprt4 as bhqrprt
 import bhqui4 as bhqui
 
-from bpy.types import AddonPreferences, Context
-from bpy.props import EnumProperty, FloatProperty, BoolProperty
+from bpy.types import AddonPreferences, Context   # pyright: ignore [reportMissingModuleSource]
+from bpy.props import EnumProperty, FloatProperty, BoolProperty   # pyright: ignore [reportMissingModuleSource]
 
 from .. import icons
 from .. import ADDON_PKG

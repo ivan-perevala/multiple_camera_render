@@ -11,7 +11,7 @@ from bpy.props import BoolProperty   # pyright: ignore [reportMissingModuleSourc
 
 import bhqrprt4 as bhqrprt
 
-from . chunk_persistent_per_camera import PersistentPerCamera
+from . chunk_persistent_main import PersistentMain
 
 log = logging.getLogger(__name__)
 
@@ -28,8 +28,8 @@ class SCENE_OT_mcr_per_camera_enable(Operator):
 
     @classmethod
     def poll(cls, context):
-        per_camera = PersistentPerCamera.get_instance()
-        return per_camera and per_camera()
+        pmain = PersistentMain.get_instance()
+        return pmain and pmain()
 
     @classmethod
     def description(cls, context, properties):
@@ -40,9 +40,9 @@ class SCENE_OT_mcr_per_camera_enable(Operator):
 
     @bhqrprt.operator_report(log)
     def execute(self, context):
-        per_camera = PersistentPerCamera.get_instance()
+        pmain = PersistentMain.get_instance()
 
-        if per_camera and per_camera():
-            per_camera().set_scene_flags_no_update(scene=context.scene, state=not self.disable)
+        if pmain and pmain():
+            pmain().per_camera.set_scene_flags_no_update(scene=context.scene, state=not self.disable)
 
         return {'FINISHED'}

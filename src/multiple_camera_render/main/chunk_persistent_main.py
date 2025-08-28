@@ -35,6 +35,7 @@ class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
 
     def invoke(self, context):
         STATUSBAR_HT_header.append(self._statusbar_draw_status)
+
         return super().invoke(context)
 
     def cancel(self, context):
@@ -47,8 +48,6 @@ class PersistentMain(bhqmain.MainChunk['PersistentMain', 'Context']):
         bpy.app.timers.register(cls.create_and_invoke, first_interval=0.1)
 
         register_handler(bpy.app.handlers.load_pre, cls.cancel_on_load_pre)
-
-        PersistentPerCamera.eval_per_camera_data_paths(bpy.context)
 
     @classmethod
     def unregister(cls):

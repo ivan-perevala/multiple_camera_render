@@ -8,3 +8,5 @@ numpy==1.26.4
 bhqmain>=4.2.1
 bhqrprt>=4.2.6
 bhqui>=4.2.2
+autopep8
+bpy

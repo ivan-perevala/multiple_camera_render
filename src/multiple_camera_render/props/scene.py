@@ -6,8 +6,8 @@ from __future__ import annotations
 
 import logging
 
-from bpy.types import PropertyGroup, Context, Scene
-from bpy.props import BoolProperty, EnumProperty
+from bpy.types import PropertyGroup, Context, Scene   # pyright: ignore [reportMissingModuleSource]
+from bpy.props import BoolProperty, EnumProperty   # pyright: ignore [reportMissingModuleSource]
 
 import bhqrprt4 as bhqrprt
 

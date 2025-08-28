@@ -28,8 +28,8 @@ class SCENE_OT_mcr_per_camera_preset_add(AddPresetBase, Operator):
     ]
 
     preset_values = [
-        f"scene_props.{flag_name}"
-        for flag_name in PersistentPerCamera.SCENE_FLAG_MAP.values()
+        f"scene_props.{PersistentPerCamera.scene_flag_name(md5_hash)}"
+        for md5_hash in PersistentPerCamera.DATA_PATHS.keys()
     ]
 
     preset_subdir = SCENE_MT_mcr_per_camera_presets.preset_subdir

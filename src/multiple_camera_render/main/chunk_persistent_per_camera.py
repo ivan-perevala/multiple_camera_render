@@ -5,8 +5,7 @@
 from __future__ import annotations
 
 import logging
-import hashlib
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING
 
 import bpy   # pyright: ignore [reportMissingModuleSource]
 from bpy.types import Context, Camera, Scene, Depsgraph, PropertyGroup   # pyright: ignore [reportMissingModuleSource]
@@ -25,106 +24,18 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
-class PerCameraAttribute:
-    data_path: str
-    split: list[str]
-    label: str
-    md5: str
-
-    @property
-    def scene_flag(self) -> str:
-        return f"use_per_camera_{self.md5}"
-
-    @property
-    def camera_idprop_name(self) -> str:
-        return f"scene_{self.md5}"
-
-    def __init__(self, data_path: list[str], label: str):
-        self.data_path = '.'.join(data_path)
-        self.split = data_path
-        self.label = label
-
-        self.md5 = hashlib.md5(
-            bytes(self.data_path, encoding='utf-8'),
-            usedforsecurity=False
-        ).hexdigest()
-
-
 class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCameraDataPaths):
     prev_camera: Camera | None
 
-    scene_data_path_grouped: ClassVar[dict[str, list[PerCameraAttribute]]] = dict()
+    hash_data_path_map: dict[str, str]
+    hash_label_map: dict[str, str]
 
     def __init__(self, main):
         super().__init__(main)
 
         self.prev_camera = None
-
-    @classmethod
-    def eval_per_camera_data_paths(cls, context: Context):
-        scene = context.scene
-
-        level0_data_paths = (
-            "render",
-            "view_settings",
-            "cycles",
-            "eevee",
-        )
-
-        struct_blacklist = {
-            bpy.types.BakeSettings,
-        }
-
-        scene_data_path_grouped = dict()
-
-        curr_section: None | str = None
-
-        def _eval_scene_data_path_members_grouped(*, struct: bpy.types.Struct, data_path: list[str]):
-            nonlocal curr_section, scene_data_path_grouped
-
-            attr = getattr(struct, data_path[-1], None)
-
-            if attr is None:
-                return
-
-            if type(attr) in struct_blacklist:
-                return
-
-            attr_struct: bpy.types.Struct = attr.bl_rna
-
-            if not curr_section:
-                curr_section = attr_struct.name
-
-            section_data = scene_data_path_grouped.get(curr_section)
-            if not section_data:
-                section_data = scene_data_path_grouped[curr_section] = []
-
-            pointer_identifiers = []
-
-            for prop in attr.bl_rna.properties:
-                if prop.identifier in {'rna_type', 'name'}:
-                    continue
-
-                if prop.type == 'POINTER':
-                    prop: bpy.types.PointerProperty
-
-                    if prop.is_readonly:
-                        pointer_identifiers.append(prop.identifier)
-                else:
-                    if not prop.is_readonly:
-                        section_data.append(PerCameraAttribute(
-                            data_path=data_path + [prop.identifier],
-                            label=prop.name
-                        ))
-
-            for identifier in pointer_identifiers:
-                if section_data and section_data[-1]:
-                    section_data.append(None)
-                _eval_scene_data_path_members_grouped(struct=attr, data_path=data_path + [identifier])
-
-        for name in level0_data_paths:
-            _eval_scene_data_path_members_grouped(struct=scene, data_path=[name])
-            curr_section = None
+        self.hash_data_path_map = dict()
+        self.hash_label_map = dict()
 
     def invoke(self, context):
         scene = context.scene
@@ -154,8 +65,8 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
             log.debug("Handler \"depsgraph_update_post\" removed")
 
     def conditional_handler_register(self, scene: Scene):
-        for name in self.SCENE_FLAG_MAP.values():
-            if getattr(scene.mcr, name, False):
+        for md5_hash in self.DATA_PATHS.keys():
+            if getattr(scene.mcr, self.scene_flag_name(md5_hash), False):
                 self.register_per_camera_handler()
                 break
         else:
@@ -163,6 +74,34 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
 
     def is_handler_active(self):
         return self.depsgraph_update_post in bpy.app.handlers.depsgraph_update_post
+
+    @staticmethod
+    def scene_flag_name(md5_hash: str) -> str:
+        return f"use_per_camera_{md5_hash}"
+
+    @staticmethod
+    def camera_idprop_name(md5_hash: str) -> str:
+        return f"scene_{md5_hash}"
+
+    @staticmethod
+    def md5_hash_from_camera_idprop_name(idprop_name: str) -> str:
+        return idprop_name[6:]  # len("scene_")
+
+    def hash_from_data_path(self, data_path: str) -> str:
+        if not self.hash_data_path_map:
+            self.hash_data_path_map = {
+                _data_path: md5_hash for md5_hash, [_label, _data_path, _split] in self.DATA_PATHS.items()
+            }
+
+        return self.hash_data_path_map.get(data_path, "")
+
+    def hash_from_label(self, label: str) -> str:
+        if not self.hash_label_map:
+            self.hash_label_map = {
+                _label: md5_hash for md5_hash, [_label, _path, _split] in self.DATA_PATHS.items()
+            }
+
+        return self.hash_label_map.get(label, "")
 
     @staticmethod
     def check_cycles() -> bool:
@@ -197,14 +136,21 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
 
         def _property_update(self: PropertyGroup, context: Context):
             pmain = PersistentMain.get_instance()
+
             if pmain and pmain():
                 scene: Scene = self.id_data
                 pmain().per_camera.conditional_handler_register(scene)
 
-        for _data_path, name in cls.SCENE_FLAG_MAP.items():
-            annotations[name] = BoolProperty(
+            # Resetting search after setting up scene flag.
+            wm = context.window_manager
+            wm.mcr.scene_per_camera_flag_search = ""
+
+        for md5_hash, [label, _data_path, _path_split] in cls.DATA_PATHS.items():
+            annotations[cls.scene_flag_name(md5_hash)] = BoolProperty(
                 update=_property_update,
-                options={'SKIP_SAVE'}
+                options={'SKIP_SAVE'},
+                name=label,
+                description="Enable per-camera value"
             )
 
         r_type = type("PerCameraProperties", tuple(), dict(__annotations__=annotations))
@@ -212,8 +158,8 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
         return r_type
 
     def set_scene_flags_no_update(self, scene: Scene, state: bool):
-        for name in self.SCENE_FLAG_MAP.values():
-            scene.mcr[name] = state
+        for md5_hash in self.DATA_PATHS.keys():
+            scene.mcr[self.scene_flag_name(md5_hash)] = state
 
         if state:
             self.register_per_camera_handler()
@@ -221,69 +167,61 @@ class PersistentPerCamera(bhqmain.MainChunk['PersistentMain', 'Context'], PerCam
             self.unregister_per_camera_handler()
 
     @classmethod
-    def eval_scene_flag_ui_label(cls, data_path: str) -> None | str:
-        if label := cls.SCENE_DATA_PATHS_LABEL_MAP.get(data_path):
-            return label
-
-        _sentinel = object()
-
-        item = Scene
-        path_split = cls.SCENE_DATA_PATHS_SPLIT[data_path]
-        for key in path_split:
-            item = item.bl_rna.properties.get(key, _sentinel)
-
-            if item is _sentinel:
-                log.debug(f"Item \"{key}\" of data path \"{data_path}\" is missing, would be skipped")
-                break
-
-            if key != path_split[-1] and isinstance(item, bpy.types.PointerProperty):
-                item = item.fixed_type
-        else:
-            if isinstance(item, bpy.types.Property):
-                label = cls.SCENE_DATA_PATHS_LABEL_MAP[data_path] = item.name
-                return label
-
-    @classmethod
     def dump_scene_properties_to_camera(cls, scene: Scene, cam: Camera):
-        for data_path, flag_name in cls.SCENE_FLAG_MAP.items():
-            if scene.mcr.path_resolve(flag_name):
-                idprop_name = cls.CAMERA_IDPROP_MAP[data_path]
+        for md5_hash, [_label, data_path, _path_split] in cls.DATA_PATHS.items():
+            if scene.mcr.path_resolve(cls.scene_flag_name(md5_hash)):
+                idprop_name = cls.camera_idprop_name(md5_hash)
 
                 try:
                     value = scene.path_resolve(data_path)
                 except ValueError:
+                    log.warning(f"Unable to dump scene data path {data_path} to camera")
                     continue
 
                 cam.mcr[idprop_name] = value
 
     @classmethod
     def clear_per_camera_data(cls, cam: Camera):
-        for data_path, idprop_name in cls.CAMERA_IDPROP_MAP.items():
+        for md5_hash in cls.DATA_PATHS.keys():
+            idprop_name = cls.camera_idprop_name(md5_hash)
+
             if idprop_name in cam.mcr:
                 del cam.mcr[idprop_name]
 
     def update_scene_properties_from_camera(self, scene: Scene, cam: Camera):
         _sentinel = object()
 
-        for data_path, flag_name in self.SCENE_FLAG_MAP.items():
-            if scene.mcr.path_resolve(flag_name):
-                idprop_name = self.CAMERA_IDPROP_MAP[data_path]
+        for idprop_name in cam.mcr.keys():
+            md5_hash = self.md5_hash_from_camera_idprop_name(idprop_name)
 
-                value = cam.mcr.get(idprop_name, _sentinel)
-                if value is not _sentinel:
-                    path_split = self.SCENE_DATA_PATHS_SPLIT[data_path]
+            value = cam.mcr.get(idprop_name, _sentinel)
+            if value is _sentinel:
+                log.warning(f"Unable to get value of \"{idprop_name}\" for camera \"{cam.name}\", skipping")
+                continue
 
-                    struct = scene
-                    for name in path_split[:-1]:
-                        struct = getattr(struct, name, _sentinel)
+            item = self.DATA_PATHS.get(md5_hash, None)
+            if item is None:
+                log.warning(f"Unknown md5 hash for ID property: {idprop_name}, skipping")
+                continue
 
-                        if struct is _sentinel:
-                            break
+            if scene.mcr.path_resolve(self.scene_flag_name(md5_hash)):
+                path_split = item[2]  # [label, data_path, path_split]
 
-                    attr_name = path_split[-1]
-                    if struct is not _sentinel:
-                        if hasattr(struct, attr_name):
-                            setattr(struct, attr_name, value)
+                struct = scene
+
+                for name in path_split[:-1]:
+                    struct = getattr(struct, name, _sentinel)
+
+                    if struct is _sentinel:
+                        break
+
+                attr_name = path_split[-1]
+                if struct is _sentinel:
+                    log.warning(f"Sentinel value reached while trying to resolve path: {path_split}, skipping")
+                elif hasattr(struct, attr_name):
+                    setattr(struct, attr_name, value)
+                else:
+                    log.warning(f"Struct \"{struct}\" has no attribute to set: {attr_name}")
 
     def register_save_pre_handler(self):
         if self.save_pre_handler not in bpy.app.handlers.save_pre:
