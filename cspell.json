@@ -27,6 +27,7 @@
         "depsgraph",
         "fromiter",
         "fstr",
+        "gpcd",
         "idname",
         "idprop",
         "ivpe",
