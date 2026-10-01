@@ -22,8 +22,10 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      packages: write
       contents: read
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
       - name: Check out the repo
