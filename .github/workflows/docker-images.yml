@@ -11,7 +11,9 @@ on:
       - main
       - docker-tests
     paths:
+      - .github/workflows/docker-images.yml
       - Dockerfile
+
   workflow_dispatch:
 
 jobs:
