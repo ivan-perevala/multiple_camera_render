@@ -1,4 +1,4 @@
-<!-- SPDX-FileCopyrightText: 2025 Ivan Perevala <ivan95perevala@gmail.com>
+<!-- SPDX-FileCopyrightText: 2025-2026 Ivan Perevala <ivan95perevala@gmail.com>
 
 SPDX-License-Identifier: GPL-3.0-or-later -->
 
@@ -11,10 +11,6 @@ is a color of "Approved" message in approval queue on Blender Extensions Platfor
 [![Blender Extensions](https://img.shields.io/badge/Blender_Extensions_Platform-6B9E2B)](https://extensions.blender.org/add-ons/multiple-camera-render/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)](./LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/mcr/badge/?version=latest)](https://mcr.readthedocs.io/latest)
-[![Spell Check](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/spellcheck.yml)
-[![Blender 4.2.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.2.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.2.0.yml)
-[![Blender 4.3.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.3.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.3.0.yml)
-[![Blender 4.4.0](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.4.0.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/blender-test-4.4.0.yml)
 
 Extension for [Blender](https://www.blender.org/) for sequential rendering from multiple cameras.
 

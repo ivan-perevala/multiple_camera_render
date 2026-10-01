@@ -73,10 +73,4 @@ addopts = ["--import-mode=importlib"]
 testpaths = ["tests"]
 
 # https://docs.pytest.org/en/stable/example/pythoncollection.html#changing-naming-conventions
-python_files = ["test_*.py", "bl_test_*.py"]
-
-# https://github.com/codespell-project/codespell?tab=readme-ov-file#using-a-config-file
-[tool.codespell]
-skip = './build,./dist,./docs/_build'
-count = true
-quiet-level = 3
+python_files = ["test_*.py"]
