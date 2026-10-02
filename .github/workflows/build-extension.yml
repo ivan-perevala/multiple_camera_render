@@ -19,9 +19,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}  
   MCR_DISTRIBUTION_DIR: /home/mcr/multiple_camera_render
-  MCR_ROOT_DIR: /home/mcr/multiple_camera_render
 
 jobs:
   build_extension:
@@ -34,10 +33,9 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
       env:
-        MCR_ROOT_DIR: ${{ env.MCR_ROOT_DIR }}
         MCR_DISTRIBUTION_DIR: ${{ env.MCR_DISTRIBUTION_DIR }}
       volumes:
-        - ${{ github.workspace }}:/${{ env.MCR_DISTRIBUTION_DIR }}
+        - ${{ github.workspace }}:/home/mcr/multiple_camera_render
 
     permissions:
       contents: read
