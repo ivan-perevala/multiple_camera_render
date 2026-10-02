@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/${{ github.repository }}
+      image: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
