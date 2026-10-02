@@ -23,12 +23,15 @@ env:
 
 jobs:
   build_extension:
-    name: Build Blenderextension
+    name: Build Blender extension
     runs-on: ubuntu-latest
 
     container:
       image: ghcr.io/${{ github.repository }}
-      volumes: 
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+      volumes:
         - ${{ github.workspace }}://home/mcr/multiple_camera_render
 
     permissions:
