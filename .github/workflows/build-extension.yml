@@ -23,7 +23,7 @@ env:
 
 jobs:
   build_extension:
-    name: Build Blender extension
+    name: Build Extension
     runs-on: ubuntu-latest
 
     container:
@@ -41,5 +41,13 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v6
 
-      - name: Test
+      - name: Build extension
         run: bash ./scripts/build.sh
+      
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          path: ../dist/multiple_camera_render-*.zip
+          if-no-files-found: error
+          overwrite: true
+          archive: false
