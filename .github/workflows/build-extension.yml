@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Build Extension
+description: Build Blender extension and upload as artifact.
+
+on:
+  push:
+    paths:
+      - .github/workflows/build-extension.yml
+      - icons/*.blend
+      - icons/*.py
+      - scripts/build.sh
+      - src/multiple_camera_render/*
+      - requirements.txt
+
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build_extension:
+    name: Build Blenderextension
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/${{ github.repository }}
+      volumes: 
+        - ${{ github.workspace }}://home/mcr/multiple_camera_render
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v6
+
+      - name: Test
+        run: ls -a
