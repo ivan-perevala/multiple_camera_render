@@ -20,6 +20,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  MCR_DISTRIBUTION_DIR: /home/mcr/multiple_camera_render
+  MCR_ROOT_DIR: /home/mcr/multiple_camera_render
 
 jobs:
   build_extension:
@@ -31,8 +33,11 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
+      env:
+        MCR_ROOT_DIR: ${{ env.MCR_ROOT_DIR }}
+        MCR_DISTRIBUTION_DIR: ${{ env.MCR_DISTRIBUTION_DIR }}
       volumes:
-        - ${{ github.workspace }}://home/mcr/multiple_camera_render
+        - ${{ github.workspace }}:/${{ env.MCR_DISTRIBUTION_DIR }}
 
     permissions:
       contents: read
@@ -47,7 +52,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
-          path: "/home/mcr/dist/multiple_camera_render-*.zip"
+          path: "${{ env.MCR_DISTRIBUTION_DIR }}/multiple_camera_render-*.zip"
           if-no-files-found: error
           overwrite: true
           archive: false
