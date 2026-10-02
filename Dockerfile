@@ -44,6 +44,22 @@ RUN tar --extract --strip-components=1 --file blender.tar.xz \
     && rm -f blender.tar.xz \
     && ./4.2/python/bin/python3.11 -m pip install pytest
 
+WORKDIR /home/mcr/blender/blender-4.3
+ADD --chown=mcr:users \
+    https://download.blender.org/release/Blender4.3/blender-4.3.2-linux-x64.tar.xz \
+    blender.tar.xz
+RUN tar --extract --strip-components=1 --file blender.tar.xz \
+    && rm -f blender.tar.xz \
+    && ./4.3/python/bin/python3.11 -m pip install pytest
+
+WORKDIR /home/mcr/blender/blender-4.4
+ADD --chown=mcr:users \
+    https://download.blender.org/release/Blender4.4/blender-4.4.3-linux-x64.tar.xz \
+    blender.tar.xz
+RUN tar --extract --strip-components=1 --file blender.tar.xz \
+    && rm -f blender.tar.xz \
+    && ./4.4/python/bin/python3.11 -m pip install pytest
+
 WORKDIR /home/mcr/blender/blender-4.5
 ADD --chown=mcr:users \
     https://download.blender.org/release/Blender4.5/blender-4.5.14-linux-x64.tar.xz \
@@ -51,6 +67,22 @@ ADD --chown=mcr:users \
 RUN tar --extract --strip-components=1 --file blender.tar.xz \
     && rm -f blender.tar.xz \
     && ./4.5/python/bin/python3.11 -m pip install pytest
+
+WORKDIR /home/mcr/blender/blender-5.0
+ADD --chown=mcr:users \
+    https://download.blender.org/release/Blender5.0/blender-5.0.1-linux-x64.tar.xz \
+    blender.tar.xz
+RUN tar --extract --strip-components=1 --file blender.tar.xz \
+    && rm -f blender.tar.xz \
+    && ./5.0/python/bin/python3.11 -m pip install pytest
+
+WORKDIR /home/mcr/blender/blender-5.1
+ADD --chown=mcr:users \
+    https://download.blender.org/release/Blender5.1/blender-5.1.2-linux-x64.tar.xz \
+    blender.tar.xz
+RUN tar --extract --strip-components=1 --file blender.tar.xz \
+    && rm -f blender.tar.xz \
+    && ./5.1/python/bin/python3.13 -m pip install pytest
 
 WORKDIR /home/mcr/blender/blender-5.2
 ADD --chown=mcr:users \
