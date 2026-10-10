@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2026 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Blender 4.2
+description: End-to-end extension tests.
+
+on:
+  workflow_run:
+    workflows: ["Blender 4.3"]
+    types: [requested]
+
+jobs:
+  end-to-end-tests:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - run: echo "Hello from 4.2 test!"
+
+  trigger-failed:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo "Tests using previous version failed, current tests skipped"

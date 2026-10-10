@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Ivan Perevala <ivan95perevala@gmail.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Blender 4.3
+description: End-to-end extension tests.
+
+on:
+  push:
+    paths:
+      - .github/workflows/blender-test-4.3.yml
+      - scripts/*.sh
+      - src/*
+      - tests/*
+
+jobs:
+  end-to-end-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo "Hello from 4.3 action!"
