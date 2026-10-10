@@ -8,7 +8,7 @@ description: End-to-end extension tests.
 on:
   workflow_run:
     workflows: ["Blender 4.3"]
-    types: [requested]
+    types: [completed]
 
 jobs:
   end-to-end-tests:
