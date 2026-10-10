@@ -13,6 +13,8 @@ on:
       - src/*
       - tests/*
 
+  workflow_dispatch:
+
 jobs:
   end-to-end-tests:
     runs-on: ubuntu-latest
