@@ -80,10 +80,10 @@ class Render(bhqmain.MainChunk['Main', 'Context']):
         initial_filepath = self.main.restore.render_filepath
         directory, filename = os.path.split(initial_filepath)
         name, ext = os.path.splitext(filename)
-
-        camera_suffix = f"{'_' if name else ''}{camera.name_full}"
-
-        name = f"{name}{camera_suffix}"
+        
+        if "{camera_name}" not in initial_filepath:
+            camera_suffix = f"{'_' if name else ''}{camera.name_full}"
+            name = f"{name}{camera_suffix}"
 
         if not self.main.animation and scene.mcr.keep_frame_in_filepath:
             name = self._eval_render_filename_frame(context, name)
