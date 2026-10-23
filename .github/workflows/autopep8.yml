@@ -33,4 +33,4 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}[bot]@users.noreply.github.com"
 
-          git diff --quiet || (git commit -am "Formatted with `autopep8`" && git push)
+          git diff --quiet || (git commit -am "Formatted with autopep8" && git push)
