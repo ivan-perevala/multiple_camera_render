@@ -1,0 +1,33 @@
+name: PEP8
+
+on:
+  push:
+    paths:
+      - "**/*.py"
+      - "pyproject.toml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pep8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - run: python -m pip install autopep8
+
+      - name: Run autopep8 checks
+        run: |
+          autopep8 --diff --recursive --agressive --agressive . > autopep8.diff
+          if [ -s autopep8.diff ]; then
+            cat autopep8.diff
+            exit 1
+          fi
