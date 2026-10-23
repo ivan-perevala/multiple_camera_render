@@ -1,4 +1,4 @@
-name: PEP8
+name: pep8
 
 on:
   push:
