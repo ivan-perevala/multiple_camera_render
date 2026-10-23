@@ -5,6 +5,7 @@ on:
     paths:
       - "**/*.py"
       - "pyproject.toml"
+      - .github/workflows/autopep8.yml
 
   workflow_dispatch:
 
@@ -26,7 +27,7 @@ jobs:
 
       - name: Run autopep8 checks
         run: |
-          autopep8 --diff --recursive --agressive --agressive . > autopep8.diff
+          autopep8 --diff --recursive . > autopep8.diff
           if [ -s autopep8.diff ]; then
             cat autopep8.diff
             exit 1
