@@ -59,7 +59,7 @@ reportMissingModuleSource = false
 reportInvalidTypeForm = false
 
 # ----------------------------------------------------------------------------------------------------------------------
-# Pytest configuration
+# Pytest configuration.
 # https://docs.pytest.org/en/stable/reference/customize.html#pyproject-toml
 [tool.pytest.ini_options]
 
