@@ -11,7 +11,7 @@ is a color of "Approved" message in approval queue on Blender Extensions Platfor
 [![Blender Extensions](https://img.shields.io/badge/Blender_Extensions_Platform-6B9E2B)](https://extensions.blender.org/add-ons/multiple-camera-render/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue)](./LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/mcr/badge/?version=latest)](https://mcr.readthedocs.io/latest)
-[![PEP8](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/autopep8.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/autopep8.yml)
+[![pep8](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/autopep8.yml/badge.svg)](https://github.com/ivan-perevala/multiple_camera_render/actions/workflows/autopep8.yml)
 
 Extension for [Blender](https://www.blender.org/) for sequential rendering from multiple cameras.
 
