@@ -9,7 +9,7 @@ import importlib
 import pathlib
 
 import bpy
-from bpy.types import Context, Object
+from bpy.types import Context,      Object
 
 
 def pytest_addoption(parser):
