@@ -40,10 +40,10 @@ def test_per_camera_resolution_x(with_select_camera):
 
     context = bpy.context
     scene = context.scene
-    
+
     scene.mcr.select_camera = with_select_camera
     scene.mcr.use_per_camera_render_resolution_x = True
-    #update_depsgraph(context)
+    # update_depsgraph(context)
 
     set_camera_and_update_depsgraph(0)
     scene.render.resolution_x = 128
